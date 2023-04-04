@@ -1,8 +1,7 @@
-package src.Syncing;
+package src.syncing;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -29,19 +28,60 @@ public class Dsync {
         List<File> list2 = Arrays.asList(folder2.listFiles());
 
         for (File file2 : list2) {
-            if (!list1.contains(file2)) {
-                try {
+            Boolean contains = false;
+            for (File file1 : list1) {
+                if(file2.getName().equals(file1.getName())) {
+                    contains = true;
+                    try{
+                        if(file2.lastModified() > file1.lastModified()) {
+                            Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
+                            System.out.println("Copied from path2 to path1 !");
+                        }
+                        else if(file2.lastModified() < file1.lastModified()) {
+                            Files.copy(file1.toPath(), Path.of(path2 + "/" + file1.getName()), StandardCopyOption.REPLACE_EXISTING);
+                            System.out.println("Copied from path1 to path2 !");
+                        }
+                    }
+                    catch(IOException e) {
+                        // e.getCause();
+                    }
+                }
+            }
+            if (!contains) {
+                try{
                     Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Created in path1 from path2 !");
                 }
                 catch(IOException e) {
                     // e.getCause();
                 }
             }
         }
+
         for (File file1 : list1) {
-            if (!list2.contains(file1)) {
-                try {
+            Boolean contains = false;
+            for (File file2 : list2) {
+                if(file1.getName().equals(file2.getName())) {
+                    contains = true;
+                    try{
+                        if(file1.lastModified() > file2.lastModified()) {
+                            Files.copy(file1.toPath(), Path.of(path2 + "/" + file1.getName()), StandardCopyOption.REPLACE_EXISTING);
+                            System.out.println("Copied from path1 to path2 !");
+                        }
+                        else if (file1.lastModified() < file2.lastModified()) {
+                            Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
+                            System.out.println("Copied from path2 to path1 !");
+                        }
+                    }
+                    catch(IOException e) {
+                        // e.getCause();
+                    }
+                }
+            }
+            if (!contains) {
+                try{
                     Files.copy(file1.toPath(), Path.of(path2 + "/" + file1.getName()), StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Created in path2 from path1 !");
                 }
                 catch(IOException e) {
                     // e.getCause();
@@ -55,10 +95,18 @@ public class Dsync {
         dsync.setPath1(args[0]);
         dsync.setPath2(args[1]);
 
-        try {
-            dsync.syncDirectories();
-        } catch (IOException e) {
-            // e.printStackTrace();
+        while(true) {
+            try {
+                dsync.syncDirectories();
+            } catch (IOException e) {
+                // e.printStackTrace();
+            }
+            try {
+                Thread.sleep(5000);
+            }
+            catch(InterruptedException e) {
+                // e.getCause();
+            }
         }
     }
 }
