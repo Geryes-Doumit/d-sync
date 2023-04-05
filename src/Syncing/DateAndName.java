@@ -28,31 +28,18 @@ public class DateAndName {
     }
 
     public Boolean equals(DateAndName document) {
-        if (this.name.equals(document.name) ) {
-            if (this.date.equals(document.date)) {
-                return true;
-            }
-            else {
-                System.out.println("Not equal, different date.");
-                return false;
-            }
-        }
-
-        else {
-            System.out.println("Not equal, different name.");
-                return false;
-        }
+        return this.name.equals(document.getName()) && this.date.equals(document.getDate());
     }
 
     public static Boolean equalLists(List<DateAndName> list1, List<DateAndName> list2) {
         if (list1.size() != list2.size()) {
-            System.out.println("Different size !");
+            // System.out.println("Different size !");
             return false;
         }
 
         for (int i = 0; i < list1.size(); i++) {
             if(!list1.get(i).equals(list2.get(i))) {
-                System.out.println("member " + Integer.toString(i)+" different !");
+                // System.out.println("member " + Integer.toString(i)+" different !");
                 return false;
             }
         }
