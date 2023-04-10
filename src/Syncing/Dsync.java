@@ -177,17 +177,14 @@ public class Dsync {
     }
 
     public void syncDirectories() throws IOException, InterruptedException {
-        int i = 0;
+        firstSync(path1, path2);
+        firstSync(path2, path1);
+
+        setLastState(path1);
+
+        Thread.sleep(5000);
+        
         while(true) {
-            if (i == 0) {
-                firstSync(path1, path2);
-                firstSync(path2, path1);
-
-                setLastState(path1);
-
-                Thread.sleep(5000);
-                i++;
-            }
             syncLastState(path1, path2);
 
             Thread.sleep(5000);
