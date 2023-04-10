@@ -4,11 +4,13 @@ import java.util.List;
 
 public class DateAndName {
     private String name;
+    private String type;
     private Long date;
 
-    public DateAndName(String name, Long date){
+    public DateAndName(String name, Long date, String type){
         this.name = name;
         this.date = date;
+        this.type = type;
     }
 
     public String getName(){
@@ -19,6 +21,10 @@ public class DateAndName {
         return this.date;
     }
 
+    public String getType(){
+        return this.type;
+    }
+
     public void setName(String name){
         this.name = name;
     }
@@ -27,8 +33,22 @@ public class DateAndName {
         this.date = date;
     }
 
+    public void setType(String type){
+        this.type = type;
+    }
+
     public Boolean equals(DateAndName document) {
-        return this.name.equals(document.getName()) && this.date.equals(document.getDate());
+        if (document.getType() != this.type) {
+            return false;
+        }
+
+        else if (this.type == "File") {
+            return this.name.equals(document.getName()) && this.date.equals(document.getDate());
+        }
+
+        else {
+            return this.name.equals(document.getName());
+        }
     }
 
     public static Boolean equalLists(List<DateAndName> list1, List<DateAndName> list2) {
