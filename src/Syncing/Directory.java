@@ -9,26 +9,28 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Directory {
-    public static void copyDirectory(String src, String dest) throws IOException {
+    public static String copyDirectory(String src, String dest) throws IOException {
         Files.createDirectory(Path.of(dest));
         List<File> subFolderList = Arrays.asList(new File(src).listFiles());
         for (File file : subFolderList) {
             if (file.isFile()) {
                 Files.copy(file.toPath(), Path.of(dest + "/" + file.getName()), StandardCopyOption.REPLACE_EXISTING);
-                System.out.println("Created in " + src + " from " + dest + " !");
+                // System.out.println("Created in " + src + " from " + dest + " !");
             }
             else if(file.isDirectory()) {
                 copyDirectory(src + "/" + file.getName(), dest + "/" + file.getName());
             }
         }
-        System.out.println("Copied the " + src + " directory in" + dest);
+        // System.out.println("Copied the " + src + " directory in" + dest);
+
+        return "Synced the subdirectories.";
     }
 
-    public static void deleteDirectory(String src) throws IOException {
+    public static String deleteDirectory(String src) throws IOException {
         List<File> subFolderList = Arrays.asList(new File(src).listFiles());
         for (File file : subFolderList) {
             if (file.isFile()) {
-                System.out.println("Deleting" + file.getName() + "in " + src + " ...");
+                // System.out.println("Deleting" + file.getName() + "in " + src + " ...");
                 file.delete();
             }
             else if(file.isDirectory()) {
@@ -36,12 +38,14 @@ public class Directory {
             }
         }
         new File(src).delete();
-        System.out.println("Deleted the " + src + " directory and all its content.");
+        // System.out.println("Deleted the " + src + " directory and all its content.");
+
+        return "Synced the subdirectories.";
     }
 
     public static Long lastModifiedDate(File file) { // returns the date of the latest file in a path.
         if (file.isFile()) {
-            System.out.println(file.lastModified());
+            // System.out.println(file.lastModified());
             return file.lastModified();
         }
         else if (file.isDirectory()) {

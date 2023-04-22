@@ -49,13 +49,23 @@ public class Dsync extends Thread {
         if (messages.isEmpty()) {
             messages.add("");
             messages.add("");
+            messages.add("");
+            messages.add("");
+            messages.add("");
+            messages.add("");
+            messages.add("");
             messages.add(Msg);
         }
 
         else {
             messages.set(0, messages.get(1));
             messages.set(1, messages.get(2));
-            messages.set(2, Msg);
+            messages.set(2, messages.get(3));
+            messages.set(3, messages.get(4));
+            messages.set(4, messages.get(5));
+            messages.set(5, messages.get(6));
+            messages.set(6, messages.get(7));
+            messages.set(7, Msg);
         }
     }
 
@@ -79,11 +89,11 @@ public class Dsync extends Thread {
                         try{
                             if(file2.lastModified() > file1.lastModified()) {
                                 Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
-                                // System.out.println("Copied from " + path2 + " to " + path1 + " !");
+                                // System.out.println("Copied from " + path2 + " to " + path1 + ".");
                             }
                             else if(file2.lastModified() < file1.lastModified()) {
                                 Files.copy(file1.toPath(), Path.of(path2 + "/" + file1.getName()), StandardCopyOption.REPLACE_EXISTING);
-                                // System.out.println("Copied from " + path1 + " to " + path2 + " !");
+                                // System.out.println("Copied from " + path1 + " to " + path2 + ".");
                             }
                         }
                         catch(IOException e) {
@@ -94,7 +104,7 @@ public class Dsync extends Thread {
                 if (!contains) {
                     try{
                         Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
-                        // System.out.println("Created in " + path1 + " from " + path2 + " !");
+                        // System.out.println("Created in " + path1 + " from " + path2 + ".");
                     }
                     catch(IOException e) {
                         // e.getCause();
@@ -116,12 +126,14 @@ public class Dsync extends Thread {
         }
     }
 
-    public static void syncAndDelete(String path1, String path2) throws IOException {
+    public Boolean syncAndDelete(String path1, String path2) throws IOException {
         File folder1 = new File(path1);
         File folder2 = new File(path2);
 
         List<File> list1 = Arrays.asList(folder1.listFiles());
         List<File> list2 = Arrays.asList(folder2.listFiles());
+
+        Boolean modified = false;
 
         for (File file2 : list2) {
             if (file2.isFile()) {
@@ -132,11 +144,13 @@ public class Dsync extends Thread {
                         try{
                             if(file2.lastModified() > file1.lastModified()) {
                                 Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
-                                // System.out.println("Copied from " + path2 + " to " + path1 + " !");
+                                addMessage("Copied the modified file.");
+                                modified = true;
                             }
                             else if(file2.lastModified() < file1.lastModified()) {
                                 Files.copy(file1.toPath(), Path.of(path2 + "/" + file1.getName()), StandardCopyOption.REPLACE_EXISTING);
-                                // System.out.println("Copied from " + path1 + " to " + path2 + " !");
+                                addMessage("Copied the modified file.");
+                                modified = true;
                             }
                         }
                         catch(IOException e) {
@@ -147,7 +161,8 @@ public class Dsync extends Thread {
                 if (!contains) {
                     try{
                         Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
-                        // System.out.println("Created in " + path1 + " from " + path2 + " !");
+                        addMessage("Copied the missing file.");
+                        modified = true;
                     }
                     catch(IOException e) {
                         // e.getCause();
@@ -160,13 +175,15 @@ public class Dsync extends Thread {
                 for (File file1 : list1) {
                     if(file2.getName().equals(file1.getName()) && file1.isDirectory()) {
                         contains = true;
-                        Dsync.syncAndDelete(path1 + "/" + file1.getName(), path2 + "/" + file2.getName());
+                        syncAndDelete(path1 + "/" + file1.getName(), path2 + "/" + file2.getName());
                     }
                 }
                 if (!contains) {
-                    Directory.copyDirectory(path2 + "/" + file2.getName(), path1 + "/" + file2.getName());
+                    addMessage(Directory.copyDirectory(path2 + "/" + file2.getName(), path1 + "/" + file2.getName()));
+                    modified = true;
                 }
             }
+
         }
 
         for (File file1 : list1) {
@@ -180,7 +197,8 @@ public class Dsync extends Thread {
                 if (!contains) {
                     try{
                         file1.delete();
-                        // System.out.println("Deleted " + file1.getName() + " from " + path1 + " !");
+                        addMessage("Deleted " + file1.getName() + ".");
+                        modified = true;
                     }
                     catch(Exception e) {
                         // e.getCause();
@@ -193,36 +211,43 @@ public class Dsync extends Thread {
                     if (file2.isDirectory()) {
                         if(file1.getName().equals(file2.getName())) {
                             contains = true;
-                            Dsync.syncAndDelete(path1 + "/" + file1.getName(), path2 + "/" + file2.getName());
+                            syncAndDelete(path1 + "/" + file1.getName(), path2 + "/" + file2.getName());
                         }
                     }
                 }
                 if (!contains) {
-                    Directory.deleteDirectory(path1 + "/" + file1.getName());
+                    addMessage(Directory.deleteDirectory(path1 + "/" + file1.getName()));
+                    modified = true;
                 }
             }
         }
+
+        return modified;
     }
 
-    public static void checkAndSyncSubFolders(String path1, String path2) throws IOException {
+    public Boolean checkAndSyncSubFolders(String path1, String path2) throws IOException {
         File folder1 = new File(path1);
         File folder2 = new File(path2);
 
         List<File> list1 = Arrays.asList(folder1.listFiles());
         List<File> list2 = Arrays.asList(folder2.listFiles());
 
+        Boolean modified = false;
+
         for (File file2 : list2) {
             for (File file1 : list1) {
                 if(file1.getName().equals(file2.getName()) && file1.isDirectory() && file2.isDirectory()) {
                     if (Directory.lastModifiedDate(file2) > Directory.lastModifiedDate(file1)) {
-                        Dsync.syncAndDelete(path1 + "/" + file1.getName(), path2 + "/" + file2.getName());
+                        modified = syncAndDelete(path1 + "/" + file1.getName(), path2 + "/" + file2.getName());
                     }
                     else {
-                        Dsync.syncAndDelete(path2 + "/" + file2.getName(), path1 + "/" + file1.getName());
+                        modified = syncAndDelete(path2 + "/" + file2.getName(), path1 + "/" + file1.getName());
                     }
                 }
             }
         }
+
+        return modified;
     }
 
     public void syncLastState(String path1, String path2) throws IOException {
@@ -258,7 +283,7 @@ public class Dsync extends Thread {
             firstSync(path1, path2);
             firstSync(path2, path1);
             setLastState(path1);
-            addMessage("Folders combined !");
+            addMessage("Folders combined.");
             return;
         }
 
@@ -266,7 +291,7 @@ public class Dsync extends Thread {
             addMessage("Second folder modified, updating the first...");
             syncAndDelete(path1, path2);
             setLastState(path2);
-            addMessage("Folders synced !");
+            addMessage("Folders synced.");
             return;
         }
 
@@ -274,13 +299,11 @@ public class Dsync extends Thread {
             addMessage("First folder modified, updating the second...");
             syncAndDelete(path2, path1);
             setLastState(path1);
-            addMessage("Folders synced !");
+            addMessage("Folders synced.");
             return;
         }
 
-        checkAndSyncSubFolders(path1, path2);
-
-        addMessage("No changes detected.");
+        if (!checkAndSyncSubFolders(path1, path2)) addMessage("No changes detected.");
     }
 
     public void syncDirectories() throws IOException, InterruptedException {
