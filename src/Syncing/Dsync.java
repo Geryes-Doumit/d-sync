@@ -16,15 +16,20 @@ public class Dsync extends Thread {
     private List<DateAndName> lastState = new ArrayList<>();
 
     private Boolean sync = false; // To sync or not to sync, that is the question
+    private Boolean firstSync = true;
 
     private List<String> messages = new ArrayList<>(); // List to store the log messages that will be shown on the GUI
 
-    public void setPath1(String path) {
-        this.path1 = path;
-    }
-
     public void setSync(Boolean bool) {
         this.sync = bool;
+    }
+
+    public void setFirstSync(Boolean bool) {
+        this.firstSync = bool;
+    }
+    
+    public void setPath1(String path) {
+        this.path1 = path;
     }
 
     public void setPath2(String path) {
@@ -67,6 +72,17 @@ public class Dsync extends Thread {
             messages.set(6, messages.get(7));
             messages.set(7, Msg);
         }
+    }
+
+    public void resetMessages() {
+        messages.set(0, "");
+            messages.set(1, "");
+            messages.set(2, "");
+            messages.set(3, "");
+            messages.set(4, "");
+            messages.set(5, "");
+            messages.set(6, "");
+            messages.set(7, "");
     }
 
     public List<String> getMessages() {
@@ -307,10 +323,8 @@ public class Dsync extends Thread {
     }
 
     public void syncDirectories() throws IOException, InterruptedException {
-        boolean firstTime = true;
-
         while(true) {
-            if (firstTime && sync) {
+            if (this.firstSync && sync) {
                 firstSync(path1, path2);
                 firstSync(path2, path1);
 
@@ -320,7 +334,7 @@ public class Dsync extends Thread {
 
                 Thread.sleep(5000);
 
-                firstTime = false;
+                this.firstSync = false;
             }
 
             else if (sync) {
