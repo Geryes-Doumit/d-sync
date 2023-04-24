@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 public class Gui {
     Boolean started = false;
@@ -20,7 +21,17 @@ public class Gui {
     Boolean browse1Removed = false;
     Boolean browse2Removed = false;
 
+    Boolean networkMode = false;
+
     String syncImagePath = "img/syncIconColorBorder.png";
+
+    // Used to check if the ip address and port number entered are valid (no letters, etc...)
+    private static final Pattern PATTERN = Pattern.compile(
+        "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+
+    public static boolean isValid(final String ip) {
+        return PATTERN.matcher(ip).matches();
+    }
 
     public void updatePanel(JTextPane jTextPane, StyledDocument styledDoc, Dsync dsync) {
         jTextPane.setText("");
@@ -76,6 +87,9 @@ public class Gui {
 
         //--------------------- First path input ---------------------\\
 
+        JPanel pathsPanel = new JPanel();
+        pathsPanel.setLayout(new GridBagLayout());
+
         JPanel panel1 = new JPanel(new GridBagLayout());
         
         JTextField path1 = new JTextField(0);
@@ -104,7 +118,7 @@ public class Gui {
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
         c.gridy = 1;
-        c.gridwidth = 3;
+        c.gridwidth = 1;
         panel1.add(path1, c);
 
         path1.setLayout(new BorderLayout());
@@ -115,11 +129,11 @@ public class Gui {
         c.gridy = 0;
         c.gridwidth = 1;
         c.insets = new Insets(0, 30, 0, 15);
-        frame.add(panel1, c);
+        pathsPanel.add(panel1, c);
 
         //### END OF SECTION ###\\
 
-        //--------------------- Second path input ---------------------\\
+        //--------------------- Second path input / network settings ---------------------\\
 
         JPanel panel2 = new JPanel(new GridBagLayout());
 
@@ -142,26 +156,91 @@ public class Gui {
         
         c.insets = new Insets(0, 0, 0, 0);
         c.fill = GridBagConstraints.BOTH;
-        c.gridx = 1;
+        c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
         panel2.add(label2, c);
 
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 0;
-        c.gridy = 2;
-        c.gridwidth = 3;
+        c.gridy = 1;
+        c.gridwidth = 1;
         panel2.add(path2, c);
 
         path2.setLayout(new BorderLayout());
         path2.add(browseButton2, BorderLayout.EAST);
+
+        JToggleButton hostButton = new JToggleButton("Become server");
+        hostButton.setPreferredSize(new Dimension(150, path2.getHeight()));
+        hostButton.setFont(browseButtonFont);
+        hostButton.setBackground(Color.WHITE);
+        hostButton.setFocusPainted(false);
+        hostButton.setOpaque(true);
+        hostButton.setBorderPainted(false);
+
+        JButton startSession = new JButton("Connect");
+        startSession.setPreferredSize(new Dimension(100, path2.getHeight()));
+        startSession.setFont(browseButtonFont);
+        startSession.setBackground(new Color(187, 252, 203));
+        startSession.setFocusPainted(false);
+        startSession.setOpaque(true);
+        startSession.setBorderPainted(false);
+
+        JPanel enterNetworkInfo = new JPanel(new GridBagLayout());
+
+        // JLabel ipAddressLabel = new JLabel("IP address :");
+        JTextField ipTextField = new JTextField("IP address");
+        ipTextField.setBorder(BorderFactory.createEmptyBorder());
+        ipTextField.setFont(pathFont);
+        ipTextField.setForeground(Color.GRAY);
+
+        // JLabel portLabel = new JLabel("Port number :");
+        JTextField portTextField = new JTextField("port");
+        portTextField.setBorder(BorderFactory.createEmptyBorder());
+        portTextField.setFont(pathFont);
+        portTextField.setForeground(Color.GRAY);
+
+        // c.fill = GridBagConstraints.BOTH;
+        // c.gridx = 0;
+        // c.gridy = 0;
+        // c.gridwidth = 1;
+        // c.insets = new Insets(0, 0, 0, 0);
+        // enterNetworkInfo.add(ipAddressLabel, c);
+
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 1;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.insets = new Insets(0, 10, 0, 0);
+        enterNetworkInfo.add(ipTextField, c);
+
+        // c.fill = GridBagConstraints.BOTH;
+        // c.gridx = 2;
+        // c.gridy = 0;
+        // c.gridwidth = 1;
+        // c.insets = new Insets(0, 0, 0, 0);
+        // enterNetworkInfo.add(portLabel, c);
+
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 3;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.insets = new Insets(0, 10, 0, 10);
+        enterNetworkInfo.add(portTextField, c);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 0;
         c.gridwidth = 1;
         c.insets = new Insets(0, 15, 0, 30);
-        frame.add(panel2, c);
+        pathsPanel.add(panel2, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 4;
+        c.insets = new Insets(0, 0, 0, 0);
+        frame.add(pathsPanel, c);
 
         // Resetting the inset value
         c.insets = new Insets(0, 0, 0, 0);
@@ -199,7 +278,7 @@ public class Gui {
         c.gridx = 0;
         c.gridy = 1;
         c.insets = new Insets(0, 50, 0, 50);
-        c.gridwidth = 2;
+        c.gridwidth = 4;
         frame.add(panel3, c);
         messages.updateUI();
         //Resetting the inset
@@ -245,7 +324,7 @@ public class Gui {
 
         //### END OF SECTION ###\\
 
-        //--------------------- Reset button ---------------------\\
+        //--------------------- Reset and connect button ---------------------\\
 
         JPanel panel5 = new JPanel();
         panel5.setBorder(BorderFactory.createCompoundBorder(
@@ -256,17 +335,26 @@ public class Gui {
 
         JButton resetSync = new JButton("Reset");
         resetSync.setLayout(new GridBagLayout());
-        resetSync.setPreferredSize(buttonSize);
+        resetSync.setPreferredSize(new Dimension(75, 75));
         resetSync.setFont(buttonFont);
         resetSync.setBackground(new Color(158, 216, 247));
         resetSync.setFocusPainted(false);
         resetSync.setOpaque(true);
         resetSync.setBorderPainted(false);
 
-        panel5.add(resetSync, BorderLayout.CENTER);
+        JButton networkButton = new JButton("<html><p style=\"text-align: center;\">Connect to<br>another computer</p></html>");
+        networkButton.setPreferredSize(buttonSize);
+        networkButton.setFont(buttonFont);
+        networkButton.setBackground(new Color(242, 199, 138));
+        networkButton.setFocusPainted(false);
+        networkButton.setOpaque(true);
+        networkButton.setBorderPainted(false);
+
+        panel5.add(resetSync, BorderLayout.WEST);
+        panel5.add(networkButton, BorderLayout.EAST);
 
         c.fill = GridBagConstraints.RELATIVE;
-        c.gridx = 1;
+        c.gridx = 3;
         c.gridy = 2;
         c.gridwidth = 1;
         c.insets = new Insets(0, 0, 0, 0);
@@ -337,6 +425,89 @@ public class Gui {
             }
         });
 
+        networkButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // Change button appearance when mouse enters
+                if (networkButton.isEnabled()) {
+                    networkButton.setBackground(networkButton.getBackground().darker());
+                    networkButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // Reset button appearance when mouse exits
+                if (networkButton.isEnabled()) {
+                    networkButton.setBackground(networkButton.getBackground().brighter());
+                }
+            }
+        });
+
+        hostButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // Change button appearance when mouse enters
+                hostButton.setBackground(hostButton.getBackground().darker());
+                hostButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // Reset button appearance when mouse exits
+                hostButton.setBackground(hostButton.getBackground().brighter());
+            }
+        });
+
+        startSession.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // Change button appearance when mouse enters
+                startSession.setBackground(startSession.getBackground().darker());
+                startSession.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // Reset button appearance when mouse exits
+                startSession.setBackground(startSession.getBackground().brighter());
+            }
+        });
+
+        ipTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (ipTextField.getText().equals("IP address")) {
+                    ipTextField.setText("");
+                    ipTextField.setForeground(Color.BLACK);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (ipTextField.getText().isEmpty()) {
+                    ipTextField.setForeground(Color.GRAY);
+                    ipTextField.setText("IP address");
+                }
+            }
+        });
+
+        portTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (portTextField.getText().equals("port")) {
+                    portTextField.setText("");
+                    portTextField.setForeground(Color.BLACK);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (portTextField.getText().isEmpty()) {
+                    portTextField.setForeground(Color.GRAY);
+                    portTextField.setText("port");
+                }
+            }
+        });
+
         // When the buttons are clicked
         startSync.addActionListener(new ActionListener() {
             @Override
@@ -356,6 +527,9 @@ public class Gui {
                             path1.setBackground(Color.LIGHT_GRAY);
                             path2.setEditable(false);
                             path2.setBackground(Color.LIGHT_GRAY);
+
+                            networkButton.setEnabled(false);
+                            networkButton.setBackground(Color.LIGHT_GRAY);
                         }
 
                         if (!dsync.isAlive()) dsync.start();
@@ -396,18 +570,30 @@ public class Gui {
                 path2.setText("");
                 path1.setEditable(true);
                 path1.setBackground(Color.WHITE);
-                path2.setEditable(true);
-                path2.setBackground(Color.WHITE);
 
                 path1.add(browseButton1, BorderLayout.EAST);
                 path1.revalidate();
                 path1.repaint();
                 browse1Removed = false;
 
-                path2.add(browseButton2, BorderLayout.EAST);
-                path2.revalidate();
-                path2.repaint();
-                browse2Removed = false;
+                if (!networkMode) {
+                    path2.setEditable(true);
+                    path2.setBackground(Color.WHITE);
+                    path2.add(browseButton2, BorderLayout.EAST);
+                    path2.revalidate();
+                    path2.repaint();
+                    browse2Removed = false;
+                }
+                else {
+                    ipTextField.setText("IP address");
+                    ipTextField.setForeground(Color.GRAY);
+                    
+                    portTextField.setText("port");
+                    portTextField.setForeground(Color.GRAY);
+                }
+
+                networkButton.setEnabled(true);
+                networkButton.setBackground(new Color(242, 199, 138));
 
                 syncIcon.setRotate(false); // Stop rotation
 
@@ -454,14 +640,93 @@ public class Gui {
             }
         });
 
+        networkButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!networkMode) {
+                    networkButton.setText("<html><p style=\"text-align: center;\">Use two<br/>local folders</p></html>");
+                    label1.setText("Local folder path :");
+                    networkMode = true;
+
+                    label2.setText("Put in the IP adress and port of a server-host :");
+                    path2.setEditable(false);
+                    path2.setText("");
+                    path2.setBackground(new Color(220, 220, 220));
+                    path2.remove(browseButton2);
+
+                    path2.add(hostButton, BorderLayout.WEST);
+                    path2.add(enterNetworkInfo, BorderLayout.CENTER);
+                    path2.add(startSession, BorderLayout.EAST);
+
+                    path2.revalidate();
+                    path2.repaint();
+                }
+                else {
+                    networkButton.setText("<html><p style=\"text-align: center;\">Connect to<br>another computer</p></html>");
+                    label1.setText("First folder path :");
+                    networkMode = false;
+
+                    label2.setText("Second folder path :");
+                    path2.setEditable(true);
+                    path2.setBackground(Color.WHITE);
+                    path2.add(browseButton2, BorderLayout.EAST);
+
+                    path2.remove(hostButton);
+                    path2.remove(startSession);
+                    path2.remove(enterNetworkInfo);
+
+                    path2.revalidate();
+                    path2.repaint();
+                }
+            }
+        });
+
+        hostButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (hostButton.isSelected()) {
+                    hostButton.setText("Become client"); 
+                    hostButton.setBackground(Color.GRAY);
+
+                    startSession.setText("Start");
+
+                    label2.setText("Put in the desired port number :                    ");
+
+                    // enterNetworkInfo.remove(ipAddressLabel);
+                    enterNetworkInfo.remove(ipTextField);
+                }
+                else {
+                    hostButton.setText("Become server");
+                    hostButton.setBackground(Color.WHITE);
+
+                    startSession.setText("Connect");
+
+                    label2.setText("Put in the IP address and port of a server-host :");
+
+                    c.fill = GridBagConstraints.BOTH;
+                    c.gridy = 0;
+                    c.gridwidth = 1;
+
+                    c.gridx = 0;
+                    c.insets = new Insets(0, 0, 0, 0);
+                    // enterNetworkInfo.add(ipAddressLabel, c);
+
+                    c.gridx = 1;
+                    c.insets = new Insets(0, 10, 0, 0);
+                    enterNetworkInfo.add(ipTextField, c);
+                }
+            }
+        });
+
         // Every second to update elements without user input
-        new Timer(1000, new ActionListener() {
+        new Timer(300, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updatePanel(messages, styledMsg, dsync);
 
                 if (path1.getText().isEmpty() && browse1Removed) {
                     path1.add(browseButton1, BorderLayout.EAST);
+                    browseButton1.setBackground(Color.LIGHT_GRAY);
                     path1.revalidate();
                     path1.repaint();
                     browse1Removed = false;
@@ -472,19 +737,71 @@ public class Gui {
                     browse1Removed = true;
                 }
 
-                if (path2.getText().isEmpty() && browse2Removed) {
-                    path2.add(browseButton2, BorderLayout.EAST);
-                    path2.revalidate();
-                    path2.repaint();
-                    browse2Removed = false;
+                if (!path1.getText().isEmpty() && !started) {
+                    if (new File(path1.getText()).exists() && new File(path1.getText()).isDirectory()) {
+                        path1.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(187, 252, 203)));
+                    }
+                    else {
+                        path1.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(250, 90, 90)));
+                    }
+                }
+                else {
+                    path1.setBorder(BorderFactory.createEmptyBorder());
                 }
 
-                if (!path2.getText().isEmpty() && !browse2Removed) {
-                    path2.remove(browseButton2);
-                    browse2Removed = true;
+                if (!networkMode) {
+                    if (path2.getText().isEmpty() && browse2Removed) {
+                        path2.add(browseButton2, BorderLayout.EAST);
+                        browseButton2.setBackground(Color.LIGHT_GRAY);
+                        path2.revalidate();
+                        path2.repaint();
+                        browse2Removed = false;
+                    }
+    
+                    if (!path2.getText().isEmpty() && !browse2Removed ) {
+                        path2.remove(browseButton2);
+                        browse2Removed = true;
+                    }
+
+                    if (!path2.getText().isEmpty() && !started) {
+                        if (new File(path2.getText()).exists() && new File(path2.getText()).isDirectory()) {
+                            path2.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(187, 252, 203)));
+                        }
+                        else {
+                            path2.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(250, 90, 90)));
+                        }
+                    }
+                    else {
+                        path2.setBorder(BorderFactory.createEmptyBorder());
+                    }
                 }
+                else {
+                    if (!ipTextField.getText().equals("IP address")) {
+                        if (isValid(ipTextField.getText().trim())) {
+                            ipTextField.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(187, 252, 203)));
+                        }
+                        else {
+                            ipTextField.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(250, 90, 90)));
+                        }
+                    }
+                    else {
+                        ipTextField.setBorder(BorderFactory.createEmptyBorder());
+                    }
+
+                    if (!portTextField.getText().equals("port")) {
+                        if (isValid(portTextField.getText().trim())) {
+                            portTextField.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(187, 252, 203)));
+                        }
+                        else {
+                            portTextField.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(250, 90, 90)));
+                        }
+                    }
+                    else {
+                        portTextField.setBorder(BorderFactory.createEmptyBorder());
+                    }
+                }
+                
             }
-
         }).start();
 
         //### END OF SECTION ###\\
