@@ -177,7 +177,7 @@ public class Dsync extends Thread {
                 if (!contains) {
                     try{
                         Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
-                        addMessage("Copied the missing file.");
+                        addMessage("Copied " + file2.getName() + ".");
                         modified = true;
                     }
                     catch(IOException e) {
