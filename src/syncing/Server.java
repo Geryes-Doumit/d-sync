@@ -2,6 +2,7 @@ package src.syncing;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -24,8 +25,8 @@ public class Server extends Network{
             socket = serverSocket.accept(); // attendra au maximum 30 secondes
             System.out.println("Client connected.");
 
-            in = new ObjectInputStream(socket.getInputStream());
             out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
             connect = true;
 
         } catch (IOException e) {
@@ -46,12 +47,23 @@ public class Server extends Network{
     }
 
     public void firstSync() throws IOException {
-        List<File> files = receiveFilesList();
+        System.out.println("Waiting for files list...");
+        try{
+            List<File> files = receiveFilesList();
+            System.out.println("Files list received.");
+            System.out.println("Files to receive: " + files.size());
+            for(File file : files){
+                System.out.println("Receiving file: " + file.getName());
+            }
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error receiving files list: " + e.getMessage());
+        }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException{
         Server server = new Server(117, "lol");
         System.out.println(server.connect);
+        server.firstSync();
         server.close();
     }
 }

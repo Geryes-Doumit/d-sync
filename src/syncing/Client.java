@@ -48,9 +48,10 @@ public class Client extends Network {
         sendMessage(files);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException{
         Client server = new Client("192.168.1.55", 117, "lol");
         System.out.println(server.connect);
+        server.firstSync();
         server.close();
     }
 }
