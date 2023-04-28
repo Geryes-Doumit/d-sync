@@ -1,7 +1,7 @@
 Be in the d-sync directory.
 
 Compile everything:
-javac src/gui/*.java; javac src/syncing/*.java; javac src/*.java
+javac src/*.java
 
 Run from terminal :
 java -cp . src.Main
@@ -12,7 +12,7 @@ jar -cvmf manifest.mf Dsync.jar ./classFiles ./src ./LICENSE.md ./README.md
 (The Main-Class attribute is defined in manifest.mf)
 
 Compile and run :
-javac src/gui/*.java; javac src/syncing/*.java; javac src/*.java ; java -cp . src.Main
+javac src/*.java ; java -cp . src.Main
 
 Compile and create jar :
-javac src/gui/*.java; javac src/syncing/*.java; javac src/*.java ; jar -cvmf manifest.mf Dsync.jar ./classFiles ./src ./LICENSE.md ./README.md
+javac src/*.java ; jar -cvmf manifest.mf Dsync.jar ./classFiles ./src ./LICENSE.md ./README.md
