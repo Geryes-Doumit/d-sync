@@ -74,9 +74,9 @@ public class Gui {
         JFrame frame = new JFrame("Dsync");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        int width = 1200; int height = 675;
+        int width = 800; int height = 450;
 
-        frame.setSize(width, height);
+        frame.setSize((int) (width*1.5), (int) (height*1.5));
         frame.setMinimumSize(new Dimension(width, height));
 
         frame.setLayout(new GridBagLayout());
