@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Directory {
+    // Copies a directory and all its content to the destination
     public static String copyDirectory(String src, String dest) throws IOException {
         Files.createDirectory(Path.of(dest));
         List<File> subFolderList = Arrays.asList(new File(src).listFiles());
@@ -26,6 +27,7 @@ public class Directory {
         return "Synced the subdirectories.";
     }
 
+    // Deletes a directory and all its content
     public static String deleteDirectory(String src) throws IOException {
         List<File> subFolderList = Arrays.asList(new File(src).listFiles());
         for (File file : subFolderList) {
@@ -43,9 +45,9 @@ public class Directory {
         return "Synced the subdirectories.";
     }
 
-    public static Long lastModifiedDate(File file) { // returns the date of the latest file in a path.
+    // returns the date of the latest file in a directory
+    public static Long lastModifiedDate(File file) {
         if (file.isFile()) {
-            // System.out.println(file.lastModified());
             return file.lastModified();
         }
         else if (file.isDirectory()) {
@@ -65,8 +67,6 @@ public class Directory {
                     }
                 }
             }
-
-            // System.out.println(file.getName() + ": Last Modified: "+ lastModified);
             return lastModified;
         }
 

@@ -11,15 +11,23 @@ import java.util.List;
 import java.io.IOException;
 
 public class Dsync extends Thread {
+    // The two paths of the folders to synchronise
     private String path1;
     private String path2;
+
+    // List of Files' dates and names that represents the last synchronised state that is shared by the two folders
     private List<DateAndName> lastState = new ArrayList<>();
 
-    private Boolean sync = false; // To sync or not to sync, that is the question
+    // To sync or not to sync, that is the question
+    private Boolean sync = false;
+
+    // Boolean that specifies if it is the first time syncing or not
     private Boolean firstSync = true;
 
-    private List<String> messages = new ArrayList<>(); // List to store the log messages that will be shown on the GUI
+    // List to store the log messages that will be shown on the GUI
+    private List<String> messages = new ArrayList<>();
 
+    // --------------- setters --------------- //
     public void setSync(Boolean bool) {
         this.sync = bool;
     }
@@ -50,6 +58,9 @@ public class Dsync extends Thread {
         }
     }
 
+    // ---------------  --------------- //
+
+    // --------------- Adding to the messages list, resetting it and getting the list --------------- //
     public void addMessage(String Msg) {
         if (messages.isEmpty()) {
             messages.add("");
@@ -89,15 +100,31 @@ public class Dsync extends Thread {
         return messages;
     }
 
+    // ---------------  --------------- //
+
+    // --------------- Syncing functions --------------- //
+
+    // The first synchronisation between two folders. The goal here is to combine the folders so that no file is lost.
     public static void firstSync(String path1, String path2) throws IOException {
+
+        // Generating the list of files to compare them later on
         File folder1 = new File(path1);
         File folder2 = new File(path2);
 
         List<File> list1 = Arrays.asList(folder1.listFiles());
         List<File> list2 = Arrays.asList(folder2.listFiles());
 
+        // Double for loop that will go through every element in the two lists
         for (File file2 : list2) {
             if (file2.isFile()) {
+
+                // For each file in list2, it checks if a file of list1 has the same name.
+                // If it does, then we keep the file with the latest modified date.
+                // If it doesn't, then we copy it in folder1.
+
+                // This function will copy everything from folder2 that isn't in folder1, but not vice-versa.
+                // That's why we call it twice later on to merge the two folders.
+
                 Boolean contains = false;
                 for (File file1 : list1) {
                     if(file2.getName().equals(file1.getName()) && file1.isFile()) {
@@ -128,6 +155,11 @@ public class Dsync extends Thread {
                 }
             }
             else if (file2.isDirectory()) {
+
+                // For each directory in list2, it checks if a directory of list1 has the same name.
+                // If it does, then we do a firstSync between the two directories that have the same name.
+                // If it doesn't, then we copy it in folder1.
+
                 Boolean contains = false;
                 for (File file1 : list1) {
                     if(file2.getName().equals(file1.getName()) && file1.isDirectory()) {
@@ -142,17 +174,28 @@ public class Dsync extends Thread {
         }
     }
 
+    // The normal synchronisation between two folders. The difference between this and firstSync is that if a file is deleted from a directory, we want to delete it from the other.
+    // It returns a Boolean that tells us if anything has been modified.
     public Boolean syncAndDelete(String path1, String path2) throws IOException {
+
+        // Generating the list of files to compare them later on
         File folder1 = new File(path1);
         File folder2 = new File(path2);
 
         List<File> list1 = Arrays.asList(folder1.listFiles());
         List<File> list2 = Arrays.asList(folder2.listFiles());
 
+        // The Boolean to return
         Boolean modified = false;
 
         for (File file2 : list2) {
             if (file2.isFile()) {
+
+                // for each file in list2, it checks if a file of list1 has the same name.
+                // If it does, then we keep the file with the latest modified date.
+                // If it doesn't, then we copy it in folder1.
+                // if a modification is made, modified is set to true.
+
                 Boolean contains = false;
                 for (File file1 : list1) {
                     if(file2.getName().equals(file1.getName()) && file1.isFile()) {
@@ -187,6 +230,12 @@ public class Dsync extends Thread {
             }
 
             else if (file2.isDirectory()) {
+
+                // for each directory in list2, it checks if a directory of list1 has the same name.
+                // If it does, then we call syncAndDelete between the two directories that have the same name.
+                // If it doesn't, then we copy it in folder1.
+                // if a modification is made, modified is set to true.
+
                 Boolean contains = false;
                 for (File file1 : list1) {
                     if(file2.getName().equals(file1.getName()) && file1.isDirectory()) {
@@ -202,6 +251,8 @@ public class Dsync extends Thread {
 
         }
 
+        // We do another for loop here to check if the files/directories in folder1 are contained in folder2.
+        // If a file isn't in folder2, it is deleted from folder1.
         for (File file1 : list1) {
             if (file1.isFile()) {
                 Boolean contains = false;
@@ -238,10 +289,20 @@ public class Dsync extends Thread {
             }
         }
 
+        // This function prioritizes folder2 over folder1, which is why we call it with different parameters,
+        // depending on the folder that was modified when compared to the last synchronised state.
+        // I like to call the folder it prioritizes "base folder".
+
         return modified;
     }
 
+    // This function uses the earlier functions to check the sub-directories contained inside the two directories to sync.
+    // This function is necessary because we do not compare the modified dates of folders between them directly, because they do not work the same way files do.
+    // It uses the lastModifiedDate function of the Directory class, which returns the date of the last modified file inside the folder.
+    // It uses the most recent folder as the base folder for syncAndDelete.
     public Boolean checkAndSyncSubFolders(String path1, String path2) throws IOException {
+
+        // Generating the list of files to compare them later on
         File folder1 = new File(path1);
         File folder2 = new File(path2);
 
@@ -266,17 +327,22 @@ public class Dsync extends Thread {
         return modified;
     }
 
+
+    // This function compares the names and dates of files with the last synchronized state.
     public void syncLastState(String path1, String path2) throws IOException {
 
+        // Generating the list of files to generate the dates and names
         File folder1 = new File(path1);
         File folder2 = new File(path2);
 
         List<File> list1 = Arrays.asList(folder1.listFiles());
         List<File> list2 = Arrays.asList(folder2.listFiles());
 
+        // Sorting the lists so that I can use the equalLists function that compares each element in a list with the corresponding element in another.
         Collections.sort(list1);
         Collections.sort(list2);
 
+        // Generating the list of dates and names to compare them with the last state, using the DateAndName class
         List<DateAndName> dateAndNameList1 = new ArrayList<>();
         List<DateAndName> dateAndNameList2 = new ArrayList<>();
 
@@ -294,6 +360,7 @@ public class Dsync extends Thread {
             dateAndNameList2.add(new DateAndName(file.getName(), file.lastModified(), type));
         }
 
+        // The messages added describe what each condition does. We correctly call the previous functions to do what is needed.
         if (!DateAndName.equalLists(dateAndNameList1, lastState) && !DateAndName.equalLists(dateAndNameList2, lastState)) {
             addMessage("Both folders modfied, combining their contents...");
             firstSync(path1, path2);
@@ -319,12 +386,15 @@ public class Dsync extends Thread {
             return;
         }
 
-        if (!checkAndSyncSubFolders(path1, path2)) addMessage("No changes detected.");
+        if (!checkAndSyncSubFolders(path1, path2)) // checking the subdirectories.
+        // If no modification was made, then we add this message :
+        addMessage("No changes detected.");
     }
 
+    // The main function. A simple while loop with some conditions.
     public void syncDirectories() throws IOException, InterruptedException {
         while(true) {
-            if (this.firstSync && sync) {
+            if (firstSync && sync) { // Only true when it is the first synchronisation.
                 firstSync(path1, path2);
                 firstSync(path2, path1);
 
@@ -332,23 +402,23 @@ public class Dsync extends Thread {
 
                 setLastState(path1);
 
-                Thread.sleep(5000);
+                Thread.sleep(5000); // Waits 5 seconds before looping
 
-                this.firstSync = false;
+                firstSync = false;
             }
 
             else if (sync) {
                 syncLastState(path1, path2);
-                Thread.sleep(5000);
+                Thread.sleep(5000); // Waits 5 seconds between each sync
             }
             else {
-                Thread.sleep(500);
+                Thread.sleep(500); // Waits only half a second if syncing is paused
             }
-
-            // System.out.println(messages.get(2));
         }
     }
 
+    // Overriding the run function of the Thread class.
+    @Override
     public void run() {
         try {
             this.syncDirectories();
@@ -357,14 +427,5 @@ public class Dsync extends Thread {
         } catch (InterruptedException e) {
             // e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) throws InterruptedException, IOException {
-        Dsync dsync = new Dsync();
-        dsync.setPath1(args[0]);
-        dsync.setPath2(args[1]);
-        dsync.setSync(true);
-
-        dsync.syncDirectories();
     }
 }
