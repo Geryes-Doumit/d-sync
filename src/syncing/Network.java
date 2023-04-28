@@ -1,78 +1,39 @@
 package src.syncing;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class Network {
     protected Socket socket;
     protected String ip;
     protected int port;
     protected ServerSocket serverSocket;
-    protected PrintWriter out;
-    protected BufferedReader in;
+    protected ObjectOutputStream out;
+    protected ObjectInputStream in;
     protected Boolean connect;
     protected Boolean isServer;
-
-    // // Constructeur Serveur
-    // public Network(int port) {
-    //     this.port = port;
-    //     isServer = true;
-
-    //     try {
-    //         serverSocket = new ServerSocket(port);
-    //         System.out.println("Server started. Waiting for connection...");
-    //         serverSocket.setSoTimeout(30000);
-    //         socket = serverSocket.accept(); // attendra au maximum 30 secondes
-    //         System.out.println("Client connected.");
-
-    //         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    //         out = new PrintWriter(socket.getOutputStream(), true);
-    //         connect = true;
-
-    //     } catch (IOException e) {
-    //         System.err.println("Error setting up server: " + e.getMessage());
-    //         connect = false;
-    //     }
-    // }
-
-    // // Constructeur Client
-    // public Network(String ip, int port) {
-    //     this.ip = ip;
-    //     this.port = port;
-    //     isServer = false;
-
-    //     try{
-    //         socket = new Socket(ip, port);
-    //         System.out.println("Connected to server.");
-
-    //         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-    //         out = new PrintWriter(socket.getOutputStream(), true);
-    //         connect = true;
-
-    //     } catch (IOException e) {
-    //         System.err.println("Error setting up client: " + e.getMessage());
-    //         connect = false;
-    //     }
-    // }
+    protected String path;
 
     // Getter
     public Boolean getConnect() {
         return connect;
     }
 
-    public String receiveMessage() throws IOException {
-        return in.readLine();
+    public List<File> receiveFilesList() throws IOException, ClassNotFoundException {
+        return (List<File>) in.readObject();
     }
 
-    public void sendMessage(String message) {
-        out.println(message);
+    public void sendMessage(List<File> files) throws IOException {
+        out.writeObject(files);
+        out.flush();
     }
 
     public abstract void close();
+    public abstract void firstSync() throws IOException;
+
 
     // public static void main(String[] args){
     //     // Create server

@@ -1,15 +1,20 @@
 package src.syncing;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Server extends Network{
     
-    public Server(int port) {
+    public Server(int port, String path) {
         this.port = port;
+        this.path = path;
         isServer = true;
 
         try {
@@ -19,8 +24,8 @@ public class Server extends Network{
             socket = serverSocket.accept(); // attendra au maximum 30 secondes
             System.out.println("Client connected.");
 
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new ObjectInputStream(socket.getInputStream());
+            out = new ObjectOutputStream(socket.getOutputStream());
             connect = true;
 
         } catch (IOException e) {
@@ -40,8 +45,12 @@ public class Server extends Network{
         }
     }
 
+    public void firstSync() throws IOException {
+        List<File> files = receiveFilesList();
+    }
+
     public static void main(String[] args) {
-        Server server = new Server(117);
+        Server server = new Server(117, "lol");
         System.out.println(server.connect);
         server.close();
     }
