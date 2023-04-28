@@ -25,12 +25,20 @@ public class Gui {
 
     String syncImagePath = "img/syncIconColorBorder.png";
 
-    // Used to check if the ip address and port number entered are valid (no letters, etc...)
-    private static final Pattern PATTERN = Pattern.compile(
+    // Used to check if the ip address entered is valid (no letters, etc...)
+    private static final Pattern ipPattern = Pattern.compile(
         "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
 
     public static boolean isValid(final String ip) {
-        return PATTERN.matcher(ip).matches();
+        return ipPattern.matcher(ip).matches();
+    }
+
+    // Used to check if the port number entered is valid (no non-numeric characters)
+    private static final Pattern portPattern = Pattern.compile(
+        "-?\\d+(\\.\\d+)?");
+
+    public boolean isNumber(String port) {
+        return portPattern.matcher(port).matches();
     }
 
     public void updatePanel(JTextPane jTextPane, StyledDocument styledDoc, Dsync dsync) {
@@ -57,6 +65,8 @@ public class Gui {
     }
 
     public void application() throws IOException{
+        System.setProperty("sun.java2d.uiScale.enabled", "false");
+        
         Dsync dsync = new Dsync();
         dsync.addMessage("Press a button to get started.");
 
@@ -789,7 +799,7 @@ public class Gui {
                     }
 
                     if (!portTextField.getText().equals("port")) {
-                        if (isValid(portTextField.getText().trim())) {
+                        if (isNumber(portTextField.getText().trim())) {
                             portTextField.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(187, 252, 203)));
                         }
                         else {
