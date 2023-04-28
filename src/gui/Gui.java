@@ -112,7 +112,7 @@ public class Gui {
         JLabel label1 = new JLabel("First folder path :");
         label1.setFont(labelFont);
 
-        JButton browseButton1 = new JButton("Browse...");
+        JButton browseButton1 = new JButton("Browse");
         browseButton1.setPreferredSize(browseButtonSize);
         browseButton1.setFont(browseButtonFont);
         browseButton1.setBackground(Color.LIGHT_GRAY);
@@ -157,7 +157,7 @@ public class Gui {
         JLabel label2 = new JLabel("Second folder path :");
         label2.setFont(labelFont);
 
-        JButton browseButton2 = new JButton("Browse...");
+        JButton browseButton2 = new JButton("Browse");
         browseButton2.setPreferredSize(browseButtonSize);
         browseButton2.setFont(browseButtonFont);
         browseButton2.setBackground(Color.LIGHT_GRAY);
@@ -344,7 +344,7 @@ public class Gui {
         ));
         panel5.setLayout(new BorderLayout());
 
-        JButton resetSync = new JButton("Reset");
+        JButton resetSync = new JButton("<html><p style=\"text-align: center;\">Reset</p></html>");
         resetSync.setLayout(new GridBagLayout());
         resetSync.setPreferredSize(new Dimension(75, 75));
         resetSync.setFont(buttonFont);
