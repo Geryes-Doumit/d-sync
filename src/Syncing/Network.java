@@ -15,16 +15,18 @@ public class Network {
     private PrintWriter out;
     private BufferedReader in;
     private Boolean connect;
+    private Boolean isServer;
 
     // Constructeur Serveur
     public Network(int port) {
         this.port = port;
+        isServer = true;
 
         try {
             serverSocket = new ServerSocket(port);
             System.out.println("Server started. Waiting for connection...");
-            serverSocket.setSoTimeout(5000);
-            socket = serverSocket.accept(); // attendra au maximum 5 secondes
+            serverSocket.setSoTimeout(30000);
+            socket = serverSocket.accept(); // attendra au maximum 30 secondes
             System.out.println("Client connected.");
 
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -41,6 +43,7 @@ public class Network {
     public Network(String ip, int port) {
         this.ip = ip;
         this.port = port;
+        isServer = false;
 
         try{
             socket = new Socket(ip, port);
@@ -61,6 +64,10 @@ public class Network {
         return connect;
     }
 
+    public Boolean getIsServer() {
+        return isServer;
+    }
+
     public String receiveMessage() throws IOException {
         return in.readLine();
     }
@@ -72,16 +79,19 @@ public class Network {
     public void close() throws IOException {
         in.close();
         out.close();
-        socket.close();
-        serverSocket.close();
+        if (isServer) {
+            serverSocket.close();
+        } else {
+            socket.close();
+        }
     }
 
-    public void main(String[] args){
+    public static void main(String[] args){
         // Create server
-        Network network = new Network(5000);
+        Network network = new Network(117);
         if(network.getConnect()){
             try {
-                network.sendMessage("Hello World!");
+                network.sendMessage("Hello World, I'm mac!");
                 System.out.println(network.receiveMessage());
                 network.close();
             } catch (IOException e) {
@@ -89,16 +99,16 @@ public class Network {
             }
         }
 
-        // Create client
-        Network network2 = new Network("192.168.1.55", 5000);
-        if(network2.getConnect()){
-            try {
-                System.out.println(network2.receiveMessage());
-                network2.sendMessage("Hello World!");
-                network2.close();
-            } catch (IOException e) {
-                System.err.println("Error: " + e.getMessage());
-            }
-        }
+        // // Create client
+        // Network network2 = new Network("192.168.1.55", 5000);
+        // if(network2.getConnect()){
+        //     try {
+        //         System.out.println(network2.receiveMessage());
+        //         network2.sendMessage("Hello World!");
+        //         network2.close();
+        //     } catch (IOException e) {
+        //         System.err.println("Error: " + e.getMessage());
+        //     }
+        // }
     }
 }
