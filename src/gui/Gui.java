@@ -66,7 +66,8 @@ public class Gui {
 
     public void application() throws IOException{
         System.setProperty("sun.java2d.uiScale.enabled", "false");
-        
+        System.setProperty("apple.awt.UIElement", "true");
+
         Dsync dsync = new Dsync();
         dsync.addMessage("Press a button to get started.");
 
