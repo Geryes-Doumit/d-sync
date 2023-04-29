@@ -44,22 +44,56 @@ public class Client extends Network {
     public void firstSync() throws IOException {
         File folder = new File(path);
         List<File> filesTemp = new ArrayList<File>(Arrays.asList(folder.listFiles()));
-        List<DateAndName> files = new ArrayList<DateAndName>();
+        List<DateAndName> list1 = new ArrayList<DateAndName>();
 
         for (File file : filesTemp) {
             String type;
             if (file.isFile()) {type = "File";}
             else {type = "Directory";}
-            files.add(new DateAndName(file.getName(), file.lastModified(), type));
+            list1.add(new DateAndName(file.getName(), file.lastModified(), type));
         }
 
-        sendMessage(files);
+        sendMessage(list1);
+        System.out.println("Sent files list.");
+
+        System.out.println("Waiting for files list...");
+        try{
+            List<DateAndName> list2 = receiveFilesList();
+            System.out.println("Files list received.");
+
+            for (DateAndName file2 : list2) {
+                if (file2.getType().equals("File")) {
+                    // System.out.println("Receiving file " + file2.getName() + "...");
+                    Boolean contains = false;
+
+                    for (DateAndName file1 : list1){
+                        if (file2.getName().equals(file1.getName()) && file1.getType().equals("File")) {
+                            contains = true;
+                            if (file2.getDate() > file1.getDate()) {
+                                System.out.println("Receiving file " + file2.getName() + "...");
+                            }
+                            else if(file2.getDate() < file1.getDate()) {
+                                System.out.println("Sending file " + file1.getName() + "...");
+                            }
+                        }
+                    }
+                    if (!contains) {
+                        System.out.println("Sending file " + file2.getName() + "...");
+                    }
+                }
+            }
+            System.out.println("Done.");
+            
+            
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error receiving files list: " + e.getMessage());
+        }
     }
 
     public static void main(String[] args) throws IOException{
-        Client server = new Client("192.168.1.55", 117, "C:/Users/skyec/Desktop/test");
-        System.out.println(server.connect);
-        server.firstSync();
-        server.close();
+        Client client = new Client("192.168.1.55", 117, "C:/Users/skyec/Desktop/test");
+        System.out.println(client.connect);
+        client.firstSync();
+        client.close();
     }
 }
