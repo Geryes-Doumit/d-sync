@@ -78,7 +78,7 @@ public class Client extends Network {
                         }
                     }
                     if (!contains) {
-                        System.out.println("Sending file " + file2.getName() + "...");
+                        System.out.println("Receving file " + file2.getName() + "...");
                     }
                 }
             }
