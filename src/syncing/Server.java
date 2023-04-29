@@ -62,12 +62,6 @@ public class Server extends Network{
         try{
             List<DateAndName> list2 = receiveFilesList();
             System.out.println("Files list received.");
-
-            for (DateAndName file2 : list2){
-                if (file2.getType() == "File"){
-                    System.out.println("Processing file " + file2.getName());
-                }
-            }
             
         } catch (ClassNotFoundException e) {
             System.err.println("Error receiving files list: " + e.getMessage());

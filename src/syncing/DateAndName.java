@@ -2,7 +2,9 @@ package src.syncing;
 
 import java.util.List;
 
-public class DateAndName {
+public class DateAndName implements java.io.Serializable{
+
+    private static final long serialVersionUID = 1L;
     private String name;
     private String type;
     private Long date;
