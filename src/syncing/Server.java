@@ -63,24 +63,24 @@ public class Server extends Network{
             List<DateAndName> list2 = receiveFilesList();
             System.out.println("Files list received.");
 
-            for (DateAndName file2 : list2) {
-                if (file2.getType().equals("File")) {
+            for (DateAndName file1 : list1) {
+                if (file1.getType().equals("File")) {
                     // System.out.println("Receiving file " + file2.getName() + "...");
                     Boolean contains = false;
 
-                    for (DateAndName file1 : list1){
-                        if (file2.getName().equals(file1.getName()) && file1.getType().equals("File")) {
+                    for (DateAndName file2 : list2){
+                        if (file1.getName().equals(file2.getName()) && file2.getType().equals("File")) {
                             contains = true;
-                            if (file2.getDate() > file1.getDate()) {
-                                System.out.println("Receiving file " + file2.getName() + "...");
-                            }
-                            else if(file2.getDate() < file1.getDate()) {
+                            if (file1.getDate() > file2.getDate()) {
                                 System.out.println("Sending file " + file1.getName() + "...");
+                            }
+                            else if(file1.getDate() < file2.getDate()) {
+                                System.out.println("Receving file " + file2.getName() + "...");
                             }
                         }
                     }
                     if (!contains) {
-                        System.out.println("Receving file " + file2.getName() + "...");
+                        System.out.println("Sending file " + file1.getName() + "...");
                     }
                 }
             }
