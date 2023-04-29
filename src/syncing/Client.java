@@ -43,13 +43,21 @@ public class Client extends Network {
 
     public void firstSync() throws IOException {
         File folder = new File(path);
-        List<File> files = new ArrayList<File>(Arrays.asList(folder.listFiles()));
+        List<File> filesTemp = new ArrayList<File>(Arrays.asList(folder.listFiles()));
+        List<DateAndName> files = new ArrayList<DateAndName>();
+
+        for (File file : filesTemp) {
+            String type;
+            if (file.isFile()) {type = "File";}
+            else {type = "Directory";}
+            files.add(new DateAndName(file.getName(), file.lastModified(), type));
+        }
 
         sendMessage(files);
     }
 
     public static void main(String[] args) throws IOException{
-        Client server = new Client("192.168.1.55", 117, "lol");
+        Client server = new Client("192.168.1.55", 117, "C:/Users/skyec/Desktop/test");
         System.out.println(server.connect);
         server.firstSync();
         server.close();

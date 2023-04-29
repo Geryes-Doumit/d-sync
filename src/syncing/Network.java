@@ -22,11 +22,11 @@ public abstract class Network {
         return connect;
     }
 
-    public List<File> receiveFilesList() throws IOException, ClassNotFoundException {
-        return (List<File>) in.readObject();
+    public List<DateAndName> receiveFilesList() throws IOException, ClassNotFoundException {
+        return (List<DateAndName>) in.readObject();
     }
 
-    public void sendMessage(List<File> files) throws IOException {
+    public void sendMessage(List<DateAndName> files) throws IOException {
         out.writeObject(files);
         out.flush();
     }
