@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Network {
@@ -33,5 +34,24 @@ public abstract class Network {
 
     public abstract void close();
     public abstract void firstSync() throws IOException;
+
+    public List<DateAndName> listFiles(String path){
+        File folder = new File(path);
+        List<File> filesTemp = new ArrayList<File>(Arrays.asList(folder.listFiles()));
+        List<DateAndName> fileList = new ArrayList<DateAndName>();
+
+        for (File file : filesTemp) {
+            String type;
+            if (file.isFile()) {
+                type = "File";
+            } else {
+                type = "Directory";
+                fileList.addAll(listFiles(file.getAbsolutePath())); // appel récursif pour les sous-dossiers
+            }
+            fileList.add(new DateAndName(file.getName(), file.lastModified(), type));
+        }
+
+        return fileList;
+    }
 
 }

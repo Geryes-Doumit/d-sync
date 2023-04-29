@@ -42,16 +42,7 @@ public class Client extends Network {
     }
 
     public void firstSync() throws IOException {
-        File folder = new File(path);
-        List<File> filesTemp = new ArrayList<File>(Arrays.asList(folder.listFiles()));
-        List<DateAndName> list1 = new ArrayList<DateAndName>();
-
-        for (File file : filesTemp) {
-            String type;
-            if (file.isFile()) {type = "File";}
-            else {type = "Directory";}
-            list1.add(new DateAndName(file.getName(), file.lastModified(), type));
-        }
+        List <DateAndName> list1 = listFiles(path);
 
         sendMessage(list1);
         System.out.println("Sent files list.");
