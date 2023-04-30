@@ -38,22 +38,26 @@ public abstract class Network {
                 socket = serverSocket.accept();
             } else {
                 System.out.println("Reset client");
-                while (true) {
-                    try {
+                try{
+                    Thread.sleep(1000);  // attendre 1 seconde avant de réessayer
+                }
+                catch(InterruptedException ie){
+                    System.out.println("Error while waiting");
+                }
+                while(socket.isClosed()){
+                    System.out.println("Waiting for connection...");
+                    try{
                         System.out.println("Trying to connect to " + ip + ":" + port);
                         socket = new Socket(ip, port);
-                        OutputStream os = socket.getOutputStream();
-                        os.write(0);
-                        os.flush();
-                        break;  // connexion établie
-                    } catch (IOException e) {
+                    }
+                    catch(UnknownHostException e){
+                        System.out.println("Unknown host: " + ip);
+                    }
+                    catch(ConnectException e){
+                        System.out.println("Connection refused: " + ip + ":" + port);
+                    }
+                    catch(Exception e){
                         System.out.println("Connection failed, retrying...");
-                        try{
-                            Thread.sleep(1000);  // attendre 1 seconde avant de réessayer
-                        }
-                        catch(InterruptedException ie){
-                            System.out.println("Error while waiting");
-                        }
                     }
                 }
                 System.out.println("Connected to " + ip + ":" + port);
