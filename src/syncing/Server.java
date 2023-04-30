@@ -116,7 +116,7 @@ public class Server extends Network{
             for (DateAndName file : listClient) {
                 System.out.println("Gestion de " + file.getName());
                 System.out.println("Path : " + file.getPath());
-                String folderPath = file.getPath().substring(0, file.getPath().lastIndexOf("/"));
+                String folderPath = file.getPath().lastIndexOf("/") != -1 ? file.getPath().substring(0, file.getPath().lastIndexOf("/")) : "";
                 System.out.println("Folder path : " + folderPath);
                 System.out.println("............................................");
             }
