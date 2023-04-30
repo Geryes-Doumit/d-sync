@@ -108,6 +108,7 @@ public class Client extends Network {
         if (client.connect) {
             System.out.println("Connected to server.");
         }
+        client.resetConnection();
         // client.firstSync();
         client.close();
     }

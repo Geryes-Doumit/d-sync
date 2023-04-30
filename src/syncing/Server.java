@@ -116,6 +116,7 @@ public class Server extends Network{
         if (server.connect) {
             System.out.println("Connected to client.");
         }
+        server.resetConnection();
         // server.firstSync();
         server.close();
     }
