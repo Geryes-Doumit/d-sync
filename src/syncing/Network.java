@@ -63,34 +63,69 @@ public abstract class Network {
         return fileList;
     }
 
-    public void sendFile(DateAndName file) throws IOException {
-        System.out.println("Satrting sending file...");
-        System.out.println("Sending file " + file.getName() + "...");
-        System.out.println("Relative path: " + file.getPath());
-        System.out.println("Absolute path: " + path + "/" + file.getPath());
+    // public void sendFile(DateAndName file) throws IOException {
+    //     System.out.println("Satrting sending file...");
+    //     System.out.println("Sending file " + file.getName() + "...");
+    //     System.out.println("Relative path: " + file.getPath());
+    //     System.out.println("Absolute path: " + path + "/" + file.getPath());
 
-        File fileToSend = new File(path + "/" + file.getPath());
+    //     File fileToSend = new File(path + "/" + file.getPath());
 
-        FileInputStream fis = new FileInputStream(fileToSend);
+    //     FileInputStream fis = new FileInputStream(fileToSend);
 
-        // Sending file informations
-        out.writeObject(file);
+    //     // Sending file informations
+    //     out.writeObject(file);
 
-        // Sending file
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int bytesRead;
+    //     // Sending file
+    //     byte[] buffer = new byte[BUFFER_SIZE];
+    //     int bytesRead;
 
-        while ((bytesRead = fis.read(buffer)) != -1) {
-            out.write(buffer, 0, bytesRead);
+    //     while ((bytesRead = fis.read(buffer)) != -1) {
+    //         out.write(buffer, 0, bytesRead);
+    //     }
+    //     out.flush();
+
+    //     System.out.println("Sending done.");
+
+    // }
+
+    public static void sendFile(DateAndName fileToSend, ObjectOutputStream oos, BufferedOutputStream bos) throws IOException {
+        File file = new File(fileToSend.getPath());
+        byte[] byteArray = new byte[BUFFER_SIZE];
+        FileInputStream fis = new FileInputStream(file);
+        oos.writeObject(fileToSend);
+    
+        int count;
+        while ((count = fis.read(byteArray)) > 0) {
+            bos.write(byteArray, 0, count);
         }
-        out.flush();
-
-        System.out.println("Sending done.");
-
+        bos.flush();
+        fis.close();
     }
     
-    public void receiveFile() throws IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(is);
+    // public void receiveFile() throws IOException, ClassNotFoundException {
+    //     ObjectInputStream ois = new ObjectInputStream(is);
+    //     DateAndName file = (DateAndName) ois.readObject();
+
+    //     File folder = new File(path + "/" + file.getPath());
+    //     folder.mkdirs();
+
+    //     FileOutputStream fos = new FileOutputStream(path + "/" + file.getPath());
+    //     byte[] buffer = new byte[BUFFER_SIZE];
+    //     int bytesRead;
+
+    //     while ((bytesRead = is.read(buffer)) != -1) {
+    //         fos.write(buffer, 0, bytesRead);
+    //     }
+    //     fos.flush();
+
+    //     File fileToModify = new File(path + "/" + file.getPath());
+    //     if (fileToModify.exists() && !fileToModify.isDirectory() && !(fileToModify.lastModified() == file.getDate())) {
+    //         fileToModify.setLastModified(file.getDate());
+    //     }
+    // }
+
+    public void receiveFile(ObjectInputStream ois, BufferedInputStream bis) throws IOException, ClassNotFoundException {
         DateAndName file = (DateAndName) ois.readObject();
 
         File folder = new File(path + "/" + file.getPath());
@@ -109,6 +144,8 @@ public abstract class Network {
         if (fileToModify.exists() && !fileToModify.isDirectory() && !(fileToModify.lastModified() == file.getDate())) {
             fileToModify.setLastModified(file.getDate());
         }
+        
+        fos.close();
     }
     
 
