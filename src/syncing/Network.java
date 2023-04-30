@@ -130,12 +130,13 @@ public abstract class Network {
 
     public void receiveFile(ObjectInputStream ois, BufferedInputStream bis) throws IOException, ClassNotFoundException {
         DateAndName file = (DateAndName) ois.readObject();
-        File fileToModify = new File(path + "/" + file.getPath());
 
         // On crée le dossier dans lequel est le fichier si il n'existe pas
-        String folderPath = path + "/" + fileToModify.getParent();
-        File folder = new File(folderPath);
-        folder.mkdirs();
+        String folderPath = file.getPath().substring(0, file.getPath().lastIndexOf("/"));
+        if (folderPath.length() > 0) {
+            File folder = new File(path + "/" + folderPath);
+            folder.mkdirs();
+        }
 
         FileOutputStream fos = new FileOutputStream(path + "/" + file.getPath());
         byte[] buffer = new byte[BUFFER_SIZE];
@@ -146,6 +147,7 @@ public abstract class Network {
         }
         fos.flush();
 
+        File fileToModify = new File(path + "/" + file.getPath());
         if (fileToModify.exists() && !fileToModify.isDirectory() && !(fileToModify.lastModified() == file.getDate())) {
             fileToModify.setLastModified(file.getDate());
         }
