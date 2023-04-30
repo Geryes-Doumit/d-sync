@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.lang.Thread;
 
 public abstract class Network {
     protected Socket socket;
@@ -37,20 +38,22 @@ public abstract class Network {
                 socket = serverSocket.accept();
             } else {
                 System.out.println("Reset client");
-                while(!socket.isConnected()){
-                    System.out.println("Waiting for connection...");
-                    try{
+                while (true) {
+                    try {
                         System.out.println("Trying to connect to " + ip + ":" + port);
                         socket = new Socket(ip, port);
-                    }
-                    catch(UnknownHostException e){
-                        System.out.println("Unknown host: " + ip);
-                    }
-                    catch(ConnectException e){
-                        System.out.println("Connection refused: " + ip + ":" + port);
-                    }
-                    catch(Exception e){
+                        OutputStream os = socket.getOutputStream();
+                        os.write(0);
+                        os.flush();
+                        break;  // connexion établie
+                    } catch (IOException e) {
                         System.out.println("Connection failed, retrying...");
+                        try{
+                            Thread.sleep(1000);  // attendre 1 seconde avant de réessayer
+                        }
+                        catch(InterruptedException ie){
+                            System.out.println("Error while waiting");
+                        }
                     }
                 }
                 System.out.println("Connected to " + ip + ":" + port);
