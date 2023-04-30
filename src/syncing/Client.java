@@ -23,6 +23,7 @@ public class Client extends Network {
 
             in = new ObjectInputStream(socket.getInputStream());
             out = new ObjectOutputStream(socket.getOutputStream());
+            is = socket.getInputStream();
             connect = true;
 
         } catch (IOException e) {

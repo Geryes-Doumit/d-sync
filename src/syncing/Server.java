@@ -27,6 +27,7 @@ public class Server extends Network{
 
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
+            is = socket.getInputStream();
             connect = true;
 
         } catch (IOException e) {

@@ -17,6 +17,7 @@ public abstract class Network {
     protected ObjectOutputStream out;
     protected ObjectInputStream in;
     protected FileInputStream fis;
+    protected InputStream is;
     protected Boolean connect;
     protected Boolean isServer;
     protected String path;
@@ -89,9 +90,7 @@ public abstract class Network {
     }
     
     public void receiveFile() throws IOException, ClassNotFoundException {
-        InputStream is = socket.getInputStream();
         ObjectInputStream ois = new ObjectInputStream(is);
-
         DateAndName file = (DateAndName) ois.readObject();
 
         File folder = new File(path + "/" + file.getPath());
