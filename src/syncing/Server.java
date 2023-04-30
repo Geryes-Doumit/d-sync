@@ -76,7 +76,7 @@ public class Server extends Network{
                             if (fileServer.getDate() > fileClient.getDate()) {
                                 System.out.println("Server send " + fileServer.getName() + "...");
                                 sendFile(fileServer, oos, bos);
-                                oos.flush();
+                                oos.reset();
                             }
                             else if(fileServer.getDate() < fileClient.getDate()) {
                                 System.out.println("Server receive " + fileClient.getName() + "...");
@@ -87,7 +87,7 @@ public class Server extends Network{
                     if (!contains) {
                         System.out.println("Server send " + fileServer.getName() + "...");
                         sendFile(fileServer, oos, bos);
-                        oos.flush();
+                        oos.reset();
                     }
                 }
             }

@@ -96,7 +96,6 @@ public abstract class Network {
         File file = new File(path + "/" + fileToSend.getPath());
         byte[] byteArray = new byte[BUFFER_SIZE];
         FileInputStream fis = new FileInputStream(file);
-        oos.writeObject(fileToSend);
     
         int count;
         while ((count = fis.read(byteArray)) > 0) {
@@ -142,7 +141,7 @@ public abstract class Network {
         byte[] buffer = new byte[BUFFER_SIZE];
         int bytesRead;
 
-        while ((bytesRead = is.read(buffer)) != -1) {
+        while ((bytesRead = ois.read(buffer)) != -1) {
             fos.write(buffer, 0, bytesRead);
         }
         fos.flush();
