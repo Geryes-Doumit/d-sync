@@ -103,6 +103,8 @@ public abstract class Network {
             bos.write(byteArray, 0, count);
         }
         bos.flush();
+        oos.reset();
+        bos.close();
         fis.close();
     }
     

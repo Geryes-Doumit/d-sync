@@ -62,7 +62,6 @@ public class Server extends Network{
             sendMessage(listServer);
 
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
 
@@ -75,6 +74,7 @@ public class Server extends Network{
                             contains = true;
                             if (fileServer.getDate() > fileClient.getDate()) {
                                 System.out.println("Server send " + fileServer.getName() + "...");
+                                BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
                                 sendFile(fileServer, oos, bos);
                                 oos.reset();
                             }
@@ -86,6 +86,7 @@ public class Server extends Network{
                     }
                     if (!contains) {
                         System.out.println("Server send " + fileServer.getName() + "...");
+                        BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
                         sendFile(fileServer, oos, bos);
                         oos.reset();
                     }
@@ -120,7 +121,6 @@ public class Server extends Network{
             }
             System.out.println("Done.");
             oos.close();
-            bos.close();
             ois.close();
             bis.close();
             
