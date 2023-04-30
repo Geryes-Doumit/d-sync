@@ -1,8 +1,7 @@
 package src.syncing;
 
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,8 @@ public abstract class Network {
             socket = serverSocket.accept();
         }
         else{
-            socket = new Socket(ip, port);
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress(ip, port), 30000);
         }
         ois = new ObjectInputStream(socket.getInputStream());
         oos = new ObjectOutputStream(socket.getOutputStream());

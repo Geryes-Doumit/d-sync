@@ -1,7 +1,7 @@
 package src.syncing;
 
 import java.io.*;
-import java.net.Socket;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -17,7 +17,8 @@ public class Client extends Network {
         this.path = path;
         isServer = false;
 
-        socket = new Socket(ip, port);
+        Socket socket = new Socket();
+        socket.connect(new InetSocketAddress(ip, port), 30000);
         oos = new ObjectOutputStream(socket.getOutputStream());
         ois = new ObjectInputStream(socket.getInputStream());
 
