@@ -30,68 +30,63 @@ public class Client extends Network {
             for (DateAndName file : listServer) {
                 System.out.println(file.getName());
             }
-    //         System.out.println("Files list received.");
 
-    //         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-    //         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
+            resetConnection();
 
-    //         for (DateAndName fileServer : listServer) {
-    //             if (fileServer.getType().equals("File")) {
-    //                 Boolean contains = false;
+            System.out.println("Files list received.");
 
-    //                 for (DateAndName fileClient : listClient){
-    //                     if (fileServer.getName().equals(fileClient.getName()) && fileClient.getType().equals("File")) {
-    //                         contains = true;
-    //                         if (fileServer.getDate() > fileClient.getDate()) {
-    //                             System.out.println("Server send " + fileServer.getName() + "...");
-    //                             receiveFile(ois, bis);
-    //                         }
-    //                         else if(fileServer.getDate() < fileClient.getDate()) {
-    //                             System.out.println("Server receive " + fileClient.getName() + "...");
-    //                             // receiveFile();
-    //                         }
-    //                     }
-    //                 }
-    //                 if (!contains) {
-    //                     System.out.println("Server send " + fileServer.getName() + "...");
-    //                     receiveFile(ois, bis);
-    //                 }
-    //             }
-    //         }
+            for (DateAndName fileServer : listServer) {
+                if (fileServer.getType().equals("File")) {
+                    Boolean contains = false;
 
-    //         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-    //         BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+                    for (DateAndName fileClient : listClient){
+                        if (fileServer.getName().equals(fileClient.getName()) && fileClient.getType().equals("File")) {
+                            contains = true;
+                            if (fileServer.getDate() > fileClient.getDate()) {
+                                System.out.println("Server send " + fileServer.getName() + "...");
+                                // receiveFile(ois, bis);
+                                resetConnection();
+                            }
+                            // else if(fileServer.getDate() < fileClient.getDate()) {
+                            //     System.out.println("Server receive " + fileClient.getName() + "...");
+                            //     // receiveFile();
+                            // }
+                        }
+                    }
+                    if (!contains) {
+                        System.out.println("Server send " + fileServer.getName() + "...");
+                        // receiveFile(ois, bis);
+                        resetConnection();
+                    }
+                }
+            }
 
-    //         for (DateAndName fileClient : listClient) {
-    //             if (fileClient.getType().equals("File")) {
-    //                 // System.out.println("Receiving file " + fileClient.getName() + "...");
-    //                 Boolean contains = false;
+            for (DateAndName fileClient : listClient) {
+                if (fileClient.getType().equals("File")) {
+                    // System.out.println("Receiving file " + fileClient.getName() + "...");
+                    Boolean contains = false;
 
-    //                 for (DateAndName fileServer : listServer){
-    //                     if (fileClient.getName().equals(fileServer.getName()) && fileServer.getType().equals("File")) {
-    //                         contains = true;
-    //                         if (fileClient.getDate() > fileServer.getDate()) {
-    //                             System.out.println("Client send " + fileClient.getName() + "...");
-    //                             sendFile(fileClient, oos, bos);
-    //                             oos.flush();
-    //                         }
-    //                         else if(fileClient.getDate() < fileServer.getDate()) {
-    //                             System.out.println("Client receive " + fileClient.getName() + "...");
-    //                         }
-    //                     }
-    //                 }
-    //                 if (!contains) {
-    //                     System.out.println("Client send " + fileClient.getName() + "...");
-    //                     sendFile(fileClient, oos, bos);
-    //                     oos.flush();
-    //                 }
-    //             }
-    //         }
-    //         System.out.println("Done.");
-    //         oos.close();
-    //         bos.close();
-    //         ois.close();
-            
+                    for (DateAndName fileServer : listServer){
+                        if (fileClient.getName().equals(fileServer.getName()) && fileServer.getType().equals("File")) {
+                            contains = true;
+                            if (fileClient.getDate() > fileServer.getDate()) {
+                                System.out.println("Client send " + fileClient.getName() + "...");
+                                // sendFile(fileClient, oos, bos);
+                                resetConnection();
+                            }
+                            // else if(fileClient.getDate() < fileServer.getDate()) {
+                            //     System.out.println("Client receive " + fileClient.getName() + "...");
+                            // }
+                        }
+                    }
+                    if (!contains) {
+                        System.out.println("Client send " + fileClient.getName() + "...");
+                        // sendFile(fileClient, oos, bos);
+                        resetConnection();
+                    }
+                }
+            }
+            System.out.println("Done.");
             
         } catch (ClassNotFoundException e) {
             System.err.println("Error receiving files list: " + e.getMessage());
@@ -104,8 +99,9 @@ public class Client extends Network {
         if (client.connect) {
             System.out.println("Connected to server.");
         }
-        client.resetConnection();
-        // client.firstSync();
+        client.connect();
+        // client.resetConnection();
+        client.firstSync();
         client.close();
     }
 }

@@ -58,7 +58,7 @@ public abstract class Network {
             } else {
                 System.out.println("Reset client");
                 try{
-                    Thread.sleep(2000);  // attendre 1 seconde avant de réessayer
+                    Thread.sleep(500);  // attendre 0.5 seconde avant de réessayer
                 }
                 catch(InterruptedException ie){
                     System.out.println("Error while waiting");
