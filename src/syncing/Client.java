@@ -17,12 +17,12 @@ public class Client extends Network {
         this.path = path;
         isServer = false;
 
-        socket = new Socket();
-        socket.connect(new InetSocketAddress(ip, port), 30000);
-        oos = new ObjectOutputStream(socket.getOutputStream());
-        ois = new ObjectInputStream(socket.getInputStream());
+        // socket = new Socket();
+        // socket.connect(new InetSocketAddress(ip, port), 30000);
+        // oos = new ObjectOutputStream(socket.getOutputStream());
+        // ois = new ObjectInputStream(socket.getInputStream());
 
-        connect = true;
+        // connect = true;
         
     }
 
@@ -109,7 +109,7 @@ public class Client extends Network {
         if (client.connect) {
             System.out.println("Connected to server.");
         }
-        client.resetConnection();
+        client.connect();
         // client.firstSync();
         client.close();
     }
