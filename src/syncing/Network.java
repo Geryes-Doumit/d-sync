@@ -65,7 +65,6 @@ public abstract class Network {
                 }
                 while(socket.isClosed()){
                     try{
-                        System.out.println("Trying to connect to " + ip + ":" + port);
                         socket = new Socket(ip, port);
                     }
                     catch(UnknownHostException e){
