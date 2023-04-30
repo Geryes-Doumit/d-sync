@@ -38,8 +38,15 @@ public abstract class Network {
         else{
             System.out.println("Reset client");
             while(!socket.isConnected()){
-                socket = new Socket(ip, port);
+                try{
+                    System.out.println("Trying to connect to " + ip + ":" + port);
+                    socket = new Socket(ip, port);
+                }
+                catch(Exception e){
+                    System.out.println("Connection failed, retrying...");
+                }
             }
+            System.out.println("Connected to " + ip + ":" + port);
         }
         ois = new ObjectInputStream(socket.getInputStream());
         oos = new ObjectOutputStream(socket.getOutputStream());
