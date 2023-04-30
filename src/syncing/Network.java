@@ -94,10 +94,8 @@ public abstract class Network {
         try{
             oos.close();
             ois.close();
+            socket.close();
             if (ip == null){
-                socket.close();
-            }
-            else{
                 serverSocket.close();
             }
         }
