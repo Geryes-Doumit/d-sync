@@ -60,17 +60,17 @@ public class Client extends Network {
                         if (fileServer.getName().equals(fileClient.getName()) && fileClient.getType().equals("File")) {
                             contains = true;
                             if (fileServer.getDate() > fileClient.getDate()) {
-                                System.out.println("Sending file " + fileServer.getName() + "...");
+                                System.out.println("Server send " + fileServer.getName() + "...");
                                 // sendFile(fileServer);
                             }
                             else if(fileServer.getDate() < fileClient.getDate()) {
-                                System.out.println("Receving file " + fileClient.getName() + "...");
+                                System.out.println("Server receive " + fileClient.getName() + "...");
                                 // receiveFile();
                             }
                         }
                     }
                     if (!contains) {
-                        System.out.println("Sending file " + fileServer.getName() + "...");
+                        System.out.println("Server send " + fileServer.getName() + "...");
                         // sendFile(fileServer);
                     }
                 }
@@ -85,16 +85,16 @@ public class Client extends Network {
                         if (fileClient.getName().equals(fileServer.getName()) && fileServer.getType().equals("File")) {
                             contains = true;
                             if (fileClient.getDate() > fileServer.getDate()) {
-                                System.out.println("Sending file " + fileClient.getName() + "...");
+                                System.out.println("Client send " + fileClient.getName() + "...");
                                 // sendFile(fileClient);
                             }
                             else if(fileClient.getDate() < fileServer.getDate()) {
-                                System.out.println("Receving file " + fileClient.getName() + "...");
+                                System.out.println("Client receive " + fileClient.getName() + "...");
                             }
                         }
                     }
                     if (!contains) {
-                        System.out.println("Sending file " + fileClient.getName() + "...");
+                        System.out.println("Client send " + fileClient.getName() + "...");
                         // sendFile(fileClient);
                     }
                 }

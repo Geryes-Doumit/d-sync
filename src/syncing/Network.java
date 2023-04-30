@@ -33,7 +33,6 @@ public abstract class Network {
     }
 
     public void sendMessage(List<DateAndName> files) throws IOException {
-        System.out.println("Sending files list...");
         out.writeObject(files);
         out.flush();
     }
