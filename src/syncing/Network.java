@@ -25,17 +25,18 @@ public abstract class Network {
     // Getter
 
     public void resetConnection() throws Exception{
+        connect = false;
         oos.close();
         ois.close();
-        if (ip.length()>0){
-            socket.close();
-            socket = new Socket(ip, port);
-        }
-        else{
+        if (ip == null || ip.length() == 0){
             serverSocket.close();
             serverSocket = new ServerSocket(port);
             serverSocket.setSoTimeout(30000);
             socket = serverSocket.accept();
+        }
+        else{
+            socket.close();
+            socket = new Socket(ip, port);
         }
         ois = new ObjectInputStream(socket.getInputStream());
         oos = new ObjectOutputStream(socket.getOutputStream());
@@ -56,6 +57,7 @@ public abstract class Network {
         catch(Exception e){
             System.out.println("Error while closing connection");
         }
+        connect = false;
     };
     // public abstract void firstSync() throws IOException;
 

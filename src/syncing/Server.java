@@ -19,6 +19,7 @@ public class Server extends Network{
         isServer = true;
 
         serverSocket = new ServerSocket(port);
+        serverSocket.setSoTimeout(30000);
         socket = serverSocket.accept();
         oos = new ObjectOutputStream(socket.getOutputStream());
         ois = new ObjectInputStream(socket.getInputStream());
@@ -119,5 +120,8 @@ public class Server extends Network{
         server.resetConnection();
         // server.firstSync();
         server.close();
+        if (server.connect) {
+            System.out.println("Connected to client.");
+        }
     }
 }
