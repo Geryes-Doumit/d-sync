@@ -49,6 +49,9 @@ public class Server extends Network{
 
     public void firstSync() throws IOException {
         List <DateAndName> listServer = listFiles(path, path);
+        for (DateAndName file : listServer) {
+            System.out.println(file.getName());
+        }
 
         System.out.println("Waiting for files list...");
         try{
@@ -89,6 +92,9 @@ public class Server extends Network{
                     }
                 }
             }
+
+            System.out.println("Server finished sending files.");
+            System.out.println("Waiting for client to finish sending files...");
 
             for (DateAndName fileClient : listClient) {
                 if (fileClient.getType().equals("File")) {

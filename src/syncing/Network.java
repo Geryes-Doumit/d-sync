@@ -48,6 +48,9 @@ public abstract class Network {
         Path basePath = Paths.get(root);
 
         for (File file : filesTemp) {
+            if (file.isHidden()){
+                continue;
+            }
             String type;
             if (file.isFile()) {
                 type = "File";
@@ -89,8 +92,8 @@ public abstract class Network {
 
     // }
 
-    public static void sendFile(DateAndName fileToSend, ObjectOutputStream oos, BufferedOutputStream bos) throws IOException {
-        File file = new File(fileToSend.getPath());
+    public void sendFile(DateAndName fileToSend, ObjectOutputStream oos, BufferedOutputStream bos) throws IOException {
+        File file = new File(path + "/" + fileToSend.getPath());
         byte[] byteArray = new byte[BUFFER_SIZE];
         FileInputStream fis = new FileInputStream(file);
         oos.writeObject(fileToSend);
@@ -127,8 +130,11 @@ public abstract class Network {
 
     public void receiveFile(ObjectInputStream ois, BufferedInputStream bis) throws IOException, ClassNotFoundException {
         DateAndName file = (DateAndName) ois.readObject();
+        File fileToModify = new File(path + "/" + file.getPath());
 
-        File folder = new File(path + "/" + file.getPath());
+        // On crée le dossier dans lequel est le fichier si il n'existe pas
+        String folderPath = path + "/" + fileToModify.getParent();
+        File folder = new File(folderPath);
         folder.mkdirs();
 
         FileOutputStream fos = new FileOutputStream(path + "/" + file.getPath());
@@ -140,11 +146,10 @@ public abstract class Network {
         }
         fos.flush();
 
-        File fileToModify = new File(path + "/" + file.getPath());
         if (fileToModify.exists() && !fileToModify.isDirectory() && !(fileToModify.lastModified() == file.getDate())) {
             fileToModify.setLastModified(file.getDate());
         }
-        
+
         fos.close();
     }
     
