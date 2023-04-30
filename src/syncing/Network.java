@@ -28,6 +28,7 @@ public abstract class Network {
         connect = false;
         oos.close();
         ois.close();
+        socket.close();
         if (ip == null || ip.length() == 0){
             serverSocket.close();
             serverSocket = new ServerSocket(port);
@@ -35,7 +36,6 @@ public abstract class Network {
             socket = serverSocket.accept();
         }
         else{
-            socket.close();
             socket = new Socket(ip, port);
         }
         ois = new ObjectInputStream(socket.getInputStream());
