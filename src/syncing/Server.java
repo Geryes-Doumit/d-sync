@@ -28,6 +28,10 @@ public class Server extends Network{
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
             is = socket.getInputStream();
+            ois = new ObjectInputStream(socket.getInputStream());
+            bis = new BufferedInputStream(socket.getInputStream());
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            bos = new BufferedOutputStream(socket.getOutputStream());
             connect = true;
 
         } catch (IOException e) {
@@ -70,11 +74,7 @@ public class Server extends Network{
                             contains = true;
                             if (fileServer.getDate() > fileClient.getDate()) {
                                 System.out.println("Server send " + fileServer.getName() + "...");
-                                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                                BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
                                 sendFile(fileServer, oos, bos);
-                                oos.close();
-                                bos.close();
                             }
                             else if(fileServer.getDate() < fileClient.getDate()) {
                                 System.out.println("Server receive " + fileClient.getName() + "...");
@@ -87,8 +87,6 @@ public class Server extends Network{
                         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                         BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
                         sendFile(fileServer, oos, bos);
-                        oos.close();
-                        bos.close();
                     }
                 }
             }
@@ -106,11 +104,7 @@ public class Server extends Network{
                             contains = true;
                             if (fileClient.getDate() > fileServer.getDate()) {
                                 System.out.println("Client send " + fileClient.getName() + "...");
-                                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                                BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
                                 receiveFile(ois, bis);
-                                ois.close();
-                                bis.close();
                             }
                             else if(fileClient.getDate() < fileServer.getDate()) {
                                 System.out.println("Client receive " + fileClient.getName() + "...");
@@ -119,11 +113,7 @@ public class Server extends Network{
                     }
                     if (!contains) {
                         System.out.println("Client send " + fileClient.getName() + "...");
-                        ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                        BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
                         receiveFile(ois, bis);
-                        ois.close();
-                        bis.close();
                     }
                 }
             }
