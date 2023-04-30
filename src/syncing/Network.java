@@ -18,10 +18,6 @@ public abstract class Network {
     protected ObjectInputStream in;
     protected FileInputStream fis;
     protected InputStream is;
-    protected ObjectInputStream ois;
-    protected BufferedInputStream bis;
-    protected ObjectOutputStream oos;
-    protected BufferedOutputStream bos;
     protected Boolean connect;
     protected Boolean isServer;
     protected String path;
@@ -107,7 +103,7 @@ public abstract class Network {
             bos.write(byteArray, 0, count);
         }
         bos.flush();
-        // fis.close();
+        fis.close();
     }
     
     // public void receiveFile() throws IOException, ClassNotFoundException {
@@ -156,7 +152,7 @@ public abstract class Network {
             fileToModify.setLastModified(file.getDate());
         }
 
-        // fos.close();
+        fos.close();
     }
     
 
