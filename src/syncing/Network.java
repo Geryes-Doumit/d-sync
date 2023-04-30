@@ -96,6 +96,7 @@ public abstract class Network {
         File file = new File(path + "/" + fileToSend.getPath());
         byte[] byteArray = new byte[BUFFER_SIZE];
         FileInputStream fis = new FileInputStream(file);
+        oos.writeObject(fileToSend);
     
         int count;
         while ((count = fis.read(byteArray)) > 0) {
