@@ -36,8 +36,8 @@ public abstract class Network {
                 socket = new Socket(ip, port);
                 System.out.println("Connected to " + ip + ":" + port);
             }
-            ois = new ObjectInputStream(socket.getInputStream());
-            oos = new ObjectOutputStream(socket.getOutputStream());
+            // ois = new ObjectInputStream(socket.getInputStream());
+            // oos = new ObjectOutputStream(socket.getOutputStream());
             connect = true;
         }
         catch(Exception e){
