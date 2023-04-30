@@ -89,11 +89,48 @@ public class Client extends Network {
         }
     }
 
+    public void testRelatifPath(){
+        List <DateAndName> listClient = listFiles(path, path);
+        for (DateAndName file : listClient) {
+            System.out.println("Gestion de " + file.getName());
+            System.out.println("Path : " + file.getPath());
+            String folderPath = file.getPath().substring(0, file.getPath().lastIndexOf("/"));
+            System.out.println("Folder path : " + folderPath);
+            System.out.println("............................................");
+        }
+
+        System.out.println("Waiting for files list...");
+        try{
+            List<DateAndName> listServer = receiveFilesList();
+            System.out.println("Files list received.");
+
+            System.out.println("Sending files list...");
+            sendMessage(listClient);
+
+            for (DateAndName file : listServer) {
+                System.out.println("Gestion de " + file.getName());
+                System.out.println("Path : " + file.getPath());
+                String folderPath = file.getPath().substring(0, file.getPath().lastIndexOf("/"));
+                System.out.println("Folder path : " + folderPath);
+                System.out.println("............................................");
+            }
+
+            
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error receiving files list: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error sending files list: " + e.getMessage());
+        }
+
+
+    }
+
     public static void main(String[] args) throws Exception{
         Client client = new Client("192.168.1.55", 117, "C:/Users/skyec/Desktop/test");
 
         client.connect();
-        client.firstSync();
+        // client.firstSync();
+        client.testRelatifPath();
         client.close();
     }
 }
