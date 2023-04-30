@@ -8,11 +8,19 @@ public class DateAndName implements java.io.Serializable{
     private String name;
     private String type;
     private Long date;
+    private String path;
 
     public DateAndName(String name, Long date, String type){
         this.name = name;
         this.date = date;
         this.type = type;
+    }
+
+    public DateAndName(String name, Long date, String type, String path){
+        this.name = name;
+        this.date = date;
+        this.type = type;
+        this.path = path;
     }
 
     public String getName(){
@@ -25,6 +33,10 @@ public class DateAndName implements java.io.Serializable{
 
     public String getType(){
         return this.type;
+    }
+
+    public String getPath(){
+        return this.path;
     }
 
     public void setName(String name){

@@ -47,43 +47,70 @@ public class Server extends Network{
     }
 
     public void firstSync() throws IOException {
-        List <DateAndName> list1 = listFiles(path);
+        List <DateAndName> listServer = listFiles(path, path);
 
         System.out.println("Waiting for files list...");
         try{
-            List<DateAndName> list2 = receiveFilesList();
+            List<DateAndName> listClient = receiveFilesList();
             System.out.println("Files list received.");
 
-            for (DateAndName file1 : list1) {
-                if (file1.getType().equals("File")) {
-                    // System.out.println("Receiving file " + file2.getName() + "...");
+            System.out.println("Sending files list...");
+            sendMessage(listServer);
+
+            for (DateAndName fileServer : listServer) {
+                if (fileServer.getType().equals("File")) {
                     Boolean contains = false;
 
-                    for (DateAndName file2 : list2){
-                        if (file1.getName().equals(file2.getName()) && file2.getType().equals("File")) {
+                    for (DateAndName fileClient : listClient){
+                        if (fileServer.getName().equals(fileClient.getName()) && fileClient.getType().equals("File")) {
                             contains = true;
-                            if (file1.getDate() > file2.getDate()) {
-                                System.out.println("Sending file " + file1.getName() + "...");
+                            if (fileServer.getDate() > fileClient.getDate()) {
+                                System.out.println("Sending file " + fileServer.getName() + "...");
+                                // sendFile(fileServer);
                             }
-                            else if(file1.getDate() < file2.getDate()) {
-                                System.out.println("Receving file " + file2.getName() + "...");
+                            else if(fileServer.getDate() < fileClient.getDate()) {
+                                System.out.println("Receving file " + fileClient.getName() + "...");
+                                // receiveFile();
                             }
                         }
                     }
                     if (!contains) {
-                        System.out.println("Sending file " + file1.getName() + "...");
+                        System.out.println("Sending file " + fileServer.getName() + "...");
+                        // sendFile(fileServer);
                     }
                 }
             }
-            System.out.println("Recevied list processed.");
-            
+
+            for (DateAndName fileClient : listClient) {
+                if (fileClient.getType().equals("File")) {
+                    // System.out.println("Receiving file " + fileClient.getName() + "...");
+                    Boolean contains = false;
+
+                    for (DateAndName fileServer : listServer){
+                        if (fileClient.getName().equals(fileServer.getName()) && fileServer.getType().equals("File")) {
+                            contains = true;
+                            if (fileClient.getDate() > fileServer.getDate()) {
+                                System.out.println("Sending file " + fileClient.getName() + "...");
+                                // sendFile(fileClient);
+                            }
+                            else if(fileClient.getDate() < fileServer.getDate()) {
+                                System.out.println("Receving file " + fileClient.getName() + "...");
+                            }
+                        }
+                    }
+                    if (!contains) {
+                        System.out.println("Sending file " + fileClient.getName() + "...");
+                        // sendFile(fileClient);
+                    }
+                }
+            }
+            System.out.println("Done.");
             
         } catch (ClassNotFoundException e) {
             System.err.println("Error receiving files list: " + e.getMessage());
         }
 
-        System.out.println("Sending files list...");
-        sendMessage(list1);
+        
     }
 
 
