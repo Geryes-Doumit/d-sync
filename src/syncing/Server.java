@@ -95,49 +95,49 @@ public class Server extends Network{
         
     }
 
-    public void testRelatifPath(){
-        List <DateAndName> listServer = listFiles(path, path);
-        for (DateAndName file : listServer) {
-            System.out.println("Gestion de " + file.getName());
-            System.out.println("Path : " + file.getPath());
-            String folderPath = file.getPath().substring(0, file.getPath().lastIndexOf("/"));
-            System.out.println("Folder path : " + folderPath);
-            System.out.println("............................................");
-        }
+    // public void testRelatifPath(){
+    //     List <DateAndName> listServer = listFiles(path, path);
+    //     for (DateAndName file : listServer) {
+    //         System.out.println("Gestion de " + file.getName());
+    //         System.out.println("Path : " + file.getPath());
+    //         String folderPath = file.getPath().lastIndexOf("/") != -1 ? file.getPath().substring(0, file.getPath().lastIndexOf("/")) : "";
+    //         System.out.println("Folder path : " + folderPath);
+    //         System.out.println("............................................");
+    //     }
 
-        System.out.println("Waiting for files list...");
-        try{
-            List<DateAndName> listClient = receiveFilesList();
-            System.out.println("Files list received.");
+    //     System.out.println("Waiting for files list...");
+    //     try{
+    //         List<DateAndName> listClient = receiveFilesList();
+    //         System.out.println("Files list received.");
 
-            System.out.println("Sending files list...");
-            sendMessage(listServer);
+    //         System.out.println("Sending files list...");
+    //         sendMessage(listServer);
 
-            for (DateAndName file : listClient) {
-                System.out.println("Gestion de " + file.getName());
-                System.out.println("Path : " + file.getPath());
-                String folderPath = file.getPath().lastIndexOf("/") != -1 ? file.getPath().substring(0, file.getPath().lastIndexOf("/")) : "";
-                System.out.println("Folder path : " + folderPath);
-                System.out.println("............................................");
-            }
+    //         for (DateAndName file : listClient) {
+    //             System.out.println("Gestion de " + file.getName());
+    //             System.out.println("Path : " + file.getPath());
+    //             String folderPath = file.getPath().lastIndexOf("/") != -1 ? file.getPath().substring(0, file.getPath().lastIndexOf("/")) : "";
+    //             System.out.println("Folder path : " + folderPath);
+    //             System.out.println("............................................");
+    //         }
 
             
-        } catch (ClassNotFoundException e) {
-            System.err.println("Error receiving files list: " + e.getMessage());
-        } catch (IOException e) {
-            System.err.println("Error sending files list: " + e.getMessage());
-        }
+    //     } catch (ClassNotFoundException e) {
+    //         System.err.println("Error receiving files list: " + e.getMessage());
+    //     } catch (IOException e) {
+    //         System.err.println("Error sending files list: " + e.getMessage());
+    //     }
 
 
-    }
+    // }
 
 
     public static void main(String[] args) throws Exception{
         Server server = new Server(117, "/Users/marc/Library/CloudStorage/OneDrive-uha.fr/Cours/GitHub/Test");
 
         server.connect();
-        // server.firstSync();
-        server.testRelatifPath();
+        server.firstSync();
+        // server.testRelatifPath();
         server.close();
     }
 }

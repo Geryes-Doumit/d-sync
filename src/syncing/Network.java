@@ -161,8 +161,9 @@ public abstract class Network {
     public void receiveFile(DateAndName fileToReceive) throws IOException, ClassNotFoundException {
 
         // On crée le dossier dans lequel est le fichier si il n'existe pas
-        String folderPath = fileToReceive.getPath().substring(0, fileToReceive.getPath().lastIndexOf("/"));
+        String folderPath = fileToReceive.getPath().lastIndexOf("/") != -1 ? fileToReceive.getPath().substring(0, fileToReceive.getPath().lastIndexOf("/")) : "";
         if (folderPath.length() > 0) {
+            System.out.println("Creating folder " + folderPath);
             File folder = new File(path + "/" + folderPath);
             folder.mkdirs();
         }
