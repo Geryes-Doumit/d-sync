@@ -16,25 +16,20 @@ public class Client extends Network {
         this.port = port;
         this.path = path;
         isServer = false;
-
-        socket = new Socket();
-        socket.connect(new InetSocketAddress(ip, port), 30000);
-        oos = new ObjectOutputStream(socket.getOutputStream());
-        ois = new ObjectInputStream(socket.getInputStream());
-
-        connect = true;
-        
     }
 
-    // public void firstSync() throws IOException {
-    //     List <DateAndName> listClient = listFiles(path, path);
+    public void firstSync() throws IOException {
+        List <DateAndName> listClient = listFiles(path, path);
 
-    //     sendMessage(listClient);
-    //     System.out.println("Sent files list.");
+        sendMessage(listClient);
+        System.out.println("Files list sent.");
 
-    //     System.out.println("Waiting for files list...");
-    //     try{
-    //         List<DateAndName> listServer = receiveFilesList();
+        System.out.println("Waiting for files list...");
+        try{
+            List<DateAndName> listServer = receiveFilesList();
+            for (DateAndName file : listServer) {
+                System.out.println(file.getName());
+            }
     //         System.out.println("Files list received.");
 
     //         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
@@ -98,10 +93,10 @@ public class Client extends Network {
     //         ois.close();
             
             
-    //     } catch (ClassNotFoundException e) {
-    //         System.err.println("Error receiving files list: " + e.getMessage());
-    //     }
-    // }
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error receiving files list: " + e.getMessage());
+        }
+    }
 
     public static void main(String[] args) throws Exception{
         Client client = new Client("192.168.1.55", 117, "C:/Users/skyec/Desktop/test");

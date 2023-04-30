@@ -24,26 +24,26 @@ public abstract class Network {
 
     // Getter
 
-    // public void connect(){
-    //     try{
-    //         if (ip == null || ip.length() == 0) {
-    //             serverSocket = new ServerSocket(port);
-    //             System.out.println("Waiting for connection...");
-    //             serverSocket.setSoTimeout(30000);
-    //             socket = serverSocket.accept();
-    //         } else {
-    //             System.out.println("Trying to connect to " + ip + ":" + port);
-    //             socket = new Socket(ip, port);
-    //             System.out.println("Connected to " + ip + ":" + port);
-    //         }
-    //         oos = new ObjectOutputStream(socket.getOutputStream());
-    //         ois = new ObjectInputStream(socket.getInputStream());
-    //         connect = true;
-    //     }
-    //     catch(Exception e){
-    //         System.out.println("Error while connecting");
-    //     }
-    // }
+    public void connect(){
+        try{
+            if (ip == null || ip.length() == 0) {
+                serverSocket = new ServerSocket(port);
+                System.out.println("Waiting for connection...");
+                serverSocket.setSoTimeout(30000);
+                socket = serverSocket.accept();
+            } else {
+                System.out.println("Trying to connect to " + ip + ":" + port);
+                socket = new Socket(ip, port);
+                System.out.println("Connected to " + ip + ":" + port);
+            }
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            ois = new ObjectInputStream(socket.getInputStream());
+            connect = true;
+        }
+        catch(Exception e){
+            System.out.println("Error while connecting");
+        }
+    }
 
     public void resetConnection() {
         connect = false;
@@ -104,16 +104,18 @@ public abstract class Network {
         }
         connect = false;
     };
-    // public abstract void firstSync() throws IOException;
 
-    // public List<DateAndName> receiveFilesList() throws IOException, ClassNotFoundException {
-    //     return (List<DateAndName>) in.readObject();
-    // }
 
-    // public void sendMessage(List<DateAndName> files) throws IOException {
-    //     out.writeObject(files);
-    //     out.flush();
-    // }
+    public abstract void firstSync() throws IOException;
+
+    public List<DateAndName> receiveFilesList() throws IOException, ClassNotFoundException {
+        return (List<DateAndName>) ois.readObject();
+    }
+
+    public void sendMessage(List<DateAndName> files) throws IOException {
+        oos.writeObject(files);
+        oos.flush();
+    }
 
     public List<DateAndName> listFiles(String path, String root) {
         File folder = new File(path);

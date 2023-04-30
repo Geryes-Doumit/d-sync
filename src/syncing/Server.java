@@ -17,28 +17,25 @@ public class Server extends Network{
         this.port = port;
         this.path = path;
         isServer = true;
-
-        serverSocket = new ServerSocket(port);
-        serverSocket.setSoTimeout(30000);
-        socket = serverSocket.accept();
-        oos = new ObjectOutputStream(socket.getOutputStream());
-        ois = new ObjectInputStream(socket.getInputStream());
-        connect = true;
     }
 
-    // public void firstSync() throws IOException {
-    //     List <DateAndName> listServer = listFiles(path, path);
+    public void firstSync() throws IOException {
+        List <DateAndName> listServer = listFiles(path, path);
     //     for (DateAndName file : listServer) {
     //         System.out.println(file.getName());
     //     }
 
-    //     System.out.println("Waiting for files list...");
-    //     try{
-    //         List<DateAndName> listClient = receiveFilesList();
-    //         System.out.println("Files list received.");
+        System.out.println("Waiting for files list...");
+        try{
+            List<DateAndName> listClient = receiveFilesList();
+            System.out.println("Files list received.");
 
-    //         System.out.println("Sending files list...");
-    //         sendMessage(listServer);
+            System.out.println("Sending files list...");
+            sendMessage(listServer);
+
+            for (DateAndName file : listClient) {
+                System.out.println(file.getName());
+            }
 
     //         for (DateAndName fileServer : listServer) {
     //             if (fileServer.getType().equals("File")) {
@@ -103,12 +100,12 @@ public class Server extends Network{
     //         ois.close();
     //         bis.close();
             
-    //     } catch (ClassNotFoundException e) {
-    //         System.err.println("Error receiving files list: " + e.getMessage());
-    //     }
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error receiving files list: " + e.getMessage());
+        }
 
         
-    // }
+    }
 
 
     public static void main(String[] args) throws Exception{
