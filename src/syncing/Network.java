@@ -11,13 +11,11 @@ import java.nio.file.Paths;
 
 public abstract class Network {
     protected Socket socket;
+    protected ServerSocket serverSocket;
     protected String ip;
     protected int port;
-    protected ServerSocket serverSocket;
-    protected ObjectOutputStream out;
-    protected ObjectInputStream in;
-    protected FileInputStream fis;
-    protected InputStream is;
+    protected ObjectOutputStream oos;
+    protected ObjectInputStream ois;
     protected Boolean connect;
     protected Boolean isServer;
     protected String path;
@@ -29,17 +27,49 @@ public abstract class Network {
         return connect;
     }
 
-    public List<DateAndName> receiveFilesList() throws IOException, ClassNotFoundException {
-        return (List<DateAndName>) in.readObject();
+    public void resetConnection() throws Exception{
+        oos.close();
+        ois.close();
+        if (ip.length()>0){
+            socket.close();
+            socket = new Socket(ip, port);
+        }
+        else{
+            serverSocket.close();
+            serverSocket = new ServerSocket(port);
+            serverSocket.setSoTimeout(30000);
+            socket = serverSocket.accept();
+        }
+        ois = new ObjectInputStream(socket.getInputStream());
+        oos = new ObjectOutputStream(socket.getOutputStream());
+        connect = true;
     }
 
-    public void sendMessage(List<DateAndName> files) throws IOException {
-        out.writeObject(files);
-        out.flush();
-    }
+    public void close(){
+        try{
+            oos.close();
+            ois.close();
+            if (ip.length()>0){
+                socket.close();
+            }
+            else{
+                serverSocket.close();
+            }
+        }
+        catch(Exception e){
+            System.out.println("Error while closing connection");
+        }
+    };
+    // public abstract void firstSync() throws IOException;
 
-    public abstract void close();
-    public abstract void firstSync() throws IOException;
+    // public List<DateAndName> receiveFilesList() throws IOException, ClassNotFoundException {
+    //     return (List<DateAndName>) in.readObject();
+    // }
+
+    // public void sendMessage(List<DateAndName> files) throws IOException {
+    //     out.writeObject(files);
+    //     out.flush();
+    // }
 
     public List<DateAndName> listFiles(String path, String root) {
         File folder = new File(path);
