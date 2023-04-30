@@ -68,6 +68,7 @@ public class Client extends Network {
                                 System.out.println("Server send " + fileServer.getName() + "...");
                                 BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
                                 receiveFile(ois, bis);
+                                bis.close();
                             }
                             else if(fileServer.getDate() < fileClient.getDate()) {
                                 System.out.println("Server receive " + fileClient.getName() + "...");
@@ -79,6 +80,7 @@ public class Client extends Network {
                         System.out.println("Server send " + fileServer.getName() + "...");
                         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
                         receiveFile(ois, bis);
+                        bis.close();
                     }
                 }
             }

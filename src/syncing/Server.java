@@ -77,6 +77,7 @@ public class Server extends Network{
                                 BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
                                 sendFile(fileServer, oos, bos);
                                 oos.reset();
+                                bos.close();
                             }
                             else if(fileServer.getDate() < fileClient.getDate()) {
                                 System.out.println("Server receive " + fileClient.getName() + "...");
@@ -89,6 +90,7 @@ public class Server extends Network{
                         BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
                         sendFile(fileServer, oos, bos);
                         oos.reset();
+                        bos.close();
                     }
                 }
             }
