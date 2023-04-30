@@ -61,7 +61,7 @@ public class Client extends Network {
                             contains = true;
                             if (fileServer.getDate() > fileClient.getDate()) {
                                 System.out.println("Server send " + fileServer.getName() + "...");
-                                // sendFile(fileServer);
+                                receiveFile();
                             }
                             else if(fileServer.getDate() < fileClient.getDate()) {
                                 System.out.println("Server receive " + fileClient.getName() + "...");
@@ -71,7 +71,7 @@ public class Client extends Network {
                     }
                     if (!contains) {
                         System.out.println("Server send " + fileServer.getName() + "...");
-                        // sendFile(fileServer);
+                        receiveFile();
                     }
                 }
             }
@@ -86,7 +86,7 @@ public class Client extends Network {
                             contains = true;
                             if (fileClient.getDate() > fileServer.getDate()) {
                                 System.out.println("Client send " + fileClient.getName() + "...");
-                                // sendFile(fileClient);
+                                sendFile(fileClient);
                             }
                             else if(fileClient.getDate() < fileServer.getDate()) {
                                 System.out.println("Client receive " + fileClient.getName() + "...");
@@ -95,7 +95,7 @@ public class Client extends Network {
                     }
                     if (!contains) {
                         System.out.println("Client send " + fileClient.getName() + "...");
-                        // sendFile(fileClient);
+                        sendFile(fileClient);
                     }
                 }
             }
