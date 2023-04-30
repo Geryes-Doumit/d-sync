@@ -165,19 +165,20 @@ public abstract class Network {
 
     // }
 
-    public void sendFile(DateAndName fileToSend, ObjectOutputStream oos, BufferedOutputStream bos) throws IOException {
+    public void sendFile(DateAndName fileToSend) throws IOException {
         File file = new File(path + "/" + fileToSend.getPath());
+
         byte[] byteArray = new byte[BUFFER_SIZE];
-        FileInputStream fis = new FileInputStream(file);
-        oos.writeObject(fileToSend);
-    
         int count;
+        FileInputStream fis = new FileInputStream(file);
+
         while ((count = fis.read(byteArray)) > 0) {
-            bos.write(byteArray, 0, count);
+            oos.write(byteArray, 0, count);
         }
-        bos.flush();
-        oos.reset();
+
+        oos.flush();
         fis.close();
+        resetConnection();
     }
     
     // public void receiveFile() throws IOException, ClassNotFoundException {
@@ -202,31 +203,31 @@ public abstract class Network {
     //     }
     // }
 
-    public void receiveFile(ObjectInputStream ois, BufferedInputStream bis) throws IOException, ClassNotFoundException {
-        DateAndName file = (DateAndName) ois.readObject();
+    public void receiveFile(DateAndName fileToReceive) throws IOException, ClassNotFoundException {
 
         // On crée le dossier dans lequel est le fichier si il n'existe pas
-        String folderPath = file.getPath().substring(0, file.getPath().lastIndexOf("/"));
+        String folderPath = fileToReceive.getPath().substring(0, fileToReceive.getPath().lastIndexOf("/"));
         if (folderPath.length() > 0) {
             File folder = new File(path + "/" + folderPath);
             folder.mkdirs();
         }
 
-        FileOutputStream fos = new FileOutputStream(path + "/" + file.getPath());
+        FileOutputStream fos = new FileOutputStream(path + "/" + fileToReceive.getPath());
         byte[] buffer = new byte[BUFFER_SIZE];
         int bytesRead;
 
-        while ((bytesRead = bis.read(buffer)) != -1) {
+        while ((bytesRead = ois.read(buffer)) != -1) {
             fos.write(buffer, 0, bytesRead);
         }
         fos.flush();
 
-        File fileToModify = new File(path + "/" + file.getPath());
-        if (fileToModify.exists() && !fileToModify.isDirectory() && !(fileToModify.lastModified() == file.getDate())) {
-            fileToModify.setLastModified(file.getDate());
+        File fileToModify = new File(path + "/" + fileToReceive.getPath());
+        if (fileToModify.exists() && !fileToModify.isDirectory() && !(fileToModify.lastModified() == fileToReceive.getDate())) {
+            fileToModify.setLastModified(fileToReceive.getDate());
         }
 
         fos.close();
+        resetConnection();
     }
     
 
