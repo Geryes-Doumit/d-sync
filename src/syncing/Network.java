@@ -32,8 +32,6 @@ public abstract class Network {
             socket.close();
             if (ip == null || ip.length() == 0) {
                 System.out.println("Reset server");
-                serverSocket.close();
-                serverSocket = new ServerSocket(port);
                 serverSocket.setSoTimeout(30000);
                 socket = serverSocket.accept();
             } else {
