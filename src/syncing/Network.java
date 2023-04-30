@@ -45,7 +45,7 @@ public abstract class Network {
         File folder = new File(path);
         List<File> filesTemp = new ArrayList<File>(Arrays.asList(folder.listFiles()));
         List<DateAndName> fileList = new ArrayList<DateAndName>();
-        Path basePath = Paths.get("/Users/marc/Library/CloudStorage/OneDrive-uha.fr/Cours/GitHub/Test");
+        Path basePath = Paths.get(root);
 
         for (File file : filesTemp) {
             String type;
