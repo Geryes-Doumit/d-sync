@@ -29,14 +29,17 @@ public abstract class Network {
         ois.close();
         socket.close();
         if (ip == null || ip.length() == 0){
+            System.out.println("Reset server");
             serverSocket.close();
             serverSocket = new ServerSocket(port);
             serverSocket.setSoTimeout(30000);
             socket = serverSocket.accept();
         }
         else{
-            socket = new Socket();
-            socket.connect(new InetSocketAddress(ip, port), 30000);
+            System.out.println("Reset client");
+            while(!socket.isConnected()){
+                socket = new Socket(ip, port);
+            }
         }
         ois = new ObjectInputStream(socket.getInputStream());
         oos = new ObjectOutputStream(socket.getOutputStream());
