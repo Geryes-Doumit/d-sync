@@ -64,7 +64,6 @@ public abstract class Network {
                     System.out.println("Error while waiting");
                 }
                 while(socket.isClosed()){
-                    System.out.println("Waiting for connection...");
                     try{
                         System.out.println("Trying to connect to " + ip + ":" + port);
                         socket = new Socket(ip, port);
@@ -79,7 +78,6 @@ public abstract class Network {
                         System.out.println("Connection failed, retrying...");
                     }
                 }
-                System.out.println("Connected to " + ip + ":" + port);
             }
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());

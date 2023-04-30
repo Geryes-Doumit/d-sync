@@ -95,12 +95,8 @@ public class Client extends Network {
 
     public static void main(String[] args) throws Exception{
         Client client = new Client("192.168.1.55", 117, "C:/Users/skyec/Desktop/test");
-        System.out.println(client.connect);
-        if (client.connect) {
-            System.out.println("Connected to server.");
-        }
+
         client.connect();
-        // client.resetConnection();
         client.firstSync();
         client.close();
     }

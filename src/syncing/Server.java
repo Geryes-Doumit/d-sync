@@ -102,16 +102,9 @@ public class Server extends Network{
 
     public static void main(String[] args) throws Exception{
         Server server = new Server(117, "/Users/marc/Library/CloudStorage/OneDrive-uha.fr/Cours/GitHub/Test");
-        System.out.println(server.connect);
-        if (server.connect) {
-            System.out.println("Connected to client.");
-        }
-        // server.resetConnection();
+
         server.connect();
         server.firstSync();
         server.close();
-        if (server.connect) {
-            System.out.println("Connected to client.");
-        }
     }
 }
