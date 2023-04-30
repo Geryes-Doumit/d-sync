@@ -53,9 +53,8 @@ public class Client extends Network {
             List<DateAndName> listServer = receiveFilesList();
             System.out.println("Files list received.");
 
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
 
             for (DateAndName fileServer : listServer) {
                 if (fileServer.getType().equals("File")) {
@@ -66,9 +65,7 @@ public class Client extends Network {
                             contains = true;
                             if (fileServer.getDate() > fileClient.getDate()) {
                                 System.out.println("Server send " + fileServer.getName() + "...");
-                                BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
                                 receiveFile(ois, bis);
-                                bis.close();
                             }
                             else if(fileServer.getDate() < fileClient.getDate()) {
                                 System.out.println("Server receive " + fileClient.getName() + "...");
@@ -78,12 +75,13 @@ public class Client extends Network {
                     }
                     if (!contains) {
                         System.out.println("Server send " + fileServer.getName() + "...");
-                        BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
                         receiveFile(ois, bis);
-                        bis.close();
                     }
                 }
             }
+
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
 
             for (DateAndName fileClient : listClient) {
                 if (fileClient.getType().equals("File")) {

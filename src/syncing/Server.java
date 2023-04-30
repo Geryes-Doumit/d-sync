@@ -61,10 +61,6 @@ public class Server extends Network{
             System.out.println("Sending files list...");
             sendMessage(listServer);
 
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
-
             for (DateAndName fileServer : listServer) {
                 if (fileServer.getType().equals("File")) {
                     Boolean contains = false;
@@ -74,10 +70,10 @@ public class Server extends Network{
                             contains = true;
                             if (fileServer.getDate() > fileClient.getDate()) {
                                 System.out.println("Server send " + fileServer.getName() + "...");
+                                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                                 BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
                                 sendFile(fileServer, oos, bos);
                                 oos.reset();
-                                bos.close();
                             }
                             else if(fileServer.getDate() < fileClient.getDate()) {
                                 System.out.println("Server receive " + fileClient.getName() + "...");
@@ -87,16 +83,19 @@ public class Server extends Network{
                     }
                     if (!contains) {
                         System.out.println("Server send " + fileServer.getName() + "...");
+                        ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                         BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
                         sendFile(fileServer, oos, bos);
                         oos.reset();
-                        bos.close();
                     }
                 }
             }
 
             System.out.println("Server finished sending files.");
             System.out.println("Waiting for client to finish sending files...");
+
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
 
             for (DateAndName fileClient : listClient) {
                 if (fileClient.getType().equals("File")) {
@@ -122,7 +121,6 @@ public class Server extends Network{
                 }
             }
             System.out.println("Done.");
-            oos.close();
             ois.close();
             bis.close();
             
