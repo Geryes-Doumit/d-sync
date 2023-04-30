@@ -23,35 +23,39 @@ public abstract class Network {
 
     // Getter
 
-    public void resetConnection() throws Exception{
+    public void resetConnection() {
         connect = false;
-        oos.close();
-        ois.close();
-        socket.close();
-        if (ip == null || ip.length() == 0){
-            System.out.println("Reset server");
-            serverSocket.close();
-            serverSocket = new ServerSocket(port);
-            serverSocket.setSoTimeout(30000);
-            socket = serverSocket.accept();
-        }
-        else{
-            System.out.println("Reset client");
-            while(!socket.isConnected()){
-                try{
-                    System.out.println("Trying to connect to " + ip + ":" + port);
-                    socket = new Socket(ip, port);
+        try {
+            oos.close();
+            ois.close();
+            socket.close();
+            if (ip == null || ip.length() == 0) {
+                System.out.println("Reset server");
+                serverSocket.close();
+                serverSocket = new ServerSocket(port);
+                serverSocket.setSoTimeout(30000);
+                socket = serverSocket.accept();
+            } else {
+                System.out.println("Reset client");
+                while(!socket.isConnected()){
+                    try{
+                        System.out.println("Trying to connect to " + ip + ":" + port);
+                        socket = new Socket(ip, port);
+                    }
+                    catch(Exception e){
+                        System.out.println("Connection failed, retrying...");
+                    }
                 }
-                catch(Exception e){
-                    System.out.println("Connection failed, retrying...");
-                }
+                System.out.println("Connected to " + ip + ":" + port);
             }
-            System.out.println("Connected to " + ip + ":" + port);
+            ois = new ObjectInputStream(socket.getInputStream());
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            connect = true;
+        } catch (IOException e) {
+            System.out.println("Error resetting connection: " + e.getMessage());
         }
-        ois = new ObjectInputStream(socket.getInputStream());
-        oos = new ObjectOutputStream(socket.getOutputStream());
-        connect = true;
     }
+    
 
     public void close(){
         try{
