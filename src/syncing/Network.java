@@ -23,9 +23,6 @@ public abstract class Network {
 
 
     // Getter
-    public Boolean getConnect() {
-        return connect;
-    }
 
     public void resetConnection() throws Exception{
         oos.close();

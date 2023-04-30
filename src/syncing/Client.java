@@ -16,7 +16,13 @@ public class Client extends Network {
         this.port = port;
         this.path = path;
         isServer = false;
-        resetConnection();
+
+        socket = new Socket(ip, port);
+        oos = new ObjectOutputStream(socket.getOutputStream());
+        ois = new ObjectInputStream(socket.getInputStream());
+
+        connect = true;
+        
     }
 
     // public void firstSync() throws IOException {

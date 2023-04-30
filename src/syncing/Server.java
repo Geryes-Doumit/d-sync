@@ -17,7 +17,12 @@ public class Server extends Network{
         this.port = port;
         this.path = path;
         isServer = true;
-        resetConnection();
+
+        serverSocket = new ServerSocket(port);
+        socket = serverSocket.accept();
+        oos = new ObjectOutputStream(socket.getOutputStream());
+        ois = new ObjectInputStream(socket.getInputStream());
+        connect = true;
     }
 
     // public void firstSync() throws IOException {
