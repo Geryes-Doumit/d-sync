@@ -104,7 +104,6 @@ public abstract class Network {
         }
         bos.flush();
         oos.reset();
-        bos.close();
         fis.close();
     }
     
