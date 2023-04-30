@@ -98,7 +98,7 @@ public abstract class Network {
         FileInputStream fis = new FileInputStream(file);
     
         int count;
-        while ((count = is.read(byteArray)) > 0) {
+        while ((count = fis.read(byteArray)) > 0) {
             bos.write(byteArray, 0, count);
         }
         bos.flush();
