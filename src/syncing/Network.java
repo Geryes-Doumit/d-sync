@@ -68,8 +68,14 @@ public abstract class Network {
                 serverSocket.close();
             }
         }
+        catch(UnknownHostException e){
+            System.out.println("Unknown host: " + ip);
+        }
+        catch(ConnectException e){
+            System.out.println("Connection refused: " + ip + ":" + port);
+        }
         catch(Exception e){
-            System.out.println("Error while closing connection");
+            System.out.println("Connection failed, retrying...");
         }
         connect = false;
     };
