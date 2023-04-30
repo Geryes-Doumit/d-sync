@@ -93,6 +93,7 @@ public class Client extends Network {
                             if (fileClient.getDate() > fileServer.getDate()) {
                                 System.out.println("Client send " + fileClient.getName() + "...");
                                 sendFile(fileClient, oos, bos);
+                                oos.flush();
                             }
                             else if(fileClient.getDate() < fileServer.getDate()) {
                                 System.out.println("Client receive " + fileClient.getName() + "...");
@@ -102,6 +103,7 @@ public class Client extends Network {
                     if (!contains) {
                         System.out.println("Client send " + fileClient.getName() + "...");
                         sendFile(fileClient, oos, bos);
+                        oos.flush();
                     }
                 }
             }

@@ -76,6 +76,7 @@ public class Server extends Network{
                             if (fileServer.getDate() > fileClient.getDate()) {
                                 System.out.println("Server send " + fileServer.getName() + "...");
                                 sendFile(fileServer, oos, bos);
+                                oos.flush();
                             }
                             else if(fileServer.getDate() < fileClient.getDate()) {
                                 System.out.println("Server receive " + fileClient.getName() + "...");
@@ -86,6 +87,7 @@ public class Server extends Network{
                     if (!contains) {
                         System.out.println("Server send " + fileServer.getName() + "...");
                         sendFile(fileServer, oos, bos);
+                        oos.flush();
                     }
                 }
             }
@@ -134,6 +136,6 @@ public class Server extends Network{
         Server server = new Server(117, "/Users/marc/Library/CloudStorage/OneDrive-uha.fr/Cours/GitHub/Test");
         System.out.println(server.connect);
         server.firstSync();
-        // server.close();
+        server.close();
     }
 }
