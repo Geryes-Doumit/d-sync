@@ -103,7 +103,7 @@ public abstract class Network {
             bos.write(byteArray, 0, count);
         }
         bos.flush();
-        fis.close();
+        // fis.close();
     }
     
     // public void receiveFile() throws IOException, ClassNotFoundException {
@@ -152,7 +152,7 @@ public abstract class Network {
             fileToModify.setLastModified(file.getDate());
         }
 
-        fos.close();
+        // fos.close();
     }
     
 
