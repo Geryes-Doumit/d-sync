@@ -61,6 +61,11 @@ public class Server extends Network{
             System.out.println("Sending files list...");
             sendMessage(listServer);
 
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
+
             for (DateAndName fileServer : listServer) {
                 if (fileServer.getType().equals("File")) {
                     Boolean contains = false;
@@ -70,11 +75,7 @@ public class Server extends Network{
                             contains = true;
                             if (fileServer.getDate() > fileClient.getDate()) {
                                 System.out.println("Server send " + fileServer.getName() + "...");
-                                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                                BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
                                 sendFile(fileServer, oos, bos);
-                                oos.close();
-                                bos.close();
                             }
                             else if(fileServer.getDate() < fileClient.getDate()) {
                                 System.out.println("Server receive " + fileClient.getName() + "...");
@@ -84,11 +85,7 @@ public class Server extends Network{
                     }
                     if (!contains) {
                         System.out.println("Server send " + fileServer.getName() + "...");
-                        ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                        BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
                         sendFile(fileServer, oos, bos);
-                        oos.close();
-                        bos.close();
                     }
                 }
             }
@@ -106,11 +103,7 @@ public class Server extends Network{
                             contains = true;
                             if (fileClient.getDate() > fileServer.getDate()) {
                                 System.out.println("Client send " + fileClient.getName() + "...");
-                                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                                BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
                                 receiveFile(ois, bis);
-                                ois.close();
-                                bis.close();
                             }
                             else if(fileClient.getDate() < fileServer.getDate()) {
                                 System.out.println("Client receive " + fileClient.getName() + "...");
@@ -119,15 +112,15 @@ public class Server extends Network{
                     }
                     if (!contains) {
                         System.out.println("Client send " + fileClient.getName() + "...");
-                        ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                        BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
                         receiveFile(ois, bis);
-                        ois.close();
-                        bis.close();
                     }
                 }
             }
             System.out.println("Done.");
+            oos.close();
+            bos.close();
+            ois.close();
+            bis.close();
             
         } catch (ClassNotFoundException e) {
             System.err.println("Error receiving files list: " + e.getMessage());
@@ -141,6 +134,6 @@ public class Server extends Network{
         Server server = new Server(117, "/Users/marc/Library/CloudStorage/OneDrive-uha.fr/Cours/GitHub/Test");
         System.out.println(server.connect);
         server.firstSync();
-        server.close();
+        // server.close();
     }
 }
