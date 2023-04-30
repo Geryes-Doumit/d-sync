@@ -143,7 +143,7 @@ public abstract class Network {
         byte[] buffer = new byte[BUFFER_SIZE];
         int bytesRead;
 
-        while ((bytesRead = is.read(buffer)) != -1) {
+        while ((bytesRead = bis.read(buffer)) != -1) {
             fos.write(buffer, 0, bytesRead);
         }
         fos.flush();
