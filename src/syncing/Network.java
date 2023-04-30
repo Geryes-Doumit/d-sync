@@ -24,70 +24,70 @@ public abstract class Network {
 
     // Getter
 
-    public void connect(){
-        try{
-            if (ip == null || ip.length() == 0) {
-                serverSocket = new ServerSocket(port);
-                System.out.println("Waiting for connection...");
-                serverSocket.setSoTimeout(30000);
-                socket = serverSocket.accept();
-            } else {
-                System.out.println("Trying to connect to " + ip + ":" + port);
-                socket = new Socket(ip, port);
-                System.out.println("Connected to " + ip + ":" + port);
-            }
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            // oos = new ObjectOutputStream(socket.getOutputStream());
-            connect = true;
-        }
-        catch(Exception e){
-            System.out.println("Error while connecting");
-        }
-    }
-
-    // public void resetConnection() {
-    //     connect = false;
-    //     try {
-    //         oos.close();
-    //         ois.close();
-    //         socket.close();
+    // public void connect(){
+    //     try{
     //         if (ip == null || ip.length() == 0) {
-    //             System.out.println("Reset server");
+    //             serverSocket = new ServerSocket(port);
+    //             System.out.println("Waiting for connection...");
     //             serverSocket.setSoTimeout(30000);
     //             socket = serverSocket.accept();
     //         } else {
-    //             System.out.println("Reset client");
-    //             try{
-    //                 Thread.sleep(1000);  // attendre 1 seconde avant de réessayer
-    //             }
-    //             catch(InterruptedException ie){
-    //                 System.out.println("Error while waiting");
-    //             }
-    //             while(socket.isClosed()){
-    //                 System.out.println("Waiting for connection...");
-    //                 try{
-    //                     System.out.println("Trying to connect to " + ip + ":" + port);
-    //                     socket = new Socket(ip, port);
-    //                 }
-    //                 catch(UnknownHostException e){
-    //                     System.out.println("Unknown host: " + ip);
-    //                 }
-    //                 catch(ConnectException e){
-    //                     System.out.println("Connection refused: " + ip + ":" + port);
-    //                 }
-    //                 catch(Exception e){
-    //                     System.out.println("Connection failed, retrying...");
-    //                 }
-    //             }
+    //             System.out.println("Trying to connect to " + ip + ":" + port);
+    //             socket = new Socket(ip, port);
     //             System.out.println("Connected to " + ip + ":" + port);
     //         }
-    //         ois = new ObjectInputStream(socket.getInputStream());
     //         oos = new ObjectOutputStream(socket.getOutputStream());
+    //         ois = new ObjectInputStream(socket.getInputStream());
     //         connect = true;
-    //     } catch (IOException e) {
-    //         System.out.println("Error resetting connection: " + e.getMessage());
+    //     }
+    //     catch(Exception e){
+    //         System.out.println("Error while connecting");
     //     }
     // }
+
+    public void resetConnection() {
+        connect = false;
+        try {
+            oos.close();
+            ois.close();
+            socket.close();
+            if (ip == null || ip.length() == 0) {
+                System.out.println("Reset server");
+                serverSocket.setSoTimeout(30000);
+                socket = serverSocket.accept();
+            } else {
+                System.out.println("Reset client");
+                try{
+                    Thread.sleep(2000);  // attendre 1 seconde avant de réessayer
+                }
+                catch(InterruptedException ie){
+                    System.out.println("Error while waiting");
+                }
+                while(socket.isClosed()){
+                    System.out.println("Waiting for connection...");
+                    try{
+                        System.out.println("Trying to connect to " + ip + ":" + port);
+                        socket = new Socket(ip, port);
+                    }
+                    catch(UnknownHostException e){
+                        System.out.println("Unknown host: " + ip);
+                    }
+                    catch(ConnectException e){
+                        System.out.println("Connection refused: " + ip + ":" + port);
+                    }
+                    catch(Exception e){
+                        System.out.println("Connection failed, retrying...");
+                    }
+                }
+                System.out.println("Connected to " + ip + ":" + port);
+            }
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            ois = new ObjectInputStream(socket.getInputStream());
+            connect = true;
+        } catch (IOException e) {
+            System.out.println("Error resetting connection: " + e.getMessage());
+        }
+    }
     
 
     public void close(){

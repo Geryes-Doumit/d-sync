@@ -18,12 +18,12 @@ public class Server extends Network{
         this.path = path;
         isServer = true;
 
-        // serverSocket = new ServerSocket(port);
-        // serverSocket.setSoTimeout(30000);
-        // socket = serverSocket.accept();
-        // oos = new ObjectOutputStream(socket.getOutputStream());
-        // ois = new ObjectInputStream(socket.getInputStream());
-        // connect = true;
+        serverSocket = new ServerSocket(port);
+        serverSocket.setSoTimeout(30000);
+        socket = serverSocket.accept();
+        oos = new ObjectOutputStream(socket.getOutputStream());
+        ois = new ObjectInputStream(socket.getInputStream());
+        connect = true;
     }
 
     // public void firstSync() throws IOException {
@@ -117,7 +117,7 @@ public class Server extends Network{
         if (server.connect) {
             System.out.println("Connected to client.");
         }
-        server.connect();
+        server.resetConnection();
         // server.firstSync();
         server.close();
         if (server.connect) {
