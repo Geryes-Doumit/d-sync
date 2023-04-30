@@ -35,7 +35,7 @@ public abstract class Network {
             socket = serverSocket.accept();
         }
         else{
-            Socket socket = new Socket();
+            socket = new Socket();
             socket.connect(new InetSocketAddress(ip, port), 30000);
         }
         ois = new ObjectInputStream(socket.getInputStream());

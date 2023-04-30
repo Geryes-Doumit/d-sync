@@ -17,7 +17,7 @@ public class Client extends Network {
         this.path = path;
         isServer = false;
 
-        Socket socket = new Socket();
+        socket = new Socket();
         socket.connect(new InetSocketAddress(ip, port), 30000);
         oos = new ObjectOutputStream(socket.getOutputStream());
         ois = new ObjectInputStream(socket.getInputStream());
