@@ -1,7 +1,10 @@
 package src.syncing;
 
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
+import java.net.ServerSocket;
+import java.net.UnknownHostException;
+import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +31,10 @@ public abstract class Network {
         try{
             if (ip == null || ip.length() == 0) {
                 serverSocket = new ServerSocket(port);
-                System.out.println("Waiting for connection...");
                 serverSocket.setSoTimeout(30000);
                 socket = serverSocket.accept();
             } else {
-                System.out.println("Trying to connect to " + ip + ":" + port);
                 socket = new Socket(ip, port);
-                System.out.println("Connected to " + ip + ":" + port);
             }
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
@@ -52,11 +52,9 @@ public abstract class Network {
             ois.close();
             socket.close();
             if (ip == null || ip.length() == 0) {
-                System.out.println("Reset server");
                 serverSocket.setSoTimeout(30000);
                 socket = serverSocket.accept();
             } else {
-                System.out.println("Reset client");
                 try{
                     Thread.sleep(100);
                 }
@@ -163,7 +161,6 @@ public abstract class Network {
         // On crée le dossier dans lequel est le fichier si il n'existe pas
         String folderPath = fileToReceive.getPath().lastIndexOf("/") != -1 ? fileToReceive.getPath().substring(0, fileToReceive.getPath().lastIndexOf("/")) : "";
         if (folderPath.length() > 0) {
-            System.out.println("Creating folder " + folderPath);
             File folder = new File(path + "/" + folderPath);
             folder.mkdirs();
         }
