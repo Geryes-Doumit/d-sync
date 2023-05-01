@@ -24,6 +24,10 @@ public abstract class Network {
     protected String path;
     protected static final int BUFFER_SIZE = 8192; // taille du tampon utilisé pour la lecture et l'écriture des fichiers
 
+    protected List <DateAndName> listServer;
+    protected List <DateAndName> listClient;
+    protected List <DateAndName> lasteState;
+
 
     // Getter
 
