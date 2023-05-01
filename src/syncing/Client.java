@@ -190,7 +190,13 @@ public class Client extends Network {
 
         client.connect();
         client.firstSync();
-        // client.syncAndDelete();
+        try{
+            Thread.sleep(60000);
+        }
+        catch(InterruptedException ie){
+            System.out.println("Error while waiting");
+        }
+        client.syncAndDelete();
         client.close();
     }
 }

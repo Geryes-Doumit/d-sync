@@ -198,7 +198,13 @@ public class Server extends Network{
 
         server.connect();
         server.firstSync();
-        // server.syncAndDelete();
+        try{
+            Thread.sleep(60000);
+        }
+        catch(InterruptedException ie){
+            System.out.println("Error while waiting");
+        }
+        server.syncAndDelete();
         server.close();
     }
 }
