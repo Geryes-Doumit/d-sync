@@ -106,6 +106,7 @@ public abstract class Network {
 
 
     public abstract void firstSync() throws IOException;
+    public abstract void syncAndDelete() throws IOException;
 
     public List<DateAndName> receiveFilesList() throws IOException, ClassNotFoundException {
         return (List<DateAndName>) ois.readObject();
