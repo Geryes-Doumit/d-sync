@@ -12,9 +12,9 @@ public class Server extends Network{
     }
 
     public void firstSync() throws IOException {
-        listServer.clear();
-        listClient.clear();
-        lasteState.clear();
+        // listServer.clear();
+        // listClient.clear();
+        // lasteState.clear();
 
         listServer = listFiles(path, path);
 

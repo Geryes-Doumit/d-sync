@@ -176,6 +176,8 @@ public class Client extends Network {
             //         }
             //     }
             // }
+            lasteState.clear();
+            lasteState = listFiles(path, path);
             System.out.println("Done.");
             
         } catch (ClassNotFoundException e) {
