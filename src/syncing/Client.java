@@ -56,6 +56,7 @@ public class Client extends Network {
                     }
                 }
             }
+            lasteState = listFiles(path, path);
             System.out.println("Done.");
             
         } catch (ClassNotFoundException e) {
@@ -64,8 +65,6 @@ public class Client extends Network {
     }
 
     public void syncAndDelete() throws IOException {
-        listServer.clear();
-        listClient.clear();
         List <DateAndName> listClient = listFiles(path, path);
 
         sendMessage(listClient);

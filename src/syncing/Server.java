@@ -71,8 +71,6 @@ public class Server extends Network{
     }
 
     public void syncAndDelete() throws IOException{
-        listServer.clear();
-        listClient.clear();
         List <DateAndName> listServer = listFiles(path, path);
 
         try {
