@@ -26,7 +26,7 @@ public abstract class Network {
 
     protected List <DateAndName> listServer;
     protected List <DateAndName> listClient;
-    protected List <DateAndName> lasteState;
+    protected List <DateAndName> lastState;
 
 
     // Getter

@@ -14,7 +14,7 @@ public class Server extends Network{
     public void firstSync() throws IOException {
         // listServer.clear();
         // listClient.clear();
-        // lasteState.clear();
+        // lastState.clear();
 
         listServer = listFiles(path, path);
 
@@ -60,7 +60,7 @@ public class Server extends Network{
                     }
                 }
             }
-            lasteState = listFiles(path, path);
+            lastState = listFiles(path, path);
             System.out.println("Done.");
             
         } catch (ClassNotFoundException e) {
@@ -82,20 +82,20 @@ public class Server extends Network{
 
             for (DateAndName fileClient : listClient){
                 if (fileClient.getType().equals("File")){
-                    DateAndName fileServer = listServer.stream().filter(o -> o.getName().equals(fileClient.getName()) && o.getType().equals("File")).findFirst().orElse(null);
+                    DateAndName fileServer = listServer.stream().filter(o -> o.getPath().equals(fileClient.getPath()) && o.getType().equals("File")).findFirst().orElse(null);
                     if (fileServer != null){
-                        System.out.println("File " + fileClient.getName() + " is on the server and client.");
+                        // System.out.println("File " + fileClient.getPath() + " is on the server and client.");
                         if (fileServer.getDate() > fileClient.getDate()) {
-                            System.out.println("File " + fileServer.getName() + " has been modified on the server.");
+                            System.out.println("File " + fileServer.getPath() + " has been modified on the server.");
                             System.out.println("I will send it to the client.");
                             // sendFile(fileServer);
                         }
                     } else {
-                        System.out.println("File " + fileClient.getName() + " is on the client but not on the server.");
-                        if (lasteState.contains(fileClient)){
-                            System.out.println("File " + fileClient.getName() + " has been deleted on the server.");
+                        // System.out.println("File " + fileClient.getPath() + " is on the client but not on the server.");
+                        if (lastState.stream().anyMatch(o -> o.getType().equals(fileClient.getType()) && o.getPath().equals(fileClient.getPath()))){
+                            System.out.println("File " + fileClient.getPath() + " has been deleted on the server.");
                         } else {
-                            System.out.println("File " + fileClient.getName() + " has been added on the client.");
+                            System.out.println("File " + fileClient.getPath() + " has been added on the client.");
                             System.out.println("I will receive the file.");
                             // receiveFile(fileClient);
                         }
@@ -105,22 +105,22 @@ public class Server extends Network{
 
             for (DateAndName fileServer : listServer){
                 if (fileServer.getType().equals("File")){
-                    DateAndName fileClient = listClient.stream().filter(o -> o.getName().equals(fileServer.getName()) && o.getType().equals("File")).findFirst().orElse(null);
+                    DateAndName fileClient = listClient.stream().filter(o -> o.getPath().equals(fileServer.getPath()) && o.getType().equals("File")).findFirst().orElse(null);
                     if (fileClient != null){
-                        System.out.println("File " + fileServer.getName() + " is on the server and client.");
+                        // System.out.println("File " + fileServer.getPath() + " is on the server and client.");
                         if (fileClient.getDate() > fileServer.getDate()) {
-                            System.out.println("File " + fileClient.getName() + " has been modified on the client.");
+                            System.out.println("File " + fileClient.getPath() + " has been modified on the client.");
                             System.out.println("I will receive the file.");
                             // receiveFile(fileClient);
                         }
                     } else {
-                        System.out.println("File " + fileServer.getName() + " is on the server but not on the client.");
-                        if (lasteState.contains(fileServer)){
-                            System.out.println("File " + fileServer.getName() + " has been deleted on the client.");
+                        // System.out.println("File " + fileServer.getPath() + " is on the server but not on the client.");
+                        if (lastState.stream().anyMatch(o -> o.getType().equals(fileServer.getType()) && o.getPath().equals(fileServer.getPath()))){
+                            System.out.println("File " + fileServer.getPath() + " has been deleted on the client.");
                             System.out.println("I will delete it mine.");
                             // deleteFile(fileServer);
                         } else {
-                            System.out.println("File " + fileServer.getName() + " has been added on the server.");
+                            System.out.println("File " + fileServer.getPath() + " has been added on the server.");
                             System.out.println("I will send it to the client.");
                             // sendFile(fileServer);
                         }
@@ -128,63 +128,36 @@ public class Server extends Network{
                 }
             }
 
-            // for (DateAndName fileServer : listServer) {
-            //     if (fileServer.getType().equals("File")) {
-            //         Boolean contains = false;
-
-            //         for (DateAndName fileClient : listClient){
-            //             if (fileServer.getName().equals(fileClient.getName()) && fileClient.getType().equals("File")) {
-            //                 contains = true;
-            //                 if (fileServer.getDate() > fileClient.getDate()) {
-            //                     System.out.println("File " + fileServer.getName() + " has been modified on the server.");
-            //                     System.out.println("I will send it to the client.");
-            //                     // sendFile(fileServer);
-            //                 }
-            //             }
-            //         }
-            //         if (!contains) {
-            //             if (lasteState.contains(fileServer)){
-            //                 System.out.println("File " + fileServer.getName() + " has been deleted on the server.");
-            //             } else {
-            //                 System.out.println("File " + fileServer.getName() + " has been added on the server.");
-            //                 System.out.println("I will send it to the client.");
-            //                 // sendFile(fileServer);
-            //             }
-            //         }
-            //     }
-            // }
-
-            // for (DateAndName fileClient : listClient) {
-            //     if (fileClient.getType().equals("File")) {
-            //         Boolean contains = false;
-
-            //         for (DateAndName fileServer : listServer){
-            //             if (fileClient.getName().equals(fileServer.getName()) && fileServer.getType().equals("File")) {
-            //                 contains = true;
-            //                 if (fileClient.getDate() > fileServer.getDate()) {
-            //                     System.out.println("File " + fileClient.getName() + " has been modified on the client.");
-            //                     System.out.println("I will receive the file.");
-            //                     // receiveFile(fileClient);
-            //                 }
-            //             }
-            //         }
-            //         if (!contains) {
-            //             if (lasteState.contains(fileClient)){
-            //                 System.out.println("File " + fileClient.getName() + " has been deleted on the client.");
-            //                 System.out.println("I will delete it on the server.");
-            //                 // deleteFile(fileClient);
-            //             } else {
-            //                 System.out.println("File " + fileClient.getName() + " has been added on the client.");
-            //                 System.out.println("I will receive the file.");
-            //                 // receiveFile(fileClient);
-            //             }
-            //         }
-            //     }
-            // }
-
-            lasteState.clear();
-            lasteState = listFiles(path, path);
+            lastState.clear();
+            lastState = listFiles(path, path);
             System.out.println("Done.");
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error receiving files list: " + e.getMessage());
+        }
+    }
+
+    public void testList() throws IOException{
+        System.out.println("Last state :");
+        for (DateAndName file : lastState){
+            System.out.println("Name : " + file.getName() + " Date : " + file.getDate() + "Type : "+ file.getType()+" Path : "+file.getPath());
+            System.out.println(".....................");
+        }
+
+        listServer = listFiles(path, path);
+        System.out.println("Current server state :");
+        for (DateAndName file : listServer){
+            System.out.println("Name : " + file.getName() + " Date : " + file.getDate() + "Type : "+ file.getType()+" Path : "+file.getPath());
+            System.out.println("Was in last state : "+lastState.stream().anyMatch(o -> o.getName().equals(file.getName()) && o.getType().equals(file.getType()) && o.getPath().equals(file.getPath())));
+            System.out.println(".....................");
+        }
+        try {
+            listClient = receiveFilesList();
+            System.out.println("Current client state :");
+            for (DateAndName file : listClient){
+                System.out.println("Name : " + file.getName() + " Date : " + file.getDate() + "Type : "+ file.getType()+" Path : "+file.getPath());
+                System.out.println("Was in last state : "+lastState.stream().anyMatch(o -> o.getName().equals(file.getName()) && o.getType().equals(file.getType()) && o.getPath().equals(file.getPath())));
+                System.out.println(".....................");
+            }
         } catch (ClassNotFoundException e) {
             System.err.println("Error receiving files list: " + e.getMessage());
         }
@@ -197,12 +170,13 @@ public class Server extends Network{
         server.connect();
         server.firstSync();
         try{
-            Thread.sleep(60000);
+            Thread.sleep(30000);
         }
         catch(InterruptedException ie){
             System.out.println("Error while waiting");
         }
         server.syncAndDelete();
+        // server.testList();
         server.close();
     }
 }
