@@ -12,18 +12,22 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class Gui {
     Boolean started = false;
+    Boolean networkMode = false;
 
     Boolean browse1Removed = false;
     Boolean browse2Removed = false;
 
-    Boolean networkMode = false;
-
     String syncImagePath = "img/syncIconColorBorder.png";
+    String userDataPath = "DsyncUserData.txt";
 
     // Used to check if the ip address entered is valid (no letters, etc...)
     private static final Pattern ipPattern = Pattern.compile(
@@ -68,21 +72,46 @@ public class Gui {
         System.setProperty("sun.java2d.uiScale.enabled", "false");
         System.setProperty("apple.awt.uiScale", "1.0");
 
+        // Reading the user data
+        File userDataFile = new File(userDataPath);
+        List<String> data = new ArrayList<>();
+
+        if (userDataFile.exists()) {
+            Scanner userdata = new Scanner(userDataFile);
+            while(userdata.hasNextLine()) {
+                data.add(userdata.nextLine());
+            }
+            userdata.close();
+        }
+        else {
+            try {
+                userDataFile.createNewFile();
+            } catch (IOException e1) {}
+        }
+
         Dsync dsync = new Dsync();
         dsync.addMessage("Press a button to get started.");
 
-        JFrame frame = new JFrame("Dsync");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JFrame window = new JFrame("Dsync");
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         int width = 800; int height = 450;
 
-        frame.setSize((int) (width*1.5), (int) (height*1.5));
-        frame.setMinimumSize(new Dimension(width, height));
-
+        window.setSize((int) (width*1.5), (int) (height*1.5));
+        window.setMinimumSize(new Dimension(width, height));
+        window.setLayout(new BorderLayout());
+        
+        JPanel frame = new JPanel();
         frame.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.weightx = 1.0;
         c.weighty = 1.0;
+
+        Color defaultFrameBG = new Color(230, 230, 230);
+        frame.setBackground(defaultFrameBG);
+        Color invertedFrameBackground = new Color(255 - frame.getBackground().getRed(), 255 - frame.getBackground().getGreen(), 255 - frame.getBackground().getBlue());
+        Color darkerFrameBackground = new Color(frame.getBackground().getRed() - 15, frame.getBackground().getGreen() - 15, frame.getBackground().getBlue() - 15);
+
 
         // Path input design
         Font labelFont = new Font("Calibri", Font.BOLD, 18);
@@ -106,11 +135,17 @@ public class Gui {
         JTextField path1 = new JTextField(0);
         path1.setPreferredSize(textFieldSize);
         path1.setFont(pathFont);
-        path1.setBackground(Color.WHITE);
+        path1.setBackground(frame.getBackground().brighter());
         path1.setBorder(textFieldBorder);
+        try {
+            path1.setText(data.get(0));
+        } catch(Exception e) {
+            // if the data wasn't saved correctly
+        }
 
         JLabel label1 = new JLabel("First folder path :");
         label1.setFont(labelFont);
+        label1.setForeground(invertedFrameBackground);
 
         JButton browseButton1 = new JButton("Browse");
         browseButton1.setPreferredSize(browseButtonSize);
@@ -135,6 +170,8 @@ public class Gui {
         path1.setLayout(new BorderLayout());
         path1.add(browseButton1, BorderLayout.EAST);
 
+        panel1.setBackground(frame.getBackground());
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
@@ -151,11 +188,17 @@ public class Gui {
         JTextField path2 = new JTextField(0);
         path2.setPreferredSize(textFieldSize);
         path2.setFont(pathFont);
-        path2.setBackground(Color.WHITE);
+        path2.setBackground(frame.getBackground().brighter());
         path2.setBorder(textFieldBorder);
+        try {
+            path2.setText(data.get(1));
+        } catch(Exception e) {
+            // if the data wasn't saved correctly
+        }
         
         JLabel label2 = new JLabel("Second folder path :");
         label2.setFont(labelFont);
+        label2.setForeground(invertedFrameBackground);
 
         JButton browseButton2 = new JButton("Browse");
         browseButton2.setPreferredSize(browseButtonSize);
@@ -239,12 +282,16 @@ public class Gui {
         c.insets = new Insets(0, 10, 0, 10);
         enterNetworkInfo.add(portTextField, c);
 
+        panel2.setBackground(frame.getBackground());
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridy = 0;
         c.gridwidth = 1;
         c.insets = new Insets(0, 15, 0, 30);
         pathsPanel.add(panel2, c);
+
+        pathsPanel.setBackground(frame.getBackground());
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -285,6 +332,8 @@ public class Gui {
         c.fill = GridBagConstraints.BOTH;
         panel3.add(messages, c);
 
+        panel3.setBackground(frame.getBackground());
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 1;
@@ -317,6 +366,7 @@ public class Gui {
         BackgroundRotation syncIcon = new BackgroundRotation(syncImagePath);
         syncIcon.setPreferredSize(new Dimension(75, 75));
         syncIcon.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        syncIcon.setBackground(frame.getBackground());
 
         panel4.add(syncIcon, BorderLayout.WEST);
 
@@ -325,6 +375,8 @@ public class Gui {
         c.gridy = 0;
         c.gridwidth = 1;
         panel4.add(startSync, BorderLayout.EAST);
+
+        panel4.setBackground(frame.getBackground());
 
         c.fill = GridBagConstraints.RELATIVE;
         c.gridx = 0;
@@ -364,12 +416,44 @@ public class Gui {
         panel5.add(resetSync, BorderLayout.WEST);
         panel5.add(networkButton, BorderLayout.EAST);
 
+        panel5.setBackground(frame.getBackground());
+
         c.fill = GridBagConstraints.RELATIVE;
         c.gridx = 3;
         c.gridy = 2;
         c.gridwidth = 1;
         c.insets = new Insets(0, 0, 0, 0);
         frame.add(panel5, c);
+
+        //### END OF SECTION ###\\
+
+        //--------------------- Options Panel ---------------------\\
+
+        int colorNumber = 230;
+        Color optionsGray = new Color(colorNumber, colorNumber, colorNumber);
+
+        JPanel optionsPanel = new JPanel(new BorderLayout());
+        optionsPanel.setPreferredSize(new Dimension(window.getWidth(), 25));
+        optionsPanel.setBackground(darkerFrameBackground);
+
+        JButton optionsButton = new JButton("Options");
+        optionsButton.setFont(browseButtonFont);
+        optionsButton.setBackground(optionsPanel.getBackground());
+        optionsButton.setFocusPainted(false);
+        optionsButton.setOpaque(true);
+        optionsButton.setBorderPainted(false);
+        optionsButton.setForeground(invertedFrameBackground);
+
+        JButton HelloButton = new JButton("Dsync, brought to you by Geryes and Marc.");
+        HelloButton.setFont(browseButtonFont);
+        HelloButton.setBackground(optionsPanel.getBackground());
+        HelloButton.setFocusPainted(false);
+        HelloButton.setOpaque(true);
+        HelloButton.setBorderPainted(false);
+        HelloButton.setForeground(invertedFrameBackground);
+
+        optionsPanel.add(optionsButton, BorderLayout.WEST);
+        optionsPanel.add(HelloButton, BorderLayout.EAST);
 
         //### END OF SECTION ###\\
 
@@ -485,6 +569,36 @@ public class Gui {
             }
         });
 
+        HelloButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // Change button appearance when mouse enters
+                HelloButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                HelloButton.setForeground(HelloButton.getForeground().brighter());
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // Reset button appearance when mouse exits
+                HelloButton.setForeground(invertedFrameBackground); 
+            }
+        });
+
+        optionsButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // Change button appearance when mouse enters
+                optionsButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                optionsButton.setForeground(optionsButton.getForeground().brighter());
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // Reset button appearance when mouse exits
+                optionsButton.setForeground(invertedFrameBackground);
+            }
+        });
+
         ipTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -524,26 +638,30 @@ public class Gui {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!started) {
-                    Boolean valid = new File(path1.getText()).exists() 
-                    && new File(path1.getText()).isDirectory() 
-                    && new File(path2.getText()).exists()
-                    && new File(path2.getText()).isDirectory();
+                    Boolean validLocal = new File(path1.getText()).exists() 
+                        && new File(path1.getText()).isDirectory() 
+                        && new File(path2.getText()).exists()
+                        && new File(path2.getText()).isDirectory();
 
-                    if (valid) {
-                        dsync.setSync(true);
-                        if (startSync.getText().equals("Start Syncing")) {
-                            dsync.setPath1(path1.getText().trim());
-                            dsync.setPath2(path2.getText().trim());
-                            path1.setEditable(false);
-                            path1.setBackground(Color.LIGHT_GRAY);
-                            path2.setEditable(false);
-                            path2.setBackground(Color.LIGHT_GRAY);
+                    Boolean validNetwork = false; // to change
 
-                            networkButton.setEnabled(false);
-                            networkButton.setBackground(Color.LIGHT_GRAY);
+                    if (validLocal || validNetwork) {
+                        if (!networkMode) {
+                            dsync.setSync(true);
+                            if (startSync.getText().equals("Start Syncing")) {
+                                dsync.setPath1(path1.getText().trim());
+                                dsync.setPath2(path2.getText().trim());
+                                path1.setEditable(false);
+                                path1.setBackground(Color.LIGHT_GRAY);
+                                path2.setEditable(false);
+                                path2.setBackground(Color.LIGHT_GRAY);
+
+                                networkButton.setEnabled(false);
+                                networkButton.setBackground(Color.LIGHT_GRAY);
+                            }
+
+                            if (!dsync.isAlive()) dsync.start();
                         }
-
-                        if (!dsync.isAlive()) dsync.start();
                         started = true;
 
                         startSync.setText("Pause Syncing");
@@ -571,6 +689,20 @@ public class Gui {
 
                     syncIcon.setRotate(false); // Stop rotation
                 }
+
+                // Saving user data :
+                try {
+                    FileWriter userData = new FileWriter(userDataPath);
+
+                    String data = path1.getText().trim() + "\n" 
+                        + path2.getText().trim() + "\n" 
+                        + ipTextField.getText().trim() + "\n" 
+                        + portTextField.getText().trim() + "\n";
+
+                    userData.write(data);
+                    userData.close();
+                } catch (IOException e1) {}
+
             }
         });
 
@@ -668,6 +800,13 @@ public class Gui {
                     path2.add(hostButton, BorderLayout.WEST);
                     path2.add(enterNetworkInfo, BorderLayout.CENTER);
                     path2.add(startSession, BorderLayout.EAST);
+                    
+                    try {
+                        ipTextField.setText(data.get(2));
+                        portTextField.setText(data.get(3));
+                    } catch(Exception error) {
+                        // if the data wasn't saved correctly
+                    }
 
                     path2.revalidate();
                     path2.repaint();
@@ -788,6 +927,7 @@ public class Gui {
                 }
                 else {
                     if (!ipTextField.getText().equals("IP address")) {
+                        ipTextField.setForeground(Color.BLACK);
                         if (isValid(ipTextField.getText().trim())) {
                             ipTextField.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(187, 252, 203)));
                         }
@@ -800,6 +940,7 @@ public class Gui {
                     }
 
                     if (!portTextField.getText().equals("port")) {
+                        portTextField.setForeground(Color.BLACK);
                         if (isNumber(portTextField.getText().trim())) {
                             portTextField.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(187, 252, 203)));
                         }
@@ -818,7 +959,9 @@ public class Gui {
         //### END OF SECTION ###\\
 
         updatePanel(messages, styledMsg, dsync);
-        frame.setVisible(true);
+        window.add(frame, BorderLayout.CENTER);
+        window.add(optionsPanel, BorderLayout.NORTH);
+        window.setVisible(true);
      }
 
      public static void main(String[] args) throws IOException {
