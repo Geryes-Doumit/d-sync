@@ -132,10 +132,12 @@ public class Dsync extends Thread {
                         try{
                             if(file2.lastModified() > file1.lastModified()) {
                                 Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
+                                new File(path1 + "/" + file2.getName()).setLastModified(file2.lastModified());
                                 // System.out.println("Copied from " + path2 + " to " + path1 + ".");
                             }
                             else if(file2.lastModified() < file1.lastModified()) {
                                 Files.copy(file1.toPath(), Path.of(path2 + "/" + file1.getName()), StandardCopyOption.REPLACE_EXISTING);
+                                new File(path2 + "/" + file1.getName()).setLastModified(file1.lastModified());
                                 // System.out.println("Copied from " + path1 + " to " + path2 + ".");
                             }
                         }
@@ -147,6 +149,7 @@ public class Dsync extends Thread {
                 if (!contains) {
                     try{
                         Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        new File(path1 + "/" + file2.getName()).setLastModified(file2.lastModified());
                         // System.out.println("Created in " + path1 + " from " + path2 + ".");
                     }
                     catch(IOException e) {
@@ -203,11 +206,13 @@ public class Dsync extends Thread {
                         try{
                             if(file2.lastModified() > file1.lastModified()) {
                                 Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
+                                new File(path1 + "/" + file2.getName()).setLastModified(file2.lastModified());
                                 addMessage("Copied the modified file.");
                                 modified = true;
                             }
                             else if(file2.lastModified() < file1.lastModified()) {
                                 Files.copy(file1.toPath(), Path.of(path2 + "/" + file1.getName()), StandardCopyOption.REPLACE_EXISTING);
+                                new File(path2 + "/" + file1.getName()).setLastModified(file1.lastModified());
                                 addMessage("Copied the modified file.");
                                 modified = true;
                             }
@@ -220,6 +225,7 @@ public class Dsync extends Thread {
                 if (!contains) {
                     try{
                         Files.copy(file2.toPath(), Path.of(path1 + "/" + file2.getName()), StandardCopyOption.REPLACE_EXISTING);
+                        new File(path1 + "/" + file2.getName()).setLastModified(file2.lastModified());
                         addMessage("Copied " + file2.getName() + ".");
                         modified = true;
                     }
@@ -387,8 +393,25 @@ public class Dsync extends Thread {
         }
 
         if (!checkAndSyncSubFolders(path1, path2)) // checking the subdirectories.
-        // If no modification was made, then we add this message :
-        addMessage("No changes detected.");
+        // If no modification was made, then we put a message:
+        {
+            if (!messages.get(7).equals("No changes detected") && !messages.get(7).equals("No changes detected.") && !messages.get(7).equals("No changes detected..") && !messages.get(7).equals("No changes detected...") ) {
+                addMessage("No changes detected");
+            }
+            else if (messages.get(7).equals("No changes detected")) {
+                messages.set(7, "No changes detected.");
+            }
+            else if (messages.get(7).equals("No changes detected.")) {
+                messages.set(7, "No changes detected..");
+            }
+            else if (messages.get(7).equals("No changes detected..")) {
+                messages.set(7, "No changes detected...");
+            }
+            else if (messages.get(7).equals("No changes detected...")) {
+                messages.set(7, "No changes detected");
+            }
+            // This creates a small animation with the dots appearing and disappearing.
+        }
     }
 
     // The main function. A simple while loop with some conditions.
@@ -402,14 +425,24 @@ public class Dsync extends Thread {
 
                 setLastState(path1);
 
-                Thread.sleep(5000); // Waits 5 seconds before looping
+                Thread.sleep(1500); // Waits 1.5 seconds
 
                 firstSync = false;
             }
 
             else if (sync) {
-                syncLastState(path1, path2);
-                Thread.sleep(5000); // Waits 5 seconds between each sync
+                // Quick check to see if the folders haven't been moved/modified
+                if (new File(path1).exists() && new File(path1).isDirectory()
+                && new File(path2).exists() && new File(path2).isDirectory()) 
+                {
+                    syncLastState(path1, path2);
+                }
+                else {
+                    String Msg = "The paths aren't valid anymore. Please reset and retry.";
+
+                    if (!messages.get(7).equals(Msg)) addMessage(Msg);
+                }
+                Thread.sleep(2000); // Waits 2 seconds between each sync
             }
             else {
                 Thread.sleep(500); // Waits only half a second if syncing is paused

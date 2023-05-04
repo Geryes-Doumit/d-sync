@@ -122,7 +122,7 @@ public class Gui {
 
         // Button sizes and fonts
         Font browseButtonFont = new Font("Calibri", Font.BOLD, 14);
-        Font buttonFont = new Font("Calibri", Font.BOLD, 18);
+        Font buttonFont = new Font("Calibri", Font.BOLD, 17);
         Dimension buttonSize = new Dimension(200, 80);
 
         //--------------------- First path input ---------------------\\
@@ -396,16 +396,16 @@ public class Gui {
         ));
         panel5.setLayout(new BorderLayout());
 
-        JButton resetSync = new JButton("<html><p style=\"text-align: center;\">Reset</p></html>");
+        JButton resetSync = new JButton("Reset");
         resetSync.setLayout(new GridBagLayout());
-        resetSync.setPreferredSize(new Dimension(75, 75));
+        resetSync.setPreferredSize(new Dimension(89, 75));
         resetSync.setFont(buttonFont);
         resetSync.setBackground(new Color(158, 216, 247));
         resetSync.setFocusPainted(false);
         resetSync.setOpaque(true);
         resetSync.setBorderPainted(false);
 
-        JButton networkButton = new JButton("<html><p style=\"text-align: center;\">Connect to<br>another computer</p></html>");
+        JButton networkButton = new JButton("<html><p style=\"text-align: center;\">Connect to another computer</p></html>");
         networkButton.setPreferredSize(buttonSize);
         networkButton.setFont(buttonFont);
         networkButton.setBackground(new Color(242, 199, 138));
@@ -429,8 +429,8 @@ public class Gui {
 
         //--------------------- Options Panel ---------------------\\
 
-        int colorNumber = 230;
-        Color optionsGray = new Color(colorNumber, colorNumber, colorNumber);
+        // int colorNumber = 230;
+        // Color optionsGray = new Color(colorNumber, colorNumber, colorNumber);
 
         JPanel optionsPanel = new JPanel(new BorderLayout());
         optionsPanel.setPreferredSize(new Dimension(window.getWidth(), 25));
