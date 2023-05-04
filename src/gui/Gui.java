@@ -224,7 +224,7 @@ public class Gui {
         path2.setLayout(new BorderLayout());
         path2.add(browseButton2, BorderLayout.EAST);
 
-        JToggleButton hostButton = new JToggleButton("Become server");
+        JToggleButton hostButton = new JToggleButton("Host server");
         hostButton.setPreferredSize(new Dimension(150, path2.getHeight()));
         hostButton.setFont(browseButtonFont);
         hostButton.setBackground(Color.WHITE);
@@ -802,6 +802,7 @@ public class Gui {
                     path2.add(startSession, BorderLayout.EAST);
                     
                     try {
+                        path1.setText(data.get(0));
                         ipTextField.setText(data.get(2));
                         portTextField.setText(data.get(3));
                     } catch(Exception error) {
@@ -825,6 +826,13 @@ public class Gui {
                     path2.remove(startSession);
                     path2.remove(enterNetworkInfo);
 
+                    try {
+                        path1.setText(data.get(0));
+                        path2.setText(data.get(1));
+                    } catch(Exception error) {
+                        // if the data wasn't saved correctly
+                    }
+
                     path2.revalidate();
                     path2.repaint();
                 }
@@ -846,7 +854,7 @@ public class Gui {
                     enterNetworkInfo.remove(ipTextField);
                 }
                 else {
-                    hostButton.setText("Become server");
+                    hostButton.setText("Host server");
                     hostButton.setBackground(Color.WHITE);
 
                     startSession.setText("Connect");
