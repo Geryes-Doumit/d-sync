@@ -12,6 +12,7 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -20,14 +21,16 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class Gui {
-    Boolean started = false;
-    Boolean networkMode = false;
+    private Boolean started = false;
+    private Boolean networkMode = false;
 
-    Boolean browse1Removed = false;
-    Boolean browse2Removed = false;
+    private Boolean browse1Removed = false;
+    private Boolean browse2Removed = false;
 
-    String syncImagePath = "img/syncIconColorBorder.png";
-    String userDataPath = "DsyncUserData.txt";
+    private String syncImagePath = "img/syncIconColorBorder.png";
+    private String userDataPath = "DsyncUserData.txt";
+
+    private List<String> data = new ArrayList<>();
 
     // Used to check if the ip address entered is valid (no letters, etc...)
     private static final Pattern ipPattern = Pattern.compile(
@@ -68,13 +71,11 @@ public class Gui {
         jTextPane.updateUI();
     }
 
-    public void application() throws IOException{
-        System.setProperty("sun.java2d.uiScale.enabled", "false");
-        System.setProperty("apple.awt.uiScale", "1.0");
-
-        // Reading the user data
+    
+    // Reading the user data and saving it
+    public void updateData() throws FileNotFoundException {
         File userDataFile = new File(userDataPath);
-        List<String> data = new ArrayList<>();
+        data.clear();
 
         if (userDataFile.exists()) {
             Scanner userdata = new Scanner(userDataFile);
@@ -88,6 +89,13 @@ public class Gui {
                 userDataFile.createNewFile();
             } catch (IOException e1) {}
         }
+    }
+
+    public void application() throws IOException{
+        System.setProperty("sun.java2d.uiScale.enabled", "false");
+        System.setProperty("apple.awt.uiScale", "1.0");
+
+        updateData(); // Making sure the data is up to date when the app opens
 
         Dsync dsync = new Dsync();
         dsync.addMessage("Press a button to get started.");
@@ -702,6 +710,11 @@ public class Gui {
                     userData.write(data);
                     userData.close();
                 } catch (IOException e1) {}
+
+                // Updating the saved data :
+                try {
+                    updateData();
+                } catch (FileNotFoundException e1) {}
 
             }
         });
