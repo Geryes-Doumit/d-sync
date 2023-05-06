@@ -8,11 +8,12 @@ import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.lang.Thread;
 
-public abstract class Network {
+public abstract class Network extends Thread{
     protected Socket socket;
     protected ServerSocket serverSocket;
     protected String ip;
@@ -21,6 +22,8 @@ public abstract class Network {
     protected ObjectInputStream ois;
     protected Boolean connect = false;
     protected Boolean isServer;
+    protected Boolean firstSync = true;
+    protected Boolean sync;
     protected String path;
     protected static final int BUFFER_SIZE = 8192; // taille du tampon utilisé pour la lecture et l'écriture des fichiers
 
@@ -200,5 +203,24 @@ public abstract class Network {
         folder.setLastModified(directoryToCreate.getDate());
     }
     
+    public void run(){
+        try{
+            connect();
+            while(true){
+                if (firstSync && sync){
+                    firstSync();
+                    Thread.sleep(2000);
+                }
+                else if (sync){
+                    syncAndDelete();
+                    Thread.sleep(2000);
+                }
+            }
+
+        }
+        catch(Exception e){
+            System.out.println("Error while running : " + e.getMessage());
+        }
+    }
 
 }

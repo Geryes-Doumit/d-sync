@@ -73,6 +73,7 @@ public class Server extends Network{
             }
             lastState = listFiles(path, path);
             System.out.println("Done.");
+            firstSync = false;
             
         } catch (ClassNotFoundException e) {
             System.err.println("Error receiving files list: " + e.getMessage());
@@ -164,28 +165,13 @@ public class Server extends Network{
     }
 
 
+    // public static void main(String[] args) throws Exception{
+    //     Server server = new Server(117, "/Users/marc/Library/CloudStorage/OneDrive-uha.fr/Cours/GitHub/Test_DSync/Server");
+    //     Client client = new Client("192.168.1.55", 117, "/Users/marc/Library/CloudStorage/OneDrive-uha.fr/Cours/GitHub/Test_DSync/Client");
+    //     server.sync = true;
+    //     client.sync = true;
 
-    public static void main(String[] args) throws Exception{
-        Server server = new Server(117, "/Users/marc/Library/CloudStorage/OneDrive-uha.fr/Cours/GitHub/Test_DSync/Server");
-
-        server.connect();
-        server.firstSync();
-        try{
-            Thread.sleep(2000);
-        }
-        catch(InterruptedException ie){
-            System.out.println("Error while waiting");
-        }
-        while(true){
-            server.syncAndDelete();
-            try{
-                Thread.sleep(2000);
-            }
-            catch(InterruptedException ie){
-                System.out.println("Error while waiting");
-            }
-        }
-        // server.testList();
-        // server.close();
-    }
+    //     server.start();
+    //     client.start();
+    // }
 }
