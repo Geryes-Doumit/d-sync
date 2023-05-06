@@ -30,6 +30,8 @@ public class Gui {
     private String syncImagePath = "img/syncIconColorBorder.png";
     private String userDataPath = "DsyncUserData.txt";
 
+    private Color defaultFrameBG = new Color(230, 230, 230);
+
     private List<String> data = new ArrayList<>();
 
     // Used to check if the ip address entered is valid (no letters, etc...)
@@ -46,6 +48,46 @@ public class Gui {
 
     public boolean isNumber(String port) {
         return portPattern.matcher(port).matches();
+    }
+
+    public void buttonHover(JButton button) {
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // Change button appearance when mouse enters
+                button.setBackground(button.getBackground().darker());
+                button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // Reset button appearance when mouse exits
+                button.setBackground(button.getBackground().brighter());
+            }
+        });
+    }
+
+    public Boolean isDark(Color c) {
+        float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+
+        float brightness = hsb[2];
+
+        if (brightness > 0.5) {
+            return false;
+        } else {
+            return true;
+         }
+    }
+
+    public void setPathTextColorWithBG(JLabel label, JTextField path, Color frameBG) {
+        if (isDark(frameBG)) {
+            path.setForeground(Color.WHITE);
+            label.setForeground(Color.WHITE);
+        }
+        else {
+            path.setForeground(Color.BLACK);
+            label.setForeground(Color.BLACK);
+        }
     }
 
     public void updatePanel(JTextPane jTextPane, StyledDocument styledDoc, Dsync dsync) {
@@ -91,6 +133,49 @@ public class Gui {
         }
     }
 
+    public void updateTheme(JPanel frame, JTextField path1, JLabel label1, JTextField path2, JLabel label2, 
+        JTextPane messages, JPanel panel1, JPanel panel2, JPanel pathsPanel, JPanel panel3, JPanel panel4,
+        JPanel panel5, BackgroundRotation syncIcon, JButton optionsButton, JButton helloButton, JPanel optionsPanel) {
+            path1.setBackground(frame.getBackground().brighter());
+            path2.setBackground(frame.getBackground().brighter());
+
+            setPathTextColorWithBG(label1, path1, frame.getBackground());
+            setPathTextColorWithBG(label2, path2, frame.getBackground());
+
+            messages.setBackground(frame.getBackground().brighter());
+            if (isDark(frame.getBackground())) {
+                messages.setForeground(Color.WHITE);
+            }
+            else {
+                messages.setForeground(Color.BLACK);
+            }
+
+            panel1.setBackground(frame.getBackground());
+            panel2.setBackground(frame.getBackground());
+            panel3.setBackground(frame.getBackground());
+            panel4.setBackground(frame.getBackground());
+            panel5.setBackground(frame.getBackground());
+            pathsPanel.setBackground(frame.getBackground());
+
+            syncIcon.setBackground(frame.getBackground());
+
+            Color darkerFrameBackground = new Color(Math.abs(frame.getBackground().getRed() - 15), Math.abs(frame.getBackground().getGreen() - 15), Math.abs(frame.getBackground().getBlue() - 15));
+            optionsPanel.setBackground(darkerFrameBackground);
+            optionsButton.setBackground(darkerFrameBackground);
+            helloButton.setBackground(darkerFrameBackground);
+
+            if (isDark(frame.getBackground())) {
+                optionsButton.setForeground(Color.LIGHT_GRAY);
+                helloButton.setForeground(Color.LIGHT_GRAY);
+            }
+            else {
+                optionsButton.setForeground(Color.DARK_GRAY);
+                helloButton.setForeground(Color.DARK_GRAY);
+            }
+
+            frame.repaint();
+        }
+
     public void application() throws IOException{
         System.setProperty("sun.java2d.uiScale.enabled", "false");
         System.setProperty("apple.awt.uiScale", "1.0");
@@ -115,10 +200,14 @@ public class Gui {
         c.weightx = 1.0;
         c.weighty = 1.0;
 
-        Color defaultFrameBG = new Color(230, 230, 230);
-        frame.setBackground(defaultFrameBG);
+        try {
+            frame.setBackground(new Color(Integer.valueOf(data.get(4))));
+        } 
+        catch(Exception e) {
+            frame.setBackground(defaultFrameBG);
+        }
         Color invertedFrameBackground = new Color(255 - frame.getBackground().getRed(), 255 - frame.getBackground().getGreen(), 255 - frame.getBackground().getBlue());
-        Color darkerFrameBackground = new Color(frame.getBackground().getRed() - 15, frame.getBackground().getGreen() - 15, frame.getBackground().getBlue() - 15);
+        Color darkerFrameBackground = new Color(Math.abs(frame.getBackground().getRed() - 15), Math.abs(frame.getBackground().getGreen() - 15), Math.abs(frame.getBackground().getBlue() - 15));
 
 
         // Path input design
@@ -153,7 +242,8 @@ public class Gui {
 
         JLabel label1 = new JLabel("First folder path :");
         label1.setFont(labelFont);
-        label1.setForeground(invertedFrameBackground);
+
+        setPathTextColorWithBG(label1, path1, frame.getBackground());
 
         JButton browseButton1 = new JButton("Browse");
         browseButton1.setPreferredSize(browseButtonSize);
@@ -200,13 +290,15 @@ public class Gui {
         path2.setBorder(textFieldBorder);
         try {
             path2.setText(data.get(1));
-        } catch(Exception e) {
+        } 
+        catch(Exception e) {
             // if the data wasn't saved correctly
         }
         
         JLabel label2 = new JLabel("Second folder path :");
         label2.setFont(labelFont);
-        label2.setForeground(invertedFrameBackground);
+
+        setPathTextColorWithBG(label2, path2, frame.getBackground());
 
         JButton browseButton2 = new JButton("Browse");
         browseButton2.setPreferredSize(browseButtonSize);
@@ -324,7 +416,13 @@ public class Gui {
         JTextPane messages = new JTextPane();
         messages.setEditable(false);
         messages.setFont(new Font("Calibri", 0, 20));
-        messages.setBackground(new Color(220, 220, 220));
+        messages.setBackground(frame.getBackground().brighter());
+        if (isDark(frame.getBackground())) {
+            messages.setForeground(Color.WHITE);
+        }
+        else {
+            messages.setForeground(Color.BLACK);
+        }
 
         StyledDocument styledMsg = (StyledDocument)messages.getDocument(); // Used to edit the style
 
@@ -444,7 +542,7 @@ public class Gui {
         optionsPanel.setPreferredSize(new Dimension(window.getWidth(), 25));
         optionsPanel.setBackground(darkerFrameBackground);
 
-        JButton optionsButton = new JButton("Options");
+        JButton optionsButton = new JButton("Change theme");
         optionsButton.setFont(browseButtonFont);
         optionsButton.setBackground(optionsPanel.getBackground());
         optionsButton.setFocusPainted(false);
@@ -452,7 +550,7 @@ public class Gui {
         optionsButton.setBorderPainted(false);
         optionsButton.setForeground(invertedFrameBackground);
 
-        JButton HelloButton = new JButton("Dsync, brought to you by Geryes and Marc.");
+        JButton HelloButton = new JButton("Dsync, by Geryes and Marc.");
         HelloButton.setFont(browseButtonFont);
         HelloButton.setBackground(optionsPanel.getBackground());
         HelloButton.setFocusPainted(false);
@@ -468,67 +566,15 @@ public class Gui {
         //--------------------- Listeners to perform actions after button presses or every second ---------------------\\
 
         // Hovering the buttons
-        browseButton1.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                // Change button appearance when mouse enters
-                browseButton1.setBackground(browseButton1.getBackground().darker());
-                browseButton1.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-            
-            @Override
-            public void mouseExited(MouseEvent e) {
-                // Reset button appearance when mouse exits
-                browseButton1.setBackground(browseButton1.getBackground().brighter());
-            }
-        });
+        buttonHover(browseButton1);
 
-        browseButton2.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                // Change button appearance when mouse enters
-                browseButton2.setBackground(browseButton2.getBackground().darker());
-                browseButton2.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-            
-            @Override
-            public void mouseExited(MouseEvent e) {
-                // Reset button appearance when mouse exits
-                browseButton2.setBackground(browseButton2.getBackground().brighter());
-            }
-        });
+        buttonHover(browseButton2);
 
-        startSync.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                // Change button appearance when mouse enters
-                startSync.setBackground(startSync.getBackground().darker());
-                startSync.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-            
-            @Override
-            public void mouseExited(MouseEvent e) {
-                // Reset button appearance when mouse exits
-                startSync.setBackground(startSync.getBackground().brighter());
-            }
-        });
+        buttonHover(startSync);
 
-        resetSync.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                // Change button appearance when mouse enters
-                resetSync.setBackground(resetSync.getBackground().darker());
-                resetSync.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-            
-            @Override
-            public void mouseExited(MouseEvent e) {
-                // Reset button appearance when mouse exits
-                resetSync.setBackground(resetSync.getBackground().brighter());
-            }
-        });
+        buttonHover(resetSync);
 
-        networkButton.addMouseListener(new MouseAdapter() {
+        networkButton.addMouseListener(new MouseAdapter() { // Un peu spécial
             @Override
             public void mouseEntered(MouseEvent e) {
                 // Change button appearance when mouse enters
@@ -547,63 +593,44 @@ public class Gui {
             }
         });
 
-        hostButton.addMouseListener(new MouseAdapter() {
+        hostButton.addMouseListener(new MouseAdapter() { // Jtoggle button, cannot call buttonHover function
             @Override
             public void mouseEntered(MouseEvent e) {
-                // Change button appearance when mouse enters
                 hostButton.setBackground(hostButton.getBackground().darker());
                 hostButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
             
             @Override
             public void mouseExited(MouseEvent e) {
-                // Reset button appearance when mouse exits
                 hostButton.setBackground(hostButton.getBackground().brighter());
             }
         });
 
-        startSession.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                // Change button appearance when mouse enters
-                startSession.setBackground(startSession.getBackground().darker());
-                startSession.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-            
-            @Override
-            public void mouseExited(MouseEvent e) {
-                // Reset button appearance when mouse exits
-                startSession.setBackground(startSession.getBackground().brighter());
-            }
-        });
+        buttonHover(startSession);
 
         HelloButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                // Change button appearance when mouse enters
+                // Change cursor when mouse enters
                 HelloButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                HelloButton.setForeground(HelloButton.getForeground().brighter());
             }
             
             @Override
             public void mouseExited(MouseEvent e) {
-                // Reset button appearance when mouse exits
-                HelloButton.setForeground(invertedFrameBackground); 
+                // No need to change the cursor
             }
         });
 
         optionsButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                // Change button appearance when mouse enters
+                // Change cursor when mouse enters
                 optionsButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                optionsButton.setForeground(optionsButton.getForeground().brighter());
             }
             
             @Override
             public void mouseExited(MouseEvent e) {
-                // Reset button appearance when mouse exits
-                optionsButton.setForeground(invertedFrameBackground);
+                // No need to change the cursor
             }
         });
 
@@ -660,9 +687,11 @@ public class Gui {
                                 dsync.setPath1(path1.getText().trim());
                                 dsync.setPath2(path2.getText().trim());
                                 path1.setEditable(false);
-                                path1.setBackground(Color.LIGHT_GRAY);
+                                path1.setBackground(frame.getBackground().darker());
+                                path1.setBorder(BorderFactory.createEmptyBorder());
                                 path2.setEditable(false);
-                                path2.setBackground(Color.LIGHT_GRAY);
+                                path2.setBackground(frame.getBackground().darker());
+                                path2.setBorder(BorderFactory.createEmptyBorder());
 
                                 networkButton.setEnabled(false);
                                 networkButton.setBackground(Color.LIGHT_GRAY);
@@ -705,7 +734,8 @@ public class Gui {
                     String data = path1.getText().trim() + "\n" 
                         + path2.getText().trim() + "\n" 
                         + ipTextField.getText().trim() + "\n" 
-                        + portTextField.getText().trim() + "\n";
+                        + portTextField.getText().trim() + "\n"
+                        + frame.getBackground().getRGB() + "\n";
 
                     userData.write(data);
                     userData.close();
@@ -725,8 +755,7 @@ public class Gui {
                 path1.setText("");
                 path2.setText("");
                 path1.setEditable(true);
-                path1.setBackground(Color.WHITE);
-
+                path1.setBackground(frame.getBackground().brighter());
                 path1.add(browseButton1, BorderLayout.EAST);
                 path1.revalidate();
                 path1.repaint();
@@ -734,7 +763,7 @@ public class Gui {
 
                 if (!networkMode) {
                     path2.setEditable(true);
-                    path2.setBackground(Color.WHITE);
+                    path2.setBackground(frame.getBackground().brighter());
                     path2.add(browseButton2, BorderLayout.EAST);
                     path2.revalidate();
                     path2.repaint();
@@ -832,7 +861,7 @@ public class Gui {
 
                     label2.setText("Second folder path :");
                     path2.setEditable(true);
-                    path2.setBackground(Color.WHITE);
+                    path2.setBackground(frame.getBackground().brighter());
                     path2.add(browseButton2, BorderLayout.EAST);
 
                     path2.remove(hostButton);
@@ -887,6 +916,29 @@ public class Gui {
                     enterNetworkInfo.add(ipTextField, c);
                 }
             }
+        });
+
+        optionsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Color selectedColor = JColorChooser.showDialog(frame, "Choose a Color", Color.WHITE);
+                // if (selectedColor != null) {
+                //     frame.setBackground(selectedColor);
+                //     updateTheme(frame, path1, label1, path2, label2, messages, panel1, panel2,
+                //         pathsPanel, panel3, panel4, panel5, syncIcon, optionsButton, HelloButton, optionsPanel);
+                // }
+
+                ThemeFrame newTheme = new ThemeFrame(window);
+                newTheme.setBackground(frame.getBackground());
+                newTheme.setChosenColor(frame.getBackground());
+                newTheme.setVisible(true);
+                newTheme.setModal(true);
+
+                frame.setBackground(newTheme.chosenColor());
+                updateTheme(frame, path1, label1, path2, label2, messages, panel1, panel2,
+                    pathsPanel, panel3, panel4, panel5, syncIcon, optionsButton, HelloButton, optionsPanel);
+            }
+            
         });
 
         // Every second to update elements without user input
