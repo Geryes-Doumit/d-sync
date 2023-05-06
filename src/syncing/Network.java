@@ -23,7 +23,7 @@ public abstract class Network extends Thread{
     protected Boolean connect = false;
     protected Boolean isServer;
     protected Boolean firstSync = true;
-    protected Boolean sync;
+    protected Boolean syncCurrent;
     protected String path;
     protected static final int BUFFER_SIZE = 8192; // taille du tampon utilisé pour la lecture et l'écriture des fichiers
 
@@ -31,32 +31,64 @@ public abstract class Network extends Thread{
     protected List <DateAndName> listClient;
     protected List <DateAndName> lastState;
     protected Boolean isChange;
-
-
-    // Getter
+    protected List<String> messages = new ArrayList<>();
 
     public void connect(){
-        try{
-            if (ip == null || ip.length() == 0) {
-                serverSocket = new ServerSocket(port);
-                serverSocket.setSoTimeout(30000);
-                socket = serverSocket.accept();
-            } else {
-                socket = new Socket(ip, port);
+        connect = false;
+        while(!connect){
+            try{
+                if (!messages.get(7).equals("Connecting") && !messages.get(7).equals("Connecting.") && !messages.get(7).equals("Connecting..") && !messages.get(7).equals("Connecting...") ) {
+                    addMessage("Connecting");
+                }
+                else if (messages.get(7).equals("Connecting")) {
+                    messages.set(7, "Connecting.");
+                }
+                else if (messages.get(7).equals("Connecting.")) {
+                    messages.set(7, "Connecting..");
+                }
+                else if (messages.get(7).equals("Connecting..")) {
+                    messages.set(7, "Connecting...");
+                }
+                else if (messages.get(7).equals("Connecting...")) {
+                    messages.set(7, "Connecting");
+                }
+                if (ip == null || ip.length() == 0) {
+                    if(serverSocket == null) {
+                        serverSocket = new ServerSocket(port);
+                        serverSocket.setSoTimeout(5000);
+                    }
+                    socket = serverSocket.accept();
+                } else {
+                    socket = new Socket(ip, port);
+                }
+                oos = new ObjectOutputStream(socket.getOutputStream());
+                ois = new ObjectInputStream(socket.getInputStream());
+                connect = true;
             }
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            ois = new ObjectInputStream(socket.getInputStream());
-            connect = true;
+            catch(Exception e){
+                System.out.println("Error while connecting: " + e.getMessage());
+                if (ip == null || ip.length() == 0) {
+                    try{
+                        serverSocket.close();
+                    } catch (Exception ex) {
+                        System.out.println("Error while closing socket: " + ex.getMessage());
+                    }
+                }
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ie) {
+                    System.out.println("Error waiting: " + ie.getMessage());
+                }
+            }
         }
-        catch(Exception e){
-            System.out.println("Error while connecting");
+        if (connect){
+            System.out.println("Connected.");
         }
     }
 
     public void resetConnection() {
         connect = false;
         try {
-            System.out.println("Resetting connection...");
             oos.close();
             ois.close();
             socket.close();
@@ -65,7 +97,7 @@ public abstract class Network extends Thread{
                 socket = serverSocket.accept();
             } else {
                 try{
-                    Thread.sleep((500));
+                    Thread.sleep(100);
                 }
                 catch(InterruptedException ie){
                     System.out.println("Error while waiting");
@@ -88,7 +120,6 @@ public abstract class Network extends Thread{
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
             connect = true;
-            System.out.println("Connection reset.");
         } catch (IOException e) {
             System.out.println("Error resetting connection: " + e.getMessage());
         }
@@ -114,12 +145,12 @@ public abstract class Network extends Thread{
     public abstract void firstSync() throws IOException;
     public abstract void syncAndDelete() throws IOException;
 
-    public List<DateAndName> receiveFilesList() throws IOException, ClassNotFoundException {
-        return (List<DateAndName>) ois.readObject();
+    public Object receiveMessage() throws IOException, ClassNotFoundException {
+        return ois.readObject();
     }
 
-    public void sendMessage(List<DateAndName> files) throws IOException {
-        oos.writeObject(files);
+    public void sendMessage(Object message) throws IOException {
+        oos.writeObject(message);
         oos.flush();
     }
 
@@ -142,9 +173,6 @@ public abstract class Network extends Thread{
             }
             Path absolutePath = Paths.get(file.getAbsolutePath());
             Path relativePath = basePath.relativize(absolutePath);
-            // if (file.isDirectory()){
-            //     continue;
-            // }
             fileList.add(new DateAndName(file.getName(), file.lastModified(), type, relativePath.toString().replace('\\', '/')));
         }
 
@@ -204,26 +232,44 @@ public abstract class Network extends Thread{
         folder.mkdirs();
         folder.setLastModified(directoryToCreate.getDate());
     }
-    
-    public void run(){
-        try{
-            connect();
-            while(true){
-                if (firstSync && sync){
-                    firstSync();
-                    Thread.sleep(2000);
-                }
-                else if (sync){
-                    System.out.println("I will sync and delete.");
-                    syncAndDelete();
-                    Thread.sleep(2000);
-                }
-            }
 
+    public void addMessage(String Msg) {
+        if (messages.isEmpty()) {
+            messages.add("");
+            messages.add("");
+            messages.add("");
+            messages.add("");
+            messages.add("");
+            messages.add("");
+            messages.add("");
+            messages.add(Msg);
         }
-        catch(Exception e){
-            System.out.println("Error while running : " + e.getMessage());
+
+        else {
+            messages.set(0, messages.get(1));
+            messages.set(1, messages.get(2));
+            messages.set(2, messages.get(3));
+            messages.set(3, messages.get(4));
+            messages.set(4, messages.get(5));
+            messages.set(5, messages.get(6));
+            messages.set(6, messages.get(7));
+            messages.set(7, Msg);
         }
+    }
+
+    public void resetMessages() {
+        messages.set(0, "");
+            messages.set(1, "");
+            messages.set(2, "");
+            messages.set(3, "");
+            messages.set(4, "");
+            messages.set(5, "");
+            messages.set(6, "");
+            messages.set(7, "");
+    }
+
+    public List<String> getMessages() {
+        return messages;
     }
 
 }

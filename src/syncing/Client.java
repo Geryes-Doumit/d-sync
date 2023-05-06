@@ -17,7 +17,7 @@ public class Client extends Network {
         sendMessage(listClient);
 
         try{
-            List<DateAndName> listServer = receiveFilesList();
+            List<DateAndName> listServer = (List<DateAndName>) receiveMessage();
 
             resetConnection();
 
@@ -27,22 +27,16 @@ public class Client extends Network {
                 for (DateAndName fileClient : listClient){
                     if (fileServer.getName().equals(fileClient.getName()) && fileClient.getType().equals("File")) {
                         contains = true;
-                        System.out.println(fileServer.getType()+" " + fileServer.getPath() + " is on the server and client.");
                         if (fileServer.getDate() > fileClient.getDate()) {
-                            System.out.println("File " + fileServer.getPath() + " has been modified on the server.");
-                            System.out.println("I will receive the new version of the file.");
                             receiveFile(fileServer);
                         }
                     }
                 }
                 if (!contains) {
-                    System.out.println(fileServer.getType()+" " + fileServer.getPath() + " is on the server but not on the client.");
                     if (fileServer.getType().equals("File")){
-                        System.out.println("I will receive the file.");
                         receiveFile(fileServer);
                     }
                     else{
-                        System.out.println("I will create the directory.");
                         File folder = new File(path + "/"+ fileServer.getPath());
                         folder.mkdirs();
                     }
@@ -54,25 +48,20 @@ public class Client extends Network {
 
                 for (DateAndName fileServer : listServer){
                     if (fileClient.getName().equals(fileServer.getName()) && fileServer.getType().equals("File")) {
-                        System.out.println(fileClient.getType()+" " + fileClient.getPath() + " is on the server and client.");
                         contains = true;
                         if (fileClient.getDate() > fileServer.getDate()) {
-                            System.out.println("File " + fileClient.getPath() + " has been modified on the client.");
-                            System.out.println("I will send the new version of the file.");
                             sendFile(fileClient);
                         }
                     }
                 }
                 if (!contains) {
-                    System.out.println(fileClient.getType()+" " + fileClient.getPath() + " is on the client but not on the server.");
                     if (fileClient.getType().equals("File")){
-                        System.out.println("I will send the file.");
                         sendFile(fileClient);
                     }
                 }
             }
             lastState = listFiles(path, path);
-            System.out.println("Done.");
+            addMessage("Folders combined.");
             firstSync = false;
             
         } catch (ClassNotFoundException e) {
@@ -87,31 +76,24 @@ public class Client extends Network {
         sendMessage(listClient);
 
         try{
-            List<DateAndName> listServer = receiveFilesList();
+            List<DateAndName> listServer = (List<DateAndName>) receiveMessage();
 
             resetConnection();
 
             for (DateAndName fileClient : listClient){
                 DateAndName fileServer = listServer.stream().filter(o -> o.getPath().equals(fileClient.getPath()) && o.getType().equals(o.getType())).findFirst().orElse(null);
                 if (fileServer != null){
-                    // System.out.println(fileClient.getType()+ " " + fileClient.getPath() + " is on the server and client.");
-                    if (fileServer.getDate() > fileClient.getDate() && fileClient.getType().equals("File")) {
-                        // System.out.println(fileClient.getType()+ " " + fileServer.getPath() + " has been modified on the server.");
-                        // System.out.println("I will receive it.");
-                        receiveFile(fileServer);
+                    if (fileClient.getDate() > fileServer.getDate() && fileClient.getType().equals("File")) {
+                        sendFile(fileClient);
                         isChange = true;
                     }
                 } else {
                     isChange = true;
-                    // System.out.println(fileClient.getType()+ " " + fileClient.getPath() + " is on the client but not on the server.");
                     if (lastState.stream().anyMatch(o -> o.getType().equals(fileClient.getType()) && o.getPath().equals(fileClient.getPath()))){
-                        // System.out.println(fileClient.getType()+ " " + fileClient.getPath() + " has been deleted on the server.");
-                        // System.out.println("I will delete mine.");
                         deleteFile(fileClient);
+                        addMessage("Deleted " + fileClient.getName() + ".");
                     } else {
-                        // System.out.println(fileClient.getType()+ " " + fileClient.getPath() + " has been added on the client.");
                         if (fileClient.getType().equals("File")) {
-                            // System.out.println("I will send it.");
                             sendFile(fileClient);
                         }
                     }
@@ -121,30 +103,21 @@ public class Client extends Network {
             for (DateAndName fileServer : listServer){
                 DateAndName fileClient = listClient.stream().filter(o -> o.getPath().equals(fileServer.getPath()) && o.getType().equals(fileServer.getType())).findFirst().orElse(null);
                 if (fileClient != null){
-                    // System.out.println(fileServer.getType()+ " " + fileServer.getPath() + " is on the server and client.");
-                    if (fileClient.getDate() > fileServer.getDate() && fileClient.getType().equals("File")) {
-                        // Changer la conditions si file pour prendre en compte le changement de métadonnées du fichier
-                        // System.out.println(fileServer.getType()+ " " + fileServer.getPath() + " has been modified on the client.");
-                        // System.out.println("I will send it.");
-                        sendFile(fileServer);
+                    if (fileServer.getDate() > fileClient.getDate() && fileClient.getType().equals("File")) {
+                        receiveFile(fileServer);
+                        addMessage("Copied the modified file.");
                         isChange = true;
                     }
                 } else {
                     isChange = true;
-                    // System.out.println(fileServer.getType()+ " " + fileServer.getPath() + " is on the server but not on the client.");
-                    if (lastState.stream().anyMatch(o -> o.getType().equals(fileServer.getType()) && o.getPath().equals(fileServer.getPath()))){
-                        // System.out.println(fileServer.getType()+ " " + fileServer.getPath() + " has been deleted on the client.");
-                    } else {
-                        // System.out.println(fileServer.getType()+ " " + fileServer.getPath() + " has been added on the server.");
+                    if (!lastState.stream().anyMatch(o -> o.getType().equals(fileServer.getType()) && o.getPath().equals(fileServer.getPath()))){
                         if (fileServer.getType().equals("File")) {
-                            // System.out.println("I will receive it.");
                             receiveFile(fileServer);
+                            addMessage("Copied " + fileServer.getName() + ".");
                         }
                         else{
-                            System.out.println("I will create the folder.");
-                            // File folder = new File(path + "/" + fileServer.getPath());
-                            // folder.mkdirs();
                             createDirectory(fileServer);
+                            addMessage("Copied " + fileServer.getName() + ".");
                         }
                     }
                 }
@@ -153,14 +126,82 @@ public class Client extends Network {
             lastState.clear();
             lastState = listFiles(path, path);
             if (isChange) {
-                System.out.println("Done, with changes.");
+                addMessage("Folders combined.");
             }
             else {
-                System.out.println("No change.");
+                if (!messages.get(7).equals("No changes detected") && !messages.get(7).equals("No changes detected.") && !messages.get(7).equals("No changes detected..") && !messages.get(7).equals("No changes detected...") ) {
+                    addMessage("No changes detected");
+                }
+                else if (messages.get(7).equals("No changes detected")) {
+                    messages.set(7, "No changes detected.");
+                }
+                else if (messages.get(7).equals("No changes detected.")) {
+                    messages.set(7, "No changes detected..");
+                }
+                else if (messages.get(7).equals("No changes detected..")) {
+                    messages.set(7, "No changes detected...");
+                }
+                else if (messages.get(7).equals("No changes detected...")) {
+                    messages.set(7, "No changes detected");
+                }
             }
             
         } catch (ClassNotFoundException e) {
             System.err.println("Error receiving files list: " + e.getMessage());
         }
+    }
+
+    public void run(){
+        while(true){
+            try{
+                connect();
+                while(true){
+                    File folder = new File(path);
+                    sendMessage(folder.exists() && folder.isDirectory());
+                    Boolean foldesrExist = folder.exists() && folder.isDirectory() && (Boolean) receiveMessage();
+
+                    resetConnection();
+
+                    sendMessage(syncCurrent);
+                    Boolean sync = syncCurrent && (Boolean) receiveMessage();
+
+                    resetConnection();
+
+                    if (firstSync && sync && foldesrExist){
+                        firstSync();
+                    }
+                    else if (sync && foldesrExist){
+                        syncAndDelete();
+                    }
+                    else if(!foldesrExist && folder.exists()){
+                        if (!messages.get(7).equals("A problem as occured on the server's side.")) {
+                            addMessage("A problem as occured on the server's side.");
+                        }
+                    }
+                    else if(!folder.exists()){
+                        if (!messages.get(7).equals("The local folder path is'nt valid anymore.")) {
+                            addMessage("The local folder path is'nt valid anymore.");
+                        }
+                    }
+                    Thread.sleep(2000);
+                }
+
+            }
+            catch(Exception e){
+                addMessage("Connection lost.");
+                try{
+                    Thread.sleep(2000);
+                } catch (InterruptedException ie) {
+                    System.out.println("Error while waiting: " + ie.getMessage());
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) throws Exception{
+        Client client = new Client("192.168.1.55", 117, "/Users/marc/Library/CloudStorage/OneDrive-uha.fr/Cours/GitHub/Test_DSync/Client");
+        client.syncCurrent = true;
+
+        client.start();
     }
 }
