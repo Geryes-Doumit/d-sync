@@ -143,7 +143,7 @@ public abstract class Network extends Thread{
             // if (file.isDirectory()){
             //     continue;
             // }
-            fileList.add(new DateAndName(file.getName(), file.lastModified(), type, relativePath.toString()));
+            fileList.add(new DateAndName(file.getName(), file.lastModified(), type, relativePath.toString().replace('\\', '/')));
         }
 
         return fileList;
@@ -212,6 +212,7 @@ public abstract class Network extends Thread{
                     Thread.sleep(2000);
                 }
                 else if (sync){
+                    System.out.println("I will sync and delete.");
                     syncAndDelete();
                     Thread.sleep(2000);
                 }
