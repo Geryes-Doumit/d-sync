@@ -33,6 +33,18 @@ public abstract class Network extends Thread{
     protected Boolean isChange;
     protected List<String> messages = new ArrayList<>();
 
+    public void setSync(Boolean sync) {
+        this.syncCurrent = sync;
+    }
+
+    public Boolean getSync(){
+        return this.syncCurrent;
+    }
+
+    public void setFirstSync(Boolean firstSync) {
+        this.firstSync = firstSync;
+    }
+
     public void connect(){
         connect = false;
         while(!connect){
