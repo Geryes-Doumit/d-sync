@@ -56,6 +56,7 @@ public abstract class Network extends Thread{
     public void resetConnection() {
         connect = false;
         try {
+            System.out.println("Resetting connection...");
             oos.close();
             ois.close();
             socket.close();
@@ -64,7 +65,7 @@ public abstract class Network extends Thread{
                 socket = serverSocket.accept();
             } else {
                 try{
-                    Thread.sleep(100);
+                    Thread.sleep((500));
                 }
                 catch(InterruptedException ie){
                     System.out.println("Error while waiting");
@@ -87,6 +88,7 @@ public abstract class Network extends Thread{
             oos = new ObjectOutputStream(socket.getOutputStream());
             ois = new ObjectInputStream(socket.getInputStream());
             connect = true;
+            System.out.println("Connection reset.");
         } catch (IOException e) {
             System.out.println("Error resetting connection: " + e.getMessage());
         }
