@@ -16,6 +16,7 @@ public class Directory {
         for (File file : subFolderList) {
             if (file.isFile()) {
                 Files.copy(file.toPath(), Path.of(dest + "/" + file.getName()), StandardCopyOption.REPLACE_EXISTING);
+                new File(dest + "/" + file.getName()).setLastModified(file.lastModified());
                 // System.out.println("Created in " + src + " from " + dest + " !");
             }
             else if(file.isDirectory()) {
