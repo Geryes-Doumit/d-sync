@@ -27,6 +27,7 @@ public abstract class Network {
     protected List <DateAndName> listServer;
     protected List <DateAndName> listClient;
     protected List <DateAndName> lastState;
+    protected Boolean isChange;
 
 
     // Getter
@@ -136,9 +137,9 @@ public abstract class Network {
             }
             Path absolutePath = Paths.get(file.getAbsolutePath());
             Path relativePath = basePath.relativize(absolutePath);
-            if (file.isDirectory()){
-                continue;
-            }
+            // if (file.isDirectory()){
+            //     continue;
+            // }
             fileList.add(new DateAndName(file.getName(), file.lastModified(), type, relativePath.toString()));
         }
 
@@ -186,6 +187,17 @@ public abstract class Network {
 
         fos.close();
         resetConnection();
+    }
+
+    public void deleteFile(DateAndName fileToDelete) {
+        File file = new File(path + "/" + fileToDelete.getPath());
+        file.delete();
+    }
+
+    public void createDirectory(DateAndName directoryToCreate) {
+        File folder = new File(path + "/" + directoryToCreate.getPath());
+        folder.mkdirs();
+        folder.setLastModified(directoryToCreate.getDate());
     }
     
 
