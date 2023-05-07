@@ -837,6 +837,7 @@ public class Gui {
                     }
                     else {
                         network.setSync(false);
+                        network.setConnect(false);
                         network.addMessage("Syncing Paused.");
                     }
 
