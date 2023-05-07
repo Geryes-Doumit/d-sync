@@ -152,46 +152,48 @@ public class Server extends Network{
 
     public void run(){
         while(true){
-            try{
-                connect();
-                while(true){
-                    File folder = new File(path);
-                    Boolean foldesrExist = folder.exists() && folder.isDirectory() && (Boolean) receiveMessage();
-                    sendMessage(folder.exists() && folder.isDirectory());
-
-                    resetConnection();
-
-                    Boolean sync = syncCurrent && (Boolean) receiveMessage();
-                    sendMessage(syncCurrent);
-
-                    resetConnection();
-
-                    if (firstSync && sync && foldesrExist){
-                        firstSync();
-                    }
-                    else if (sync && foldesrExist){
-                        syncAndDelete();
-                    }
-                    else if(!foldesrExist && folder.exists()){
-                        if (!messages.get(7).equals("A problem as occured on the client's side.")) {
-                            addMessage("A problem as occured on the client's side.");
-                        }
-                    }
-                    else if(!folder.exists()){
-                        if (!messages.get(7).equals("The local folder path is'nt valid anymore.")) {
-                            addMessage("The local folder path is'nt valid anymore.");
-                        }
-                    }
-                    Thread.sleep(2000);
-                }
-
-            }
-            catch(Exception e){
-                addMessage("Connection lost.");
+            if(active){
                 try{
-                    Thread.sleep(2000);
-                } catch (InterruptedException ie) {
-                    System.out.println("Error while waiting: " + ie.getMessage());
+                    connect();
+                    while(connect){
+                        File folder = new File(path);
+                        Boolean foldesrExist = folder.exists() && folder.isDirectory() && (Boolean) receiveMessage();
+                        sendMessage(folder.exists() && folder.isDirectory());
+
+                        resetConnection();
+
+                        Boolean sync = syncCurrent && (Boolean) receiveMessage();
+                        sendMessage(syncCurrent);
+
+                        resetConnection();
+
+                        if (firstSync && sync && foldesrExist){
+                            firstSync();
+                        }
+                        else if (sync && foldesrExist){
+                            syncAndDelete();
+                        }
+                        else if(!foldesrExist && folder.exists()){
+                            if (!messages.get(7).equals("A problem as occured on the client's side.")) {
+                                addMessage("A problem as occured on the client's side.");
+                            }
+                        }
+                        else if(!folder.exists()){
+                            if (!messages.get(7).equals("The local folder path is'nt valid anymore.")) {
+                                addMessage("The local folder path is'nt valid anymore.");
+                            }
+                        }
+                        Thread.sleep(2000);
+                    }
+
+                }
+                catch(Exception e){
+                    addMessage("Connection lost.");
+                    try{
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ie) {
+                        System.out.println("Error while waiting: " + ie.getMessage());
+                    }
                 }
             }
         }

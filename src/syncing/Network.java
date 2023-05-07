@@ -24,6 +24,7 @@ public abstract class Network extends Thread{
     protected Boolean isServer;
     protected Boolean firstSync = true;
     protected Boolean syncCurrent;
+    protected Boolean active = true;
     protected String path;
     protected static final int BUFFER_SIZE = 8192; // taille du tampon utilisé pour la lecture et l'écriture des fichiers
 
@@ -37,12 +38,48 @@ public abstract class Network extends Thread{
         this.syncCurrent = sync;
     }
 
+    public void setFirstSync(Boolean firstSync) {
+        this.firstSync = firstSync;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public void setIp(String ip){
+        this.ip = ip;
+    }
+
+    public void setPort(int port){
+        this.port = port;
+    }
+
     public Boolean getSync(){
         return this.syncCurrent;
     }
 
-    public void setFirstSync(Boolean firstSync) {
-        this.firstSync = firstSync;
+    public Boolean getFirstSync(){
+        return this.firstSync;
+    }
+
+    public Boolean getActive(){
+        return this.active;
+    }
+
+    public String getPath(){
+        return this.path;
+    }
+
+    public String getIp(){
+        return this.ip;
+    }
+
+    public int getPort(){
+        return this.port;
     }
 
     public void connect(){
@@ -65,10 +102,10 @@ public abstract class Network extends Thread{
                     messages.set(7, "Connecting");
                 }
                 if (ip == null || ip.length() == 0) {
-                    if(serverSocket == null) {
-                        serverSocket = new ServerSocket(port);
-                        serverSocket.setSoTimeout(5000);
-                    }
+                    // if(serverSocket == null) {
+                    serverSocket = new ServerSocket(port);
+                    serverSocket.setSoTimeout(5000);
+                    // }
                     socket = serverSocket.accept();
                 } else {
                     socket = new Socket(ip, port);
