@@ -147,7 +147,7 @@ public class Server extends Network{
             lastState.clear();
             lastState = listFiles(path, path);
             if (isChange) {
-                addMessage("Folders combined.");
+                addMessage("Folders synced.");
             }
             else {
                 if (!messages.get(7).equals("No changes detected") && !messages.get(7).equals("No changes detected.") && !messages.get(7).equals("No changes detected..") && !messages.get(7).equals("No changes detected...") ) {
