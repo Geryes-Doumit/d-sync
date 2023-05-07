@@ -3,7 +3,7 @@
 </h1>
 
 <p align ="center">
-    D-sync is and end-of-semester project during our first year studying Computer Science.<br></br>
+    D-sync is an end-of-semester project during our first year studying Computer Science.<br></br>
     It's a java application used to synchronise files on one machine (local syncing) or two (LAN syncing).
 </p>
 
