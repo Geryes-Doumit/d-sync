@@ -17,7 +17,7 @@
 
 D-sync is a very simple application :
 - Launch it by opening Dsync.jar with Java(TM) Platform,
-- or with the command line like this :
+- or by using this command :
 ```
 java -jar D-Sync.jar
 ```
