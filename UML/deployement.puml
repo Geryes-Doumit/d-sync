@@ -1,0 +1,48 @@
+@startuml
+node User_Server
+node User_Client
+
+node Sync_Server {
+  component GUI_Server
+  component Sync_Manager
+}
+
+node Sync_Client {
+  component GUI_Client
+  component Sync_Manager
+}
+
+User_Server -> GUI_Server : Set folder path, port/Start Sync/Change Theme
+GUI_Server -> GUI_Server : Open theme selection dialog
+GUI_Server -> GUI_Server : Change application theme
+GUI_Server -> User_Server : Display new theme
+
+User_Client -> GUI_Client : Set folder path, port/Start Sync/Change Theme
+GUI_Client -> GUI_Client : Open theme selection dialog
+GUI_Client -> GUI_Client : Change application theme
+GUI_Client -> User_Client : Display new theme
+
+Sync_Server -> Sync_Manager : Folder path, port
+Sync_Server -> Sync_Manager : Start Sync
+
+Sync_Client -> Sync_Manager : Folder path, server IP, port
+Sync_Client -> Sync_Manager : Start Sync
+
+Sync_Manager -> Sync_Manager : Detect changes
+Sync_Manager->GUI_Server: Display sync messages
+Sync_Manager->GUI_Client: Display sync messages
+
+User_Server->GUI_Server: Clicks "Pause"
+GUI_Server->Sync_Manager: Pause synchronization
+Sync_Manager->GUI_Client: Display "Sync Paused On Server"
+User_Client->GUI_Client: Clicks "Pause"
+GUI_Client->Sync_Manager: Pause synchronization
+Sync_Manager->GUI_Server: Display "Sync Paused On Client"
+
+User_Server->GUI_Server: Clicks "Reset"
+GUI_Server->Sync_Manager: Stop synchronization & disconnect
+
+User_Client->GUI_Client: Clicks "Reset"
+GUI_Client->Sync_Manager: Stop synchronization & disconnect
+
+@enduml

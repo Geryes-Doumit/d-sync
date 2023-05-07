@@ -1,0 +1,31 @@
+@startuml
+[*] --> IDLE: Start
+
+state IDLE {
+    [*] --> WAIT
+    WAIT --> CHECK: Changes Detected
+    CHECK --> SYNC: Changes Found
+    SYNC --> WAIT: Sync Complete
+    WAIT --> PAUSED: Pause Clicked
+    PAUSED --> WAIT: Resume Clicked
+    WAIT --> STOPPED: Reset Clicked
+}
+
+state STOPPED {
+    STOPPED --> IDLE: Restart
+}
+
+state PAUSED {
+    PAUSED --> WAIT: Resume Clicked
+    PAUSED --> STOPPED: Reset Clicked
+}
+
+state SYNC {
+    SYNC --> WAIT: Sync Complete
+}
+
+state CHECK {
+    CHECK --> SYNC: Changes Found
+    CHECK --> WAIT: No Changes Found
+}
+@enduml

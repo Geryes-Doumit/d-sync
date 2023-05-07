@@ -1,0 +1,24 @@
+@startuml
+left to right direction
+actor User_Client
+actor User_Server
+
+rectangle "D-Sync" as App {
+  usecase "Set the folder path" as UC1
+  usecase "Start/Pause/Reset the Synchronisation" as UC2
+  usecase "Change the application theme" as UC3
+  usecase "Set the port" as UC4
+  usecase "Set the server IP and port" as UC5
+}
+
+UC1 <-- User_Client
+UC2 <-- User_Client
+UC3 <-- User_Client
+UC5 <-- User_Client
+User_Server --> UC1
+User_Server --> UC2
+User_Server --> UC3 
+User_Server --> UC4
+
+
+@enduml

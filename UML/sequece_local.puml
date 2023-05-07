@@ -1,0 +1,25 @@
+@startuml
+actor User
+participant GUI
+participant "Dsync" as SM
+
+User->GUI: Enters paths of the two directories
+GUI->SM: Paths of directories
+loop Synchronization Loop
+  SM->SM: Detect changes
+  alt No Changes
+    SM->GUI: Display "No changes detected"
+  else Changes Detected
+    SM->SM: Do necessary changes
+    SM->GUI: Display sync messages
+  end
+  User->GUI: Clicks "Pause"
+  GUI->SM: Pause synchronization
+  User->GUI: Clicks "Reset"
+  GUI->SM: Stop synchronization
+end
+User->GUI: Clicks "Change Theme"
+GUI->GUI: Open theme selection dialog
+GUI->GUI: Change application theme
+GUI->User: Display new theme
+@enduml

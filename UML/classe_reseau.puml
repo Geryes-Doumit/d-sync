@@ -1,0 +1,94 @@
+@startuml
+package src.syncing {
+    class DateAndName {
+        - serialVersionUID: long
+        - name: String
+        - type: String
+        - date: Long
+        - path: String
+        + DateAndName(String name, Long date, String type, String path)
+        + DateAndName(String name, Long date, String type)
+        + getName(): String
+        + getDate(): Long
+        + getType(): String
+        + getPath(): String
+        + setName(name: String): void
+        + setDate(date: Long): void
+        + setType(type: String): void
+        + equals(document: DateAndName): Boolean
+        + equalLists(list1: List<DateAndName>, list2: List<DateAndName>): Boolean
+        + toString(): String
+    }
+
+    class Network {
+        #socket: Socket
+        #serverSocket: ServerSocket
+        #ip: String
+        #port: int
+        #oos: ObjectOutputStream
+        #ois: ObjectInputStream
+        #connect: Boolean = false
+        #isServer: Boolean
+        #firstSync: Boolean = true
+        #syncCurrent: Boolean
+        #sync: Boolean = true
+        #active: Boolean = true
+        #path: String
+        #static BUFFER_SIZE: int = 8192
+        #listServer: List<DateAndName>
+        #listClient: List<DateAndName>
+        #lastState: List<DateAndName>
+        #isChange: Boolean
+        #messages: List<String> = new ArrayList<>
+
+        +setSync(Boolean sync)
+        +setFirstSync(Boolean firstSync)
+        +setActive(Boolean active)
+        +setPath(String path)
+        +setIp(String ip)
+        +setPort(int port)
+        +setConnect(Boolean connect)
+        +getSync(): Boolean
+        +getFirstSync(): Boolean
+        +getActive(): Boolean
+        +getPath(): String
+        +getIp(): String
+        +getPort(): int
+        +connect()
+        +resetConnection()
+        +close()
+        +{abstract} firstSync()
+        +{abstract} syncAndDelete()
+        +{abstract} run()
+        +receiveMessage(): Object
+        +sendMessage(Object)
+        +listFiles(String path, String root): List<DateAndName>
+        +sendFile(DateAndName fileToSend)
+        +receiveFile(DateAndName fileToReceive)
+        +fileToDelete(DateAndName fileToDelete)
+        +addMessage(String msg)
+        +resetMessages()
+        +getMessages(): List<String>
+    }
+
+    class Client {
+    +Client(String ip, int port, String path)
+    +void firstSync()
+    +void syncAndDelete()
+    +void run()
+    }
+
+    class Server {
+    +Server(int port, String path)
+    +void firstSync()
+    +void syncAndDelete()
+    +void run()
+    }
+
+    Network <|-- Client
+    Network <|-- Server
+    Network o-- "0..N" DateAndName : contains
+    Client o-- "0..N" DateAndName : contains
+    Server o-- "0..N" DateAndName : contains
+}
+@enduml
