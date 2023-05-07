@@ -20,6 +20,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+/**
+ * Gui class that contains all the methods used to create the GUI of the Dsync application.
+ * <br/>
+ * Author: Geryes Doumit
+ */
 public class Gui {
     private Boolean started = false;
     private Boolean networkMode = false;
@@ -38,22 +43,34 @@ public class Gui {
 
     private List<String> data = new ArrayList<>();
 
-    // Used to check if the ip address entered is valid (no letters, etc...)
     private static final Pattern ipPattern = Pattern.compile(
         "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
 
+    /**
+     * Checks if the ip address entered is valid (no letters, etc...)
+     * @param ip The ip address to check
+     * @return True if the ip address is valid, false otherwise
+     */
     public static boolean isValid(final String ip) {
         return ipPattern.matcher(ip).matches();
     }
 
-    // Used to check if the port number entered is valid (no non-numeric characters)
     private static final Pattern portPattern = Pattern.compile(
         "-?\\d+(\\.\\d+)?");
 
+    /**
+     * Checks if the port number entered is valid (no non-numeric characters)
+     * @param port The port number to check
+     * @return True if the port number is valid, false otherwise
+     */
     public boolean isNumber(String port) {
         return portPattern.matcher(port).matches();
     }
 
+    /**
+     * Adds a hover effect to a JButton.
+     * @param button
+     */
     public void buttonHover(JButton button) {
         button.addMouseListener(new MouseAdapter() {
             @Override
@@ -71,6 +88,11 @@ public class Gui {
         });
     }
 
+    /**
+     * Tells us if a color is dark or not. Used to know what color the text over it should be.
+     * @param c The color to check.
+     * @return True if the color is dark, false otherwise.
+     */
     public Boolean isDark(Color c) {
         float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
 
@@ -83,6 +105,12 @@ public class Gui {
          }
     }
 
+    /**
+     * Sets the text color of a JTextField's and a JLabel's text depending on the background color given.
+     * @param label : the JLabel to change the color of its text.
+     * @param path : the JTextField to change the color of its text.
+     * @param frameBG : the background color of the frame.
+     */
     public void setPathTextColorWithBG(JLabel label, JTextField path, Color frameBG) {
         if (isDark(frameBG)) {
             path.setForeground(Color.WHITE);
@@ -94,6 +122,11 @@ public class Gui {
         }
     }
 
+    /**
+     * Sets the text color of a JTextField's text depending on the background color given.
+     * @param path : the JTextField to change the color of its text.
+     * @param frameBG : the background color of the frame.
+     */
     public void setIPTextColorWithBG(JTextField path, Color frameBG) {
         if (isDark(frameBG)) {
             if (path.getText().equals("IP address") || path.getText().equals("port")) {
@@ -113,6 +146,13 @@ public class Gui {
         }
     }
 
+    /**
+     * Returns the correct message list depending on the network mode.
+     * @param networkMode
+     * @param localMessages
+     * @param networkMessages
+     * @return localMessages if networkMode is false, networkMessages otherwise.
+     */
     public List<String> localOrNetworkMessages(Boolean networkMode, List<String> localMessages, List<String> networkMessages) {
         if (!networkMode) {
             return localMessages;
@@ -122,6 +162,12 @@ public class Gui {
         }
     }
 
+    /**
+     * Updates the messages panel with the messages given.
+     * @param jTextPane : the JTextPane to update.
+     * @param styledDoc : the StyledDocument of the JTextPane.
+     * @param messages : the messages to add to the JTextPane.
+     */
     public void updatePanel(JTextPane jTextPane, StyledDocument styledDoc, List<String> messages) {
         jTextPane.setText("");
         int pos = 0;
@@ -145,8 +191,10 @@ public class Gui {
         jTextPane.updateUI();
     }
 
-    
-    // Reading the user data and saving it
+    /**
+     * Reads the user data from the userDataPath file and saves it in the data list.
+     * @throws FileNotFoundException
+     */
     public void updateData() throws FileNotFoundException {
         File userDataFile = new File(userDataPath);
         data.clear();
@@ -165,6 +213,28 @@ public class Gui {
         }
     }
 
+    /**
+     * Modifies all the given componennts to match the selected theme.
+     * @param frame
+     * @param path1
+     * @param label1
+     * @param path2
+     * @param label2
+     * @param messages
+     * @param panel1
+     * @param panel2
+     * @param pathsPanel
+     * @param panel3
+     * @param panel4
+     * @param panel5
+     * @param syncIcon
+     * @param optionsButton
+     * @param helloButton
+     * @param optionsPanel
+     * @param ipTextField
+     * @param portTextField
+     * @param enterNetworkInfo
+     */
     public void updateTheme(JPanel frame, JTextField path1, JLabel label1, JTextField path2, JLabel label2, 
         JTextPane messages, JPanel panel1, JPanel panel2, JPanel pathsPanel, JPanel panel3, JPanel panel4,
         JPanel panel5, BackgroundRotation syncIcon, JButton optionsButton, JButton helloButton, JPanel optionsPanel,
@@ -216,6 +286,10 @@ public class Gui {
             frame.repaint();
         }
 
+    /**
+     * Creates the GUI of the application.
+     * @throws Exception
+     */
     public void application() throws Exception{
         System.setProperty("sun.java2d.uiScale.enabled", "false");
         System.setProperty("apple.awt.uiScale", "1.0");
@@ -1173,9 +1247,5 @@ public class Gui {
         window.add(frame, BorderLayout.CENTER);
         window.add(optionsPanel, BorderLayout.NORTH);
         window.setVisible(true);
-     }
-
-     public static void main(String[] args) throws Exception {
-        new Gui().application();
      }
 }

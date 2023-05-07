@@ -4,6 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Class that creates a JPanel that allows the user to choose a color.
+ * <br/>
+ * Author: Geryes Doumit
+ */
 public class ColorInputPanel extends JPanel {
     private JTextField redField;
     private JTextField greenField;
@@ -12,20 +17,31 @@ public class ColorInputPanel extends JPanel {
 
     private Color chosenColor;
 
+    /**
+     * Get the chosen color.
+     * @return The chosen color.
+     */
     public Color chosenColor() {
         return chosenColor;
     }
 
+    /**
+     * Set the chosen color.
+     * @param c The chosen color.
+     */
     public void setChosenColor(Color c) {
         chosenColor = c;
     }
 
+    /**
+     * The constructor of the ColorInputPanel class. Creates a new color input panel.
+     */
     public ColorInputPanel() {
         JLabel title = new JLabel("Custom theme:");
 
         // Create the RGB input fields
-        redField = new JTextField("40", 3);
-        greenField = new JTextField("40", 3);
+        redField = new JTextField("55", 3);
+        greenField = new JTextField("90", 3);
         blueField = new JTextField("60", 3);
 
         // Create the preview panel

@@ -6,12 +6,21 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+/**
+ * Class that creates a JPanel that rotates a background image. Used for the animation of the sync icon.
+ * <br/>
+ * Author: Geryes Doumit
+ */
 public class BackgroundRotation extends JPanel {
     private BufferedImage bgImage;
     private double angle = 0;
 
     private Boolean rotate = false;
 
+    /**
+     * The constructor of the BackgroundRotation class.
+     * @param path The path of the background image.
+     */
     public BackgroundRotation(String path) {
         try {
             bgImage = ImageIO.read(getClass().getResource(path));
@@ -29,10 +38,17 @@ public class BackgroundRotation extends JPanel {
         timer.start();
     }
 
+    /**
+     * Set the state of the rotation of the background image.
+     * @param bool
+     */
     public void setRotate(Boolean bool) {
         this.rotate = bool;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

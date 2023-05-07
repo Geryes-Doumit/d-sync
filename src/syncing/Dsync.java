@@ -10,6 +10,12 @@ import java.util.Collections;
 import java.util.List;
 import java.io.IOException;
 
+/**
+ * The Dsync class used for the local synchronisation.
+ * It extends the {@link java.lang.Thread} class to be able to run in parallel with the GUI.
+ * <br/>
+ * Author: Geryes Doumit
+ */
 public class Dsync extends Thread {
     // The two paths of the folders to synchronise
     private String path1;
@@ -28,22 +34,42 @@ public class Dsync extends Thread {
     private List<String> messages = new ArrayList<>();
 
     // --------------- setters --------------- //
+    /**
+     * Sets the sync boolean to true or false.
+     * @param bool
+     */
     public void setSync(Boolean bool) {
         this.sync = bool;
     }
 
+    /**
+     * Sets the firstSync boolean to true or false.
+     * @param bool
+     */
     public void setFirstSync(Boolean bool) {
         this.firstSync = bool;
     }
     
+    /**
+     * Sets the path1 variable to the given path.
+     * @param path
+     */
     public void setPath1(String path) {
         this.path1 = path;
     }
 
+    /**
+     * Sets the path2 variable to the given path.
+     * @param path
+     */
     public void setPath2(String path) {
         this.path2 = path;
     }
 
+    /**
+     * Sets the lastState variable using the .
+     * @param list
+     */
     public void setLastState(String path) {
         lastState.clear();
 
@@ -58,9 +84,11 @@ public class Dsync extends Thread {
         }
     }
 
-    // ---------------  --------------- //
-
     // --------------- Adding to the messages list, resetting it and getting the list --------------- //
+    /**
+     * Adds a message at the end of the list and shifts the other messages.
+     * @param Msg
+     */
     public void addMessage(String Msg) {
         if (messages.isEmpty()) {
             messages.add("");
@@ -85,26 +113,34 @@ public class Dsync extends Thread {
         }
     }
 
+    /**
+     * Resets the messages list.
+     */
     public void resetMessages() {
         messages.set(0, "");
-            messages.set(1, "");
-            messages.set(2, "");
-            messages.set(3, "");
-            messages.set(4, "");
-            messages.set(5, "");
-            messages.set(6, "");
-            messages.set(7, "");
+        messages.set(1, "");
+        messages.set(2, "");
+        messages.set(3, "");
+        messages.set(4, "");
+        messages.set(5, "");
+        messages.set(6, "");
+        messages.set(7, "");
     }
 
+    /**
+     * Get the messages list.
+     * @return the messages list.
+     */
     public List<String> getMessages() {
         return messages;
     }
 
-    // ---------------  --------------- //
-
     // --------------- Syncing functions --------------- //
 
-    // The first synchronisation between two folders. The goal here is to combine the folders so that no file is lost.
+    /** The first synchronisation between two folders. The goal here is to combine the folders so that no file is lost.
+     * @param path1 The path of the first folder.
+     * @param path2 The path of the second folder.
+     */
     public static void firstSync(String path1, String path2) throws IOException {
 
         // Generating the list of files to compare them later on
@@ -177,8 +213,17 @@ public class Dsync extends Thread {
         }
     }
 
-    // The normal synchronisation between two folders. The difference between this and firstSync is that if a file is deleted from a directory, we want to delete it from the other.
-    // It returns a Boolean that tells us if anything has been modified.
+    /**
+     * The normal synchronisation between two folders.
+     * <br/>
+     * The difference between this and firstSync is that if a file is deleted from a directory, we want to delete it from the other.
+     * <br/>
+     * Here, path2 takes priority over path1. If a file isn't in path2, it is deleted from path1. If a file isn't in path1, it is copied from path2.
+     * @param path1 The path of the first folder.
+     * @param path2 The path of the second folder.
+     * @return A Boolean that tells us if anything has been modified.
+     * @throws IOException
+     */
     public Boolean syncAndDelete(String path1, String path2) throws IOException {
 
         // Generating the list of files to compare them later on
@@ -302,10 +347,19 @@ public class Dsync extends Thread {
         return modified;
     }
 
-    // This function uses the earlier functions to check the sub-directories contained inside the two directories to sync.
-    // This function is necessary because we do not compare the modified dates of folders between them directly, because they do not work the same way files do.
-    // It uses the lastModifiedDate function of the Directory class, which returns the date of the last modified file inside the folder.
-    // It uses the most recent folder as the base folder for syncAndDelete.
+    /**
+     * This function uses the {@link src.syncing.Dsync} functions to check the sub-directories contained inside the two directories to sync.
+     * <br/>
+     * This function is necessary because we do not compare the modified dates of folders between them directly, because they do not work the same way files do.
+     * <br/>
+     * It uses the lastModifiedDate function of the {@link src.syncing.Directory} class, which returns the date of the last modified file inside the folder.
+     * <br/>
+     * It uses the most recent folder as the base folder for syncAndDelete.
+     * @param path1 The path of the first folder.
+     * @param path2 The path of the second folder.
+     * @return A Boolean that tells us if anything has been modified.
+     * @throws IOException
+     */
     public Boolean checkAndSyncSubFolders(String path1, String path2) throws IOException {
 
         // Generating the list of files to compare them later on
@@ -333,8 +387,12 @@ public class Dsync extends Thread {
         return modified;
     }
 
-
-    // This function compares the names and dates of files with the last synchronized state.
+    /**
+     * This function compares the names and dates of files with the last synchronized state.
+     * @param path1 The path of the first folder.
+     * @param path2 The path of the second folder.
+     * @throws IOException
+     */
     public void syncLastState(String path1, String path2) throws IOException {
 
         // Generating the list of files to generate the dates and names
@@ -414,7 +472,11 @@ public class Dsync extends Thread {
         }
     }
 
-    // The main function. A simple while loop with some conditions.
+    /** 
+     * The main function. A simple while loop with some conditions.
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public void syncDirectories() throws IOException, InterruptedException {
         while(true) {
             if (firstSync && sync) { // Only true when it is the first synchronisation.
@@ -450,7 +512,11 @@ public class Dsync extends Thread {
         }
     }
 
-    // Overriding the run function of the Thread class.
+    /** 
+     * Overriding the run function of the Thread class.
+     * <br/>
+     * This is the function that will be called when we start the thread.
+     */
     @Override
     public void run() {
         try {

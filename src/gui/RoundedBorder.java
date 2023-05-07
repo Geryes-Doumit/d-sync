@@ -10,11 +10,23 @@ import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.border.Border;
 
+/**
+ * Class that creates a rounded border.
+ * <br/>
+ * Author: Geryes Doumit
+ */
 public class RoundedBorder implements Border {
     private int radius;
     private Color color;
     private int thickness;
 
+    /**
+     * Constructor of the RoundedBorder class.
+     * 
+     * @param radius The radius of the border.
+     * @param color The color of the border.
+     * @param thickness The thickness of the border.
+     */
     public RoundedBorder(int radius, Color color, int thickness) {
         this.radius = radius;
         this.color = color;
@@ -33,22 +45,42 @@ public class RoundedBorder implements Border {
         g2.draw(roundRectangle);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Insets getBorderInsets(Component c) {
         return new Insets(thickness, thickness, thickness, thickness);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean isBorderOpaque() {
         return true;
     }
 
+    // Getters
+
+    /**
+     * Get the radius of the border.
+     * @return The radius of the border.
+     */
     public int getRadius() {
         return radius;
     }
 
+    /**
+     * Get the color of the border.
+     * @return The color of the border.
+     */
     public Color getColor() {
         return color;
     }
 
+    /**
+     * Get the thickness of the border.
+     * @return The thickness of the border.
+     */
     public int getThickness() {
         return thickness;
     }

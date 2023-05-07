@@ -10,6 +10,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+/**
+ * Class that creates a frame that allows the user to choose a theme.
+ * <br/>
+ * Author: Geryes Doumit
+ */
 public class ThemeFrame extends JDialog {
     private Color chosenColor;
     
@@ -19,14 +24,29 @@ public class ThemeFrame extends JDialog {
     private Color darkThemeColor = Color.DARK_GRAY;
     private Color darkPurpleThemeColor = new Color(40, 40, 60);
 
+    /**
+     * Get the chosen color.
+     * @return The chosen color.
+     */
     public Color chosenColor() {
         return chosenColor;
     }
 
+    /**
+     * Set the chosen color.
+     * @param c The chosen color.
+     */
     public void setChosenColor(Color c) {
         chosenColor = c;
     }
 
+    /**
+     * Create a new theme button.
+     * @param name The name of the button.
+     * @param themeColor The color of the button.
+     * @param buttonTextColor The color of the text of the button.
+     * @return The new theme button.
+     */
     public JButton newThemeButton(String name, Color themeColor, Color buttonTextColor) {
         JButton button = new JButton(name);
         button.setBackground(themeColor);
@@ -43,11 +63,16 @@ public class ThemeFrame extends JDialog {
         return button;
     }
 
-    public ThemeFrame(JFrame parent, Color BG) {
+    /**
+     * Constructor of the ThemeFrame class that generates the frame with the background color given. It needs to know the parent frame.
+     * @param parent The parent frame.
+     * @param bg The background color of the frame.
+     */
+    public ThemeFrame(JFrame parent, Color bg) {
         super(parent, "Choose theme", true);
 
         JPanel frame = new JPanel();
-        frame.setBackground(BG);
+        frame.setBackground(bg);
 
         frame.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();

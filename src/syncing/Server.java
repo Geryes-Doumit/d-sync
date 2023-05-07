@@ -3,14 +3,31 @@ package src.syncing;
 import java.io.*;
 import java.util.List;
 
+/**
+ * Server class that extends Network. It is used to create a server that will be able to send and receive files.
+ * See {@link src.syncing.Network} class for more information.
+ * <br/>
+ * Author: Marc Proux
+ */
 public class Server extends Network{
     
+    /**
+     * Constructor of the Server class.
+     * 
+     * @param port The port on which the server will be listening.
+     * @param path The path of the folder that will be synchronized.
+     * @throws Exception
+     */
     public Server(int port, String path) throws Exception{
         this.port = port;
         this.path = path;
         isServer = true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void firstSync() throws IOException {
         listServer = listFiles(path, path);
 
@@ -69,6 +86,10 @@ public class Server extends Network{
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void syncAndDelete() throws IOException{
         isChange = false;
         List <DateAndName> listServer = listFiles(path, path);
@@ -150,11 +171,13 @@ public class Server extends Network{
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void run(){
         while(true){
-            System.out.println("is active ? :"+active);
             if(active){
-                System.out.println("I'm running !!!!");
                 try{
                     connect();
                     while(connect){
@@ -167,18 +190,9 @@ public class Server extends Network{
                         Boolean foldesrExist = state2[0] && state[0];
                         sync = state2[1] && state[1];
                         Boolean firstSyncAll = state2[2] || state[2];
-                        System.out.println("I will sync : "+state2[1]+" && "+state[1]);
-
-                        // sendMessage(folder.exists() && folder.isDirectory());
-
-                        // resetConnection();
-
-                        // sync = syncCurrent && (Boolean) receiveMessage();
-                        // sendMessage(syncCurrent);
 
                         resetConnection();
 
-                        // allFirstSync = (Boolean) receiveMessage() && firstSync;
                         if(!sync && syncCurrent){
                             if (!messages.get(7).equals("Waiting for client to resume syncing.")) {
                                 addMessage("Waiting for client to resume syncing.");
@@ -222,13 +236,5 @@ public class Server extends Network{
                 }
             }
         }
-    }
-
-
-    public static void main(String[] args) throws Exception{
-        Server server = new Server(117, "/Users/marc/Library/CloudStorage/OneDrive-uha.fr/Cours/GitHub/Test_DSync/Server");
-        server.syncCurrent = true;
-
-        server.start();
     }
 }

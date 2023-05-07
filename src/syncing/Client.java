@@ -3,7 +3,22 @@ package src.syncing;
 import java.io.*;
 import java.util.List;
 
+/**
+ * Client class that extends Network. It is used to create a client that will be able to send and receive files.
+ * See {@link src.syncing.Network} class for more information.
+ * <br/>
+ * Author: Marc Proux
+ */
 public class Client extends Network {
+
+    /**
+     * Constructor of the Client class.
+     * 
+     * @param ip The ip of the server.
+     * @param port The port on which the server will be listening.
+     * @param path The path of the folder that will be synchronized.
+     * @throws Exception
+     */
     public Client(String ip, int port, String path) throws Exception{
         this.ip = ip;
         this.port = port;
@@ -11,6 +26,9 @@ public class Client extends Network {
         isServer = false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void firstSync() throws IOException {
         List <DateAndName> listClient = listFiles(path, path);
 
@@ -69,6 +87,9 @@ public class Client extends Network {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void syncAndDelete() throws IOException {
         isChange = false;
         List <DateAndName> listClient = listFiles(path, path);
@@ -151,9 +172,11 @@ public class Client extends Network {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void run(){
         while(true){
-            System.out.println("is active ? : "+active);
             if(active){
                 try{
                     connect();
@@ -168,14 +191,6 @@ public class Client extends Network {
                         System.out.println("I will sync : "+state2[1]+" && "+state[1]);
                         sync = state2[1] && state[1];
                         Boolean firstSyncAll = state2[2] || state[2];
-
-                        // sendMessage(folder.exists() && folder.isDirectory());
-                        // Boolean foldesrExist = folder.exists() && folder.isDirectory() && (Boolean) receiveMessage();
-
-                        // resetConnection();
-
-                        // sendMessage(syncCurrent);
-                        // sync = syncCurrent && (Boolean) receiveMessage();
 
                         resetConnection();
 
@@ -222,12 +237,5 @@ public class Client extends Network {
                 }
             }
         }
-    }
-
-    public static void main(String[] args) throws Exception{
-        Client client = new Client("192.168.1.55", 117, "/Users/marc/Library/CloudStorage/OneDrive-uha.fr/Cours/GitHub/Test_DSync/Client");
-        client.syncCurrent = true;
-
-        client.start();
     }
 }

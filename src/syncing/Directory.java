@@ -8,8 +8,19 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Directory class that contains recursive methods to copy and delete directories.
+ * It also contains a method to get the date of the latest file in a directory.
+ * <br/>
+ * Author: Geryes Doumit
+ */
 public class Directory {
-    // Copies a directory and all its content to the destination
+    /**
+     * Copies a directory and all its content to the destination.
+     * @param src The path of the directory to copy.
+     * @param dest The path of the destination.
+     * @return A string that says that the subdirectories have been synced. Used to add the message in the GUI.
+    */
     public static String copyDirectory(String src, String dest) throws IOException {
         Files.createDirectory(Path.of(dest));
         List<File> subFolderList = Arrays.asList(new File(src).listFiles());
@@ -28,7 +39,11 @@ public class Directory {
         return "Synced the subdirectories.";
     }
 
-    // Deletes a directory and all its content
+    /** 
+     * Deletes a directory and all its content
+     * @param src The path of the directory to delete.
+     * @return A string that says that the subdirectories have been synced. Used to add the message in the GUI.
+    */
     public static String deleteDirectory(String src) throws IOException {
         List<File> subFolderList = Arrays.asList(new File(src).listFiles());
         for (File file : subFolderList) {
@@ -46,7 +61,11 @@ public class Directory {
         return "Synced the subdirectories.";
     }
 
-    // returns the date of the latest file in a directory
+    /**
+     * Returns the date of the latest file in a directory.
+     * @param file The directory to check.
+     * @return The date of the latest file in the directory.
+     */
     public static Long lastModifiedDate(File file) {
         if (file.isFile()) {
             return file.lastModified();
