@@ -32,6 +32,9 @@ public class Gui {
 
     private Color defaultFrameBG = new Color(230, 230, 230);
 
+    private Boolean isServer = false;
+    private Network network;
+
     private List<String> data = new ArrayList<>();
 
     // Used to check if the ip address entered is valid (no letters, etc...)
@@ -90,10 +93,38 @@ public class Gui {
         }
     }
 
-    public void updatePanel(JTextPane jTextPane, StyledDocument styledDoc, Dsync dsync) {
+    public void setIPTextColorWithBG(JTextField path, Color frameBG) {
+        if (isDark(frameBG)) {
+            if (path.getText().equals("IP address") || path.getText().equals("port")) {
+                path.setForeground(Color.GRAY);
+            }
+            else {
+                path.setForeground(Color.WHITE);
+            }
+        }
+        else {
+            if (path.getText().equals("IP address") || path.getText().equals("port")) {
+                path.setForeground(Color.GRAY);
+            }
+            else {
+                path.setForeground(Color.BLACK);
+            }
+        }
+    }
+
+    public List<String> localOrNetworkMessages(Boolean networkMode, List<String> localMessages, List<String> networkMessages) {
+        if (!networkMode) {
+            return localMessages;
+        }
+        else {
+            return networkMessages;
+        }
+    }
+
+    public void updatePanel(JTextPane jTextPane, StyledDocument styledDoc, List<String> messages) {
         jTextPane.setText("");
         int pos = 0;
-        for (String msg : dsync.getMessages()) {
+        for (String msg : messages) {
             try {
                 String str = msg + "\n";
                 styledDoc.insertString(pos, str, jTextPane.getStyle("default"));
@@ -135,36 +166,40 @@ public class Gui {
 
     public void updateTheme(JPanel frame, JTextField path1, JLabel label1, JTextField path2, JLabel label2, 
         JTextPane messages, JPanel panel1, JPanel panel2, JPanel pathsPanel, JPanel panel3, JPanel panel4,
-        JPanel panel5, BackgroundRotation syncIcon, JButton optionsButton, JButton helloButton, JPanel optionsPanel) {
-            path1.setBackground(frame.getBackground().brighter());
-            path2.setBackground(frame.getBackground().brighter());
+        JPanel panel5, BackgroundRotation syncIcon, JButton optionsButton, JButton helloButton, JPanel optionsPanel,
+        JTextField ipTextField, JTextField portTextField, JPanel enterNetworkInfo) {
 
-            setPathTextColorWithBG(label1, path1, frame.getBackground());
-            setPathTextColorWithBG(label2, path2, frame.getBackground());
+            Color frameBG = frame.getBackground();
 
-            messages.setBackground(frame.getBackground().brighter());
-            if (isDark(frame.getBackground())) {
+            path1.setBackground(frameBG.brighter());
+            path2.setBackground(frameBG.brighter());
+
+            setPathTextColorWithBG(label1, path1, frameBG);
+            setPathTextColorWithBG(label2, path2, frameBG);
+
+            messages.setBackground(frameBG.brighter());
+            if (isDark(frameBG)) {
                 messages.setForeground(Color.WHITE);
             }
             else {
                 messages.setForeground(Color.BLACK);
             }
 
-            panel1.setBackground(frame.getBackground());
-            panel2.setBackground(frame.getBackground());
-            panel3.setBackground(frame.getBackground());
-            panel4.setBackground(frame.getBackground());
-            panel5.setBackground(frame.getBackground());
-            pathsPanel.setBackground(frame.getBackground());
+            panel1.setBackground(frameBG);
+            panel2.setBackground(frameBG);
+            panel3.setBackground(frameBG);
+            panel4.setBackground(frameBG);
+            panel5.setBackground(frameBG);
+            pathsPanel.setBackground(frameBG);
 
-            syncIcon.setBackground(frame.getBackground());
+            syncIcon.setBackground(frameBG);
 
-            Color darkerFrameBackground = new Color(Math.abs(frame.getBackground().getRed() - 15), Math.abs(frame.getBackground().getGreen() - 15), Math.abs(frame.getBackground().getBlue() - 15));
+            Color darkerFrameBackground = new Color(Math.abs(frameBG.getRed() - 15), Math.abs(frameBG.getGreen() - 15), Math.abs(frameBG.getBlue() - 15));
             optionsPanel.setBackground(darkerFrameBackground);
             optionsButton.setBackground(darkerFrameBackground);
             helloButton.setBackground(darkerFrameBackground);
 
-            if (isDark(frame.getBackground())) {
+            if (isDark(frameBG)) {
                 optionsButton.setForeground(Color.LIGHT_GRAY);
                 helloButton.setForeground(Color.LIGHT_GRAY);
             }
@@ -173,14 +208,21 @@ public class Gui {
                 helloButton.setForeground(Color.DARK_GRAY);
             }
 
+            ipTextField.setBackground(frameBG.brighter());
+            portTextField.setBackground(frameBG.brighter());
+            enterNetworkInfo.setBackground(frameBG);
+
             frame.repaint();
         }
 
-    public void application() throws IOException{
+    public void application() throws Exception{
         System.setProperty("sun.java2d.uiScale.enabled", "false");
         System.setProperty("apple.awt.uiScale", "1.0");
 
         updateData(); // Making sure the data is up to date when the app opens
+
+        network = new Client(null, 0, null);
+        network.addMessage("Press a button to get started.");
 
         Dsync dsync = new Dsync();
         dsync.addMessage("Press a button to get started.");
@@ -332,27 +374,22 @@ public class Gui {
         hostButton.setOpaque(true);
         hostButton.setBorderPainted(false);
 
-        JButton startSession = new JButton("Connect");
-        startSession.setPreferredSize(new Dimension(100, path2.getHeight()));
-        startSession.setFont(browseButtonFont);
-        startSession.setBackground(new Color(187, 252, 203));
-        startSession.setFocusPainted(false);
-        startSession.setOpaque(true);
-        startSession.setBorderPainted(false);
-
         JPanel enterNetworkInfo = new JPanel(new GridBagLayout());
+        enterNetworkInfo.setBackground(frame.getBackground());
 
         // JLabel ipAddressLabel = new JLabel("IP address :");
         JTextField ipTextField = new JTextField("IP address");
         ipTextField.setBorder(BorderFactory.createEmptyBorder());
         ipTextField.setFont(pathFont);
-        ipTextField.setForeground(Color.GRAY);
+        setIPTextColorWithBG(ipTextField, frame.getBackground());
+        ipTextField.setBackground(frame.getBackground().brighter());
 
         // JLabel portLabel = new JLabel("Port number :");
         JTextField portTextField = new JTextField("port");
         portTextField.setBorder(BorderFactory.createEmptyBorder());
         portTextField.setFont(pathFont);
-        portTextField.setForeground(Color.GRAY);
+        setIPTextColorWithBG(portTextField, frame.getBackground());
+        portTextField.setBackground(frame.getBackground().brighter());
 
         // c.fill = GridBagConstraints.BOTH;
         // c.gridx = 0;
@@ -606,8 +643,6 @@ public class Gui {
             }
         });
 
-        buttonHover(startSession);
-
         HelloButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -639,14 +674,14 @@ public class Gui {
             public void focusGained(FocusEvent e) {
                 if (ipTextField.getText().equals("IP address")) {
                     ipTextField.setText("");
-                    ipTextField.setForeground(Color.BLACK);
+                    setIPTextColorWithBG(ipTextField, frame.getBackground());
                 }
             }
             @Override
             public void focusLost(FocusEvent e) {
                 if (ipTextField.getText().isEmpty()) {
-                    ipTextField.setForeground(Color.GRAY);
                     ipTextField.setText("IP address");
+                    setIPTextColorWithBG(ipTextField, frame.getBackground());
                 }
             }
         });
@@ -656,14 +691,14 @@ public class Gui {
             public void focusGained(FocusEvent e) {
                 if (portTextField.getText().equals("port")) {
                     portTextField.setText("");
-                    portTextField.setForeground(Color.BLACK);
+                    setIPTextColorWithBG(portTextField, frame.getBackground());
                 }
             }
             @Override
             public void focusLost(FocusEvent e) {
                 if (portTextField.getText().isEmpty()) {
-                    portTextField.setForeground(Color.GRAY);
                     portTextField.setText("port");
+                    setIPTextColorWithBG(portTextField, frame.getBackground());
                 }
             }
         });
@@ -673,15 +708,14 @@ public class Gui {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!started) {
-                    Boolean validLocal = new File(path1.getText()).exists() 
+                    
+                    if (!networkMode) {
+                        Boolean validLocal = new File(path1.getText()).exists() 
                         && new File(path1.getText()).isDirectory() 
                         && new File(path2.getText()).exists()
                         && new File(path2.getText()).isDirectory();
 
-                    Boolean validNetwork = false; // to change
-
-                    if (validLocal || validNetwork) {
-                        if (!networkMode) {
+                        if (validLocal) {
                             dsync.setSync(true);
                             if (startSync.getText().equals("Start Syncing")) {
                                 dsync.setPath1(path1.getText().trim());
@@ -692,32 +726,122 @@ public class Gui {
                                 path2.setEditable(false);
                                 path2.setBackground(frame.getBackground().darker());
                                 path2.setBorder(BorderFactory.createEmptyBorder());
+    
+                                networkButton.setEnabled(false);
+                                networkButton.setBackground(Color.LIGHT_GRAY);
+                            }
+    
+                            if (!dsync.isAlive()) dsync.start();
+                            started = true;
+    
+                            startSync.setText("Pause Syncing");
+                            startSync.setBackground(new Color(250, 90, 90));
+    
+                            syncIcon.setRotate(true); // Start rotation
+                        }
+                        else {
+                            dsync.addMessage("Invalid paths.");
+                        }
+                    }
+                    else { // If network mode is enabled
+                        Boolean validPath = new File(path1.getText()).exists() && new File(path1.getText()).isDirectory();
+                        Boolean validNetwork;
+                        if (isServer) {
+                            if (isNumber(portTextField.getText().trim())) {
+                                validNetwork = true;
+                            }
+                            else {
+                                validNetwork = false;
+                            }
+                        }
+                        else {
+                            if (isNumber(portTextField.getText().trim()) && isValid(ipTextField.getText().trim())) {
+                                validNetwork = true;
+                            }
+                            else {
+                                validNetwork = false;
+                            }
+                        }
+
+                        if (validPath && validNetwork) {
+
+                            if (startSync.getText().equals("Start Syncing")) {
+                                path1.setEditable(false);
+                                path1.setBackground(frame.getBackground().darker());
+                                path1.setBorder(BorderFactory.createEmptyBorder());
+
+                                ipTextField.setEditable(false);
+                                ipTextField.setBackground(frame.getBackground().darker());
+                                ipTextField.setBorder(BorderFactory.createEmptyBorder());
+                                portTextField.setEditable(false);
+                                portTextField.setBackground(frame.getBackground().darker());
+                                portTextField.setBorder(BorderFactory.createEmptyBorder());
 
                                 networkButton.setEnabled(false);
                                 networkButton.setBackground(Color.LIGHT_GRAY);
                             }
+                                
+                            started = true;
+    
+                            startSync.setText("Pause Syncing");
+                            startSync.setBackground(new Color(250, 90, 90));
+    
+                            syncIcon.setRotate(true); // Start rotation
 
-                            if (!dsync.isAlive()) dsync.start();
+                            if (isServer) {
+                                try {
+                                    if (network.getSync() == null) {
+                                        System.out.println("Test");
+                                        network = new Server(Integer.valueOf(portTextField.getText().trim()), new File(path1.getText().trim()).getAbsolutePath());
+                                        network.addMessage("");
+                                    }
+                                    network.setActive(true);
+                                    System.out.println(network.getActive());
+                                    network.setSync(true);
+
+                                    if (!network.isAlive()) network.start();
+                                } 
+                                catch (NumberFormatException e1) {} 
+                                catch (Exception e1) {}
+                            }
+                            else {
+                                try {
+                                    if (network.getSync() == null) {
+                                        System.out.println("Test");
+                                        network = new Client(ipTextField.getText().trim(), Integer.valueOf(portTextField.getText().trim()), new File(path1.getText().trim()).getAbsolutePath());
+                                        network.addMessage("");
+                                    }
+                                    network.setActive(true);
+                                    System.out.println(network.getActive());
+                                    network.setSync(true);
+
+                                    if (!network.isAlive()) network.start();
+                                } 
+                                catch (NumberFormatException e1) {} 
+                                catch (Exception e1) {}
+                            }
                         }
-                        started = true;
+                        else {
+                            network.addMessage("Invalid fields.");
+                        }
 
-                        startSync.setText("Pause Syncing");
-                        startSync.setBackground(new Color(250, 90, 90));
-
-                        syncIcon.setRotate(true); // Start rotation
-                    }
-                    else {
-                        dsync.addMessage("Invalid paths.");
                     }
 
-                    updatePanel(messages, styledMsg, dsync);
+                    updatePanel(messages, styledMsg, localOrNetworkMessages(networkMode, dsync.getMessages(), network.getMessages()));
                 }
                 
-                else {
-                    dsync.setSync(false);
-                    dsync.addMessage("Syncing Paused.");
+                else { // If it has already been started
+                    if (!networkMode) {
+                        dsync.setSync(false);
+                        dsync.addMessage("Syncing Paused.");
+                    }
+                    else {
+                        network.setSync(false);
+                        network.addMessage("Syncing Paused.");
+                    }
 
-                    updatePanel(messages, styledMsg, dsync);
+
+                    updatePanel(messages, styledMsg, localOrNetworkMessages(networkMode, dsync.getMessages(), network.getMessages()));
                     started = false;
 
                     startSync.setText("Resume Syncing");
@@ -775,6 +899,11 @@ public class Gui {
                     
                     portTextField.setText("port");
                     portTextField.setForeground(Color.GRAY);
+                    
+                    ipTextField.setEditable(true);
+                    ipTextField.setBackground(frame.getBackground().brighter());
+                    portTextField.setEditable(true);
+                    portTextField.setBackground(frame.getBackground().brighter());
                 }
 
                 networkButton.setEnabled(true);
@@ -782,10 +911,20 @@ public class Gui {
 
                 syncIcon.setRotate(false); // Stop rotation
 
-                dsync.resetMessages();
-                dsync.setFirstSync(true);
-                dsync.setSync(false);
-                updatePanel(messages, styledMsg, dsync);
+                if (!networkMode) {
+                    dsync.resetMessages();
+                    dsync.setFirstSync(true);
+                    dsync.setSync(false);
+                }
+                else {
+                    network.resetMessages();
+                    // network.setFirstSync(true);
+                    network.setSync(false);
+                    network.close();
+                    network.setActive(false);
+                    System.out.println(network.getActive());
+                }
+                updatePanel(messages, styledMsg, localOrNetworkMessages(networkMode, dsync.getMessages(), network.getMessages()));
 
                 startSync.setText("Start Syncing");
                 startSync.setBackground(new Color(187, 252, 203));
@@ -836,12 +975,11 @@ public class Gui {
                     label2.setText("Put in the IP adress and port of a server-host :");
                     path2.setEditable(false);
                     path2.setText("");
-                    path2.setBackground(new Color(220, 220, 220));
+                    path2.setBorder(BorderFactory.createEmptyBorder());
                     path2.remove(browseButton2);
 
                     path2.add(hostButton, BorderLayout.WEST);
                     path2.add(enterNetworkInfo, BorderLayout.CENTER);
-                    path2.add(startSession, BorderLayout.EAST);
                     
                     try {
                         path1.setText(data.get(0));
@@ -865,7 +1003,6 @@ public class Gui {
                     path2.add(browseButton2, BorderLayout.EAST);
 
                     path2.remove(hostButton);
-                    path2.remove(startSession);
                     path2.remove(enterNetworkInfo);
 
                     try {
@@ -885,10 +1022,9 @@ public class Gui {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (hostButton.isSelected()) {
+                    isServer = true;
                     hostButton.setText("Become client"); 
                     hostButton.setBackground(Color.GRAY);
-
-                    startSession.setText("Start");
 
                     label2.setText("Put in the desired port number :                    ");
 
@@ -896,10 +1032,9 @@ public class Gui {
                     enterNetworkInfo.remove(ipTextField);
                 }
                 else {
+                    isServer = false;
                     hostButton.setText("Host server");
                     hostButton.setBackground(Color.WHITE);
-
-                    startSession.setText("Connect");
 
                     label2.setText("Put in the IP address and port of a server-host :");
 
@@ -936,7 +1071,8 @@ public class Gui {
 
                 frame.setBackground(newTheme.chosenColor());
                 updateTheme(frame, path1, label1, path2, label2, messages, panel1, panel2,
-                    pathsPanel, panel3, panel4, panel5, syncIcon, optionsButton, HelloButton, optionsPanel);
+                    pathsPanel, panel3, panel4, panel5, syncIcon, optionsButton, HelloButton, optionsPanel,
+                    ipTextField, portTextField, enterNetworkInfo);
             }
             
         });
@@ -945,7 +1081,7 @@ public class Gui {
         new Timer(300, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updatePanel(messages, styledMsg, dsync);
+                updatePanel(messages, styledMsg, localOrNetworkMessages(networkMode, dsync.getMessages(), network.getMessages()));
 
                 if (path1.getText().isEmpty() && browse1Removed) {
                     path1.add(browseButton1, BorderLayout.EAST);
@@ -1000,7 +1136,7 @@ public class Gui {
                 }
                 else {
                     if (!ipTextField.getText().equals("IP address")) {
-                        ipTextField.setForeground(Color.BLACK);
+                        setIPTextColorWithBG(ipTextField, frame.getBackground());
                         if (isValid(ipTextField.getText().trim())) {
                             ipTextField.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(187, 252, 203)));
                         }
@@ -1013,7 +1149,7 @@ public class Gui {
                     }
 
                     if (!portTextField.getText().equals("port")) {
-                        portTextField.setForeground(Color.BLACK);
+                        setIPTextColorWithBG(ipTextField, frame.getBackground());
                         if (isNumber(portTextField.getText().trim())) {
                             portTextField.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, new Color(187, 252, 203)));
                         }
@@ -1031,13 +1167,13 @@ public class Gui {
 
         //### END OF SECTION ###\\
 
-        updatePanel(messages, styledMsg, dsync);
+        updatePanel(messages, styledMsg, dsync.getMessages());
         window.add(frame, BorderLayout.CENTER);
         window.add(optionsPanel, BorderLayout.NORTH);
         window.setVisible(true);
      }
 
-     public static void main(String[] args) throws IOException {
+     public static void main(String[] args) throws Exception {
         new Gui().application();
      }
 }

@@ -153,6 +153,7 @@ public class Client extends Network {
 
     public void run(){
         while(true){
+            System.out.println("is active ? : "+active);
             if(active){
                 try{
                     connect();
@@ -164,7 +165,7 @@ public class Client extends Network {
                         resetConnection();
 
                         sendMessage(syncCurrent);
-                        Boolean sync = syncCurrent && (Boolean) receiveMessage();
+                        sync = syncCurrent && (Boolean) receiveMessage();
 
                         resetConnection();
 
@@ -189,7 +190,10 @@ public class Client extends Network {
 
                 }
                 catch(Exception e){
-                    addMessage("Connection lost.");
+                    if(!messages.get(6).equals("Connection lost.")){
+                        addMessage("Connection lost.");
+                    }
+                    System.out.println("Error in run :"+e);
                     try{
                         Thread.sleep(2000);
                     } catch (InterruptedException ie) {

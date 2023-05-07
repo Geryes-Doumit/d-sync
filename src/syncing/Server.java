@@ -152,7 +152,9 @@ public class Server extends Network{
 
     public void run(){
         while(true){
+            System.out.println("is active ? :"+active);
             if(active){
+                System.out.println("I'm running !!!!");
                 try{
                     connect();
                     while(connect){
@@ -162,15 +164,15 @@ public class Server extends Network{
 
                         resetConnection();
 
-                        Boolean sync = syncCurrent && (Boolean) receiveMessage();
+                        syncCurrent = syncCurrent && (Boolean) receiveMessage();
                         sendMessage(syncCurrent);
 
                         resetConnection();
 
-                        if (firstSync && sync && foldesrExist){
+                        if (firstSync && syncCurrent && foldesrExist){
                             firstSync();
                         }
-                        else if (sync && foldesrExist){
+                        else if (syncCurrent && foldesrExist){
                             syncAndDelete();
                         }
                         else if(!foldesrExist && folder.exists()){
@@ -188,7 +190,10 @@ public class Server extends Network{
 
                 }
                 catch(Exception e){
-                    addMessage("Connection lost.");
+                    if(!messages.get(6).equals("Connection lost.")){
+                        addMessage("Connection lost.");
+                    }
+                    System.out.println("Error in run :"+e);
                     try{
                         Thread.sleep(2000);
                     } catch (InterruptedException ie) {

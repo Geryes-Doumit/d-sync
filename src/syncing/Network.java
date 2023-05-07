@@ -24,6 +24,7 @@ public abstract class Network extends Thread{
     protected Boolean isServer;
     protected Boolean firstSync = true;
     protected Boolean syncCurrent;
+    protected Boolean sync;
     protected Boolean active = true;
     protected String path;
     protected static final int BUFFER_SIZE = 8192; // taille du tampon utilisé pour la lecture et l'écriture des fichiers
@@ -58,6 +59,11 @@ public abstract class Network extends Thread{
         this.port = port;
     }
 
+    public void setConnect (Boolean connect){
+        this.connect = connect;
+    }
+
+
     public Boolean getSync(){
         return this.syncCurrent;
     }
@@ -84,9 +90,9 @@ public abstract class Network extends Thread{
 
     public void connect(){
         connect = false;
-        while(!connect){
+        while(!connect && active){
             try{
-                if (!messages.get(7).equals("Connecting") && !messages.get(7).equals("Connecting.") && !messages.get(7).equals("Connecting..") && !messages.get(7).equals("Connecting...") ) {
+                if (!messages.get(7).equals("Connecting") && !messages.get(7).equals("Connecting.") && !messages.get(7).equals("Connecting..") && !messages.get(7).equals("Connecting...") && syncCurrent) {
                     addMessage("Connecting");
                 }
                 else if (messages.get(7).equals("Connecting")) {
@@ -102,10 +108,11 @@ public abstract class Network extends Thread{
                     messages.set(7, "Connecting");
                 }
                 if (ip == null || ip.length() == 0) {
-                    // if(serverSocket == null) {
-                    serverSocket = new ServerSocket(port);
-                    serverSocket.setSoTimeout(5000);
-                    // }
+                    if(serverSocket == null) {
+                        System.out.println("Creation socket");
+                        serverSocket = new ServerSocket(port);
+                        serverSocket.setSoTimeout(5000);
+                    }
                     socket = serverSocket.accept();
                 } else {
                     socket = new Socket(ip, port);
@@ -118,6 +125,7 @@ public abstract class Network extends Thread{
                 System.out.println("Error while connecting: " + e.getMessage());
                 if (ip == null || ip.length() == 0) {
                     try{
+                        System.out.println("Reset server socket");
                         serverSocket.close();
                     } catch (Exception ex) {
                         System.out.println("Error while closing socket: " + ex.getMessage());
@@ -180,9 +188,6 @@ public abstract class Network extends Thread{
             oos.close();
             ois.close();
             socket.close();
-            if (ip == null){
-                serverSocket.close();
-            }
         }
         catch(Exception e){
             System.out.println("Error while closing connection");
