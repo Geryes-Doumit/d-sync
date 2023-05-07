@@ -1,0 +1,18 @@
+@startuml
+left to right direction
+actor Utilisateur
+rectangle "Application de synchronisation de répertoire" as App {
+  usecase "Saisir les chemins des dossiers locaux" as UC1
+  usecase "Saisir le chemin du dossier local et l'IP/port du serveur distant" as UC2
+  usecase "Fusionner les dossiers locaux" as UC3
+  usecase "Mettre à jour les modifications" as UC4
+}
+
+Utilisateur --> App : Utilise
+
+App --> UC1 : Invoque
+App --> UC2 : Invoque
+App --> UC3 : Invoque
+App --> UC4 : Invoque
+
+@enduml
