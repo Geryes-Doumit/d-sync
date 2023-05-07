@@ -159,20 +159,40 @@ public class Server extends Network{
                     connect();
                     while(connect){
                         File folder = new File(path);
-                        Boolean foldesrExist = folder.exists() && folder.isDirectory() && (Boolean) receiveMessage();
-                        sendMessage(folder.exists() && folder.isDirectory());
+
+                        Boolean state[] = {folder.exists() && folder.isDirectory(), syncCurrent, firstSync};
+                        sendMessage(state);
+                        Boolean state2[] = (Boolean[]) receiveMessage();
+
+                        Boolean foldesrExist = state2[0] && state[0];
+                        sync = state2[1] && state[1];
+                        Boolean firstSyncAll = state2[2] || state[2];
+                        System.out.println("I will sync : "+state2[1]+" && "+state[1]);
+
+                        // sendMessage(folder.exists() && folder.isDirectory());
+
+                        // resetConnection();
+
+                        // sync = syncCurrent && (Boolean) receiveMessage();
+                        // sendMessage(syncCurrent);
 
                         resetConnection();
 
-                        syncCurrent = syncCurrent && (Boolean) receiveMessage();
-                        sendMessage(syncCurrent);
-
-                        resetConnection();
-
-                        if (firstSync && syncCurrent && foldesrExist){
+                        // allFirstSync = (Boolean) receiveMessage() && firstSync;
+                        if(!sync && syncCurrent){
+                            if (!messages.get(7).equals("Waiting for client to resume syncing.")) {
+                                addMessage("Waiting for client to resume syncing.");
+                            }
+                        }
+                        else if(!syncCurrent){
+                            if (!messages.get(7).equals("Syncing Paused.")) {
+                                addMessage("Syncing Paused.");
+                            }
+                        }
+                        else if (firstSyncAll && sync && foldesrExist){
                             firstSync();
                         }
-                        else if (syncCurrent && foldesrExist){
+                        else if (sync && foldesrExist){
                             syncAndDelete();
                         }
                         else if(!foldesrExist && folder.exists()){

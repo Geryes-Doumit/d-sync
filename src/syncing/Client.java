@@ -159,17 +159,37 @@ public class Client extends Network {
                     connect();
                     while(connect){
                         File folder = new File(path);
-                        sendMessage(folder.exists() && folder.isDirectory());
-                        Boolean foldesrExist = folder.exists() && folder.isDirectory() && (Boolean) receiveMessage();
+
+                        Boolean state[] = {folder.exists() && folder.isDirectory(), syncCurrent, firstSync};
+                        Boolean state2[] = (Boolean[]) receiveMessage();
+                        sendMessage(state);
+
+                        Boolean foldesrExist = state2[0] && state[0];
+                        System.out.println("I will sync : "+state2[1]+" && "+state[1]);
+                        sync = state2[1] && state[1];
+                        Boolean firstSyncAll = state2[2] || state[2];
+
+                        // sendMessage(folder.exists() && folder.isDirectory());
+                        // Boolean foldesrExist = folder.exists() && folder.isDirectory() && (Boolean) receiveMessage();
+
+                        // resetConnection();
+
+                        // sendMessage(syncCurrent);
+                        // sync = syncCurrent && (Boolean) receiveMessage();
 
                         resetConnection();
 
-                        sendMessage(syncCurrent);
-                        sync = syncCurrent && (Boolean) receiveMessage();
-
-                        resetConnection();
-
-                        if (firstSync && sync && foldesrExist){
+                        if(!sync && syncCurrent){
+                            if (!messages.get(7).equals("Waiting for server to resume syncing.")) {
+                                addMessage("Waiting for server to resume syncing.");
+                            }
+                        }
+                        else if(!syncCurrent){
+                            if (!messages.get(7).equals("Syncing Paused.")) {
+                                addMessage("Syncing Paused.");
+                            }
+                        }
+                        else if (firstSyncAll && sync && foldesrExist){
                             firstSync();
                         }
                         else if (sync && foldesrExist){

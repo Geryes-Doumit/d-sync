@@ -24,7 +24,7 @@ public abstract class Network extends Thread{
     protected Boolean isServer;
     protected Boolean firstSync = true;
     protected Boolean syncCurrent;
-    protected Boolean sync;
+    protected Boolean sync = true;
     protected Boolean active = true;
     protected String path;
     protected static final int BUFFER_SIZE = 8192; // taille du tampon utilisé pour la lecture et l'écriture des fichiers
@@ -92,7 +92,7 @@ public abstract class Network extends Thread{
         connect = false;
         while(!connect && active){
             try{
-                if (!messages.get(7).equals("Connecting") && !messages.get(7).equals("Connecting.") && !messages.get(7).equals("Connecting..") && !messages.get(7).equals("Connecting...") && syncCurrent) {
+                if (!messages.get(7).equals("Connecting") && !messages.get(7).equals("Connecting.") && !messages.get(7).equals("Connecting..") && !messages.get(7).equals("Connecting...")) {
                     addMessage("Connecting");
                 }
                 else if (messages.get(7).equals("Connecting")) {
@@ -109,9 +109,8 @@ public abstract class Network extends Thread{
                 }
                 if (ip == null || ip.length() == 0) {
                     if(serverSocket == null) {
-                        System.out.println("Creation socket");
                         serverSocket = new ServerSocket(port);
-                        serverSocket.setSoTimeout(5000);
+                        serverSocket.setSoTimeout(2000);
                     }
                     socket = serverSocket.accept();
                 } else {
@@ -123,23 +122,20 @@ public abstract class Network extends Thread{
             }
             catch(Exception e){
                 System.out.println("Error while connecting: " + e.getMessage());
-                if (ip == null || ip.length() == 0) {
-                    try{
-                        System.out.println("Reset server socket");
-                        serverSocket.close();
-                    } catch (Exception ex) {
-                        System.out.println("Error while closing socket: " + ex.getMessage());
-                    }
-                }
+                // if (ip == null || ip.length() == 0) {
+                //     try{
+                //         System.out.println("Reset server socket");
+                //         serverSocket.close();
+                //     } catch (Exception ex) {
+                //         System.out.println("Error while closing socket: " + ex.getMessage());
+                //     }
+                // }
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException ie) {
                     System.out.println("Error waiting: " + ie.getMessage());
                 }
             }
-        }
-        if (connect){
-            System.out.println("Connected.");
         }
     }
 
@@ -150,7 +146,7 @@ public abstract class Network extends Thread{
             ois.close();
             socket.close();
             if (ip == null || ip.length() == 0) {
-                serverSocket.setSoTimeout(30000);
+                serverSocket.setSoTimeout(2000);
                 socket = serverSocket.accept();
             } else {
                 try{
