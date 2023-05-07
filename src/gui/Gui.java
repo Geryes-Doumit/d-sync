@@ -15,6 +15,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -662,16 +665,16 @@ public class Gui {
         optionsButton.setBorderPainted(false);
         optionsButton.setForeground(invertedFrameBackground);
 
-        JButton HelloButton = new JButton("Dsync, by Geryes and Marc.");
-        HelloButton.setFont(browseButtonFont);
-        HelloButton.setBackground(optionsPanel.getBackground());
-        HelloButton.setFocusPainted(false);
-        HelloButton.setOpaque(true);
-        HelloButton.setBorderPainted(false);
-        HelloButton.setForeground(invertedFrameBackground);
+        JButton helloButton = new JButton("Dsync, by Geryes and Marc.");
+        helloButton.setFont(browseButtonFont);
+        helloButton.setBackground(optionsPanel.getBackground());
+        helloButton.setFocusPainted(false);
+        helloButton.setOpaque(true);
+        helloButton.setBorderPainted(false);
+        helloButton.setForeground(invertedFrameBackground);
 
         optionsPanel.add(optionsButton, BorderLayout.WEST);
-        optionsPanel.add(HelloButton, BorderLayout.EAST);
+        optionsPanel.add(helloButton, BorderLayout.EAST);
 
         //### END OF SECTION ###\\
 
@@ -715,19 +718,6 @@ public class Gui {
             @Override
             public void mouseExited(MouseEvent e) {
                 hostButton.setBackground(hostButton.getBackground().brighter());
-            }
-        });
-
-        HelloButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                // Change cursor when mouse enters
-                HelloButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-            
-            @Override
-            public void mouseExited(MouseEvent e) {
-                // No need to change the cursor
             }
         });
 
@@ -1147,8 +1137,22 @@ public class Gui {
 
                 frame.setBackground(newTheme.chosenColor());
                 updateTheme(frame, path1, label1, path2, label2, messages, panel1, panel2,
-                    pathsPanel, panel3, panel4, panel5, syncIcon, optionsButton, HelloButton, optionsPanel,
+                    pathsPanel, panel3, panel4, panel5, syncIcon, optionsButton, helloButton, optionsPanel,
                     ipTextField, portTextField, enterNetworkInfo);
+            }
+            
+        });
+
+        helloButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // String url = "https://github.com/Marc-Proux/d-sync";
+                try {
+                    java.awt.Desktop.getDesktop().browse(new URL("https://github.com/Marc-Proux/d-sync").toURI());
+                }
+                  catch (java.io.IOException | URISyntaxException e1) {
+                      System.out.println(e1.getMessage());
+                }
             }
             
         });
