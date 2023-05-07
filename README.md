@@ -3,38 +3,39 @@
 </h1>
 
 <p align ="center">
-    D-sync est un projet de fin de semestre de première année en cycle ingénieur en Informatique & Réseaux.<br></br>
-    D-sync est une application java de synchronisation de fichiers sur une ou deux machine (LAN).
+    D-sync is and end-of-semester project during our first year studying Computer Science.<br></br>
+    It's a java application used to synchronise files on one machine (local syncing) or two (LAN syncing).
 </p>
 
 <hr />
 
-## Prérequis
+## Requirements
 
 - Jdk 17
 
-## Utilisation
+## Using the app
 
-L'utilisation de D-sync est très simple :
-- Lancer l'application grâce à la commande 
+D-sync is a very simple application :
+- Launch it by opening Dsync.jar with Java(TM) Platform,
+- or with the command line like this :
 ```
 java -jar D-Sync.jar
 ```
 
-- Sur l'interface séléctionner le mode local ou network et pour ce dernier, séléctionner le mode serveur ou client.
+- You will see multiple buttons on the interface. You can choose the local mode or the network mode, in which you can choose to host a server or to connect to one
 
-- Rentrer les informations demandées (adresse ip, port, dossier à synchroniser)
+- Make sure to fill out the required information (folder path(s), IP address, port)
 
-- Lancer la synchronisation et admirer la magie de D-sync
+- Press Start Syncing and admire Dsync working flawlessly
 
-- Il est également possible de personnaliser le thème de l'application via le menu "Change Theme"
+- You can also change the application's theme just by clicking on the "change theme" button
 
 ## License
 
-Application sous [license MIT](./LICENSE.md)
+Dsync is licensed under [license MIT](./LICENSE.md)
 
 <footer>
 <p align="center">
-Créé avec ❤️ par Geryes et Marc, étudiants à l'<a href="https://www.ensisa.uha.fr">ENSISA</a>.
+Created with ❤️ by Geryes et Marc, students at <a href="https://www.ensisa.uha.fr">ENSISA</a>.
 </p>
 </footer>
