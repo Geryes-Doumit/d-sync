@@ -188,7 +188,6 @@ public class Client extends Network {
                         sendMessage(state);
 
                         Boolean foldesrExist = state2[0] && state[0];
-                        System.out.println("I will sync : "+state2[1]+" && "+state[1]);
                         sync = state2[1] && state[1];
                         Boolean firstSyncAll = state2[2] || state[2];
 
@@ -235,6 +234,11 @@ public class Client extends Network {
                         System.out.println("Error while waiting: " + ie.getMessage());
                     }
                 }
+            }
+            try{
+                Thread.sleep(100);
+            } catch (InterruptedException ie) {
+                System.out.println("Error while waiting: " + ie.getMessage());
             }
         }
     }

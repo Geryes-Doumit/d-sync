@@ -235,6 +235,11 @@ public class Server extends Network{
                     }
                 }
             }
+            try{
+                Thread.sleep(100);
+            } catch (InterruptedException ie) {
+                System.out.println("Error while waiting: " + ie.getMessage());
+            }
         }
     }
 }
