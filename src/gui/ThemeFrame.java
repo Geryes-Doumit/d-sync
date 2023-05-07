@@ -43,13 +43,16 @@ public class ThemeFrame extends JDialog {
         return button;
     }
 
-    public ThemeFrame(JFrame parent) {
+    public ThemeFrame(JFrame parent, Color BG) {
         super(parent, "Choose theme", true);
 
-        setLayout(new GridBagLayout());
+        JPanel frame = new JPanel();
+        frame.setBackground(BG);
+
+        frame.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-        setSize(300, 500);
+        setSize(800, 600);
         setLocationRelativeTo(null);
 
         JButton lightTheme = newThemeButton("Default Light Theme", lightThemeColor, darkThemeColor);
@@ -82,19 +85,21 @@ public class ThemeFrame extends JDialog {
         c.insets = new Insets(10, 10, 10, 10);
 
         c.gridy = 0;
-        add(lightTheme, c);
+        frame.add(lightTheme, c);
 
         c.gridy = 1;
-        add(lightPinkTheme, c);
+        frame.add(lightPinkTheme, c);
 
         c.gridy = 2;
-        add(darkTheme, c);
+        frame.add(darkTheme, c);
 
         c.gridy = 3;
-        add(darkPurpleTheme, c);
+        frame.add(darkPurpleTheme, c);
 
         c.gridy = 4;
-        add(customPanel, c);
+        frame.add(customPanel, c);
+
+        add(frame);
     }
     
 }

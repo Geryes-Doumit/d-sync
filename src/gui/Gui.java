@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 public class Gui {
     private Boolean started = false;
     private Boolean networkMode = false;
+    private Boolean editableNetwork = true;
 
     private Boolean browse1Removed = false;
     private Boolean browse2Removed = false;
@@ -776,6 +777,8 @@ public class Gui {
                                 portTextField.setEditable(false);
                                 portTextField.setBackground(frame.getBackground().darker());
                                 portTextField.setBorder(BorderFactory.createEmptyBorder());
+                                // hostButton.setEnabled(false);
+                                editableNetwork = false;
 
                                 networkButton.setEnabled(false);
                                 networkButton.setBackground(Color.LIGHT_GRAY);
@@ -795,7 +798,11 @@ public class Gui {
                                         network = new Server(Integer.valueOf(portTextField.getText().trim()), new File(path1.getText().trim()).getAbsolutePath());
                                         network.addMessage("");
                                     }
-                                    network.setActive(true);
+                                    else {
+                                        network.setPath(new File(path1.getText().trim()).getAbsolutePath());
+                                        network.setActive(true);
+                                    }
+                                    
                                     System.out.println(network.getActive());
                                     network.setSync(true);
 
@@ -811,7 +818,10 @@ public class Gui {
                                         network = new Client(ipTextField.getText().trim(), Integer.valueOf(portTextField.getText().trim()), new File(path1.getText().trim()).getAbsolutePath());
                                         network.addMessage("");
                                     }
-                                    network.setActive(true);
+                                    else {
+                                        network.setPath(new File(path1.getText().trim()).getAbsolutePath());
+                                        network.setActive(true);
+                                    }
                                     System.out.println(network.getActive());
                                     network.setSync(true);
 
@@ -837,8 +847,6 @@ public class Gui {
                     }
                     else {
                         network.setSync(false);
-                        network.setConnect(false);
-                        network.addMessage("Syncing Paused.");
                     }
 
 
@@ -894,18 +902,6 @@ public class Gui {
                     path2.repaint();
                     browse2Removed = false;
                 }
-                else {
-                    ipTextField.setText("IP address");
-                    ipTextField.setForeground(Color.GRAY);
-                    
-                    portTextField.setText("port");
-                    portTextField.setForeground(Color.GRAY);
-                    
-                    ipTextField.setEditable(true);
-                    ipTextField.setBackground(frame.getBackground().brighter());
-                    portTextField.setEditable(true);
-                    portTextField.setBackground(frame.getBackground().brighter());
-                }
 
                 networkButton.setEnabled(true);
                 networkButton.setBackground(new Color(242, 199, 138));
@@ -919,7 +915,7 @@ public class Gui {
                 }
                 else {
                     network.resetMessages();
-                    // network.setFirstSync(true);
+                    network.setFirstSync(true);
                     network.setSync(false);
                     network.close();
                     network.setActive(false);
@@ -1022,34 +1018,39 @@ public class Gui {
         hostButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (hostButton.isSelected()) {
-                    isServer = true;
-                    hostButton.setText("Become client"); 
-                    hostButton.setBackground(Color.GRAY);
-
-                    label2.setText("Put in the desired port number :                    ");
-
-                    // enterNetworkInfo.remove(ipAddressLabel);
-                    enterNetworkInfo.remove(ipTextField);
+                if (!editableNetwork) {
+                    JOptionPane.showMessageDialog(null, "Restart the application to change network settings.");
                 }
                 else {
-                    isServer = false;
-                    hostButton.setText("Host server");
-                    hostButton.setBackground(Color.WHITE);
-
-                    label2.setText("Put in the IP address and port of a server-host :");
-
-                    c.fill = GridBagConstraints.BOTH;
-                    c.gridy = 0;
-                    c.gridwidth = 1;
-
-                    c.gridx = 0;
-                    c.insets = new Insets(0, 0, 0, 0);
-                    // enterNetworkInfo.add(ipAddressLabel, c);
-
-                    c.gridx = 1;
-                    c.insets = new Insets(0, 10, 0, 0);
-                    enterNetworkInfo.add(ipTextField, c);
+                    if (hostButton.isSelected()) {
+                        isServer = true;
+                        hostButton.setText("Become client"); 
+                        hostButton.setBackground(Color.GRAY);
+    
+                        label2.setText("Put in the desired port number :                    ");
+    
+                        // enterNetworkInfo.remove(ipAddressLabel);
+                        enterNetworkInfo.remove(ipTextField);
+                    }
+                    else {
+                        isServer = false;
+                        hostButton.setText("Host server");
+                        hostButton.setBackground(Color.WHITE);
+    
+                        label2.setText("Put in the IP address and port of a server-host :");
+    
+                        c.fill = GridBagConstraints.BOTH;
+                        c.gridy = 0;
+                        c.gridwidth = 1;
+    
+                        c.gridx = 0;
+                        c.insets = new Insets(0, 0, 0, 0);
+                        // enterNetworkInfo.add(ipAddressLabel, c);
+    
+                        c.gridx = 1;
+                        c.insets = new Insets(0, 10, 0, 0);
+                        enterNetworkInfo.add(ipTextField, c);
+                    }
                 }
             }
         });
@@ -1064,7 +1065,7 @@ public class Gui {
                 //         pathsPanel, panel3, panel4, panel5, syncIcon, optionsButton, HelloButton, optionsPanel);
                 // }
 
-                ThemeFrame newTheme = new ThemeFrame(window);
+                ThemeFrame newTheme = new ThemeFrame(window, frame.getBackground().brighter());
                 newTheme.setBackground(frame.getBackground());
                 newTheme.setChosenColor(frame.getBackground());
                 newTheme.setVisible(true);
