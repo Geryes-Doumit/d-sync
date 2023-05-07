@@ -1,0 +1,56 @@
+@startuml
+[*] --> Disconnected
+
+Disconnected --> Connecting : Connect
+Connecting --> Connected : Connection Established
+Connecting --> Disconnected : Connection Failed
+Connected --> Syncing : Start Sync
+Connected --> Disconnected : Disconnect
+Syncing --> Syncing : Check for changes
+Syncing --> Syncing : Display "No changes detected"
+Syncing --> Syncing : Copy modified file(s)
+Syncing --> SyncPaused : Pause Sync
+SyncPaused --> Syncing : Resume Sync
+SyncPaused --> Disconnected : Disconnect
+Disconnected --> [*] : Reset
+
+state Connecting {
+  [*] --> WaitConnect : "Connecting..."
+  WaitConnect --> Connected : Connection Established
+  WaitConnect --> Disconnected : Connection Failed
+}
+
+state Syncing {
+  state "Checking Changes" as CheckChanges {
+    [*] --> Check : Check for changes
+    Check --> NoChanges : No changes detected
+    Check --> Copy : Changes detected
+    NoChanges --> [*] : Idle
+    Copy --> [*] : Files copied
+  }
+
+  state "Pausing Sync" as PauseSync {
+    [*] --> WaitResume : "Sync Paused"
+    WaitResume --> Syncing : Resume Sync
+    WaitResume --> Disconnected : Disconnect
+  }
+
+  CheckChanges --> PauseSync : Pause Sync
+}
+
+state Connected {
+  [*] --> WaitSync : "Connected"
+  WaitSync --> Syncing : Start Sync
+  WaitSync --> Disconnected : Disconnect
+}
+
+state Disconnected {
+  state "Resetting Sync" as ResetSync {
+    [*] --> WaitConnect : "Connection Lost"
+    WaitConnect --> Connecting : Connect
+  }
+
+  ResetSync --> [*] : Reset
+}
+
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+left to right direction
+actor User
+rectangle "D-Sync" as App {
+  usecase "Set the 2 folders path" as UC1
+  usecase "Start/Pause/Reset the Synchronisation" as UC2
+  usecase "Change the application theme" as UC3
+}
+
+User --> App
+
+App --> UC1
+App --> UC2
+App --> UC3 
+
+@enduml

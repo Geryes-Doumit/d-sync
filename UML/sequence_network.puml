@@ -1,0 +1,67 @@
+@startuml
+
+actor User_Server
+User_Server -> GUI_Server: Set folder path, port
+User_Server -> GUI_Server: Start Sync
+participant GUI_Server
+participant "Dsync" as SM
+
+participant GUI_Client
+actor User_Client
+User_Client -> GUI_Client: Set folder path, server IP, port
+User_Client -> GUI_Client: Start Sync
+
+GUI_Server -> SM: Folder path, port
+GUI_Server -> SM: Start Sync
+
+GUI_Client -> SM: Folder path, server IP, port
+GUI_Client -> SM: Start Sync
+
+loop Synchronization Loop
+    SM -> SM: Detect changes
+    alt No Changes
+        SM->GUI_Server: Display "No changes detected"
+        SM->GUI_Client: Display "No changes detected"
+    else Changes Detected On Server
+        SM->SM: Do necessary changes
+        User_Server->User_Client: Send modified files
+        SM->GUI_Server: Display sync messages
+        SM->GUI_Client: Display sync messages
+    else Changes Detected On Client
+        SM->SM: Do necessary changes
+        User_Client->User_Server: Send modified files
+        SM->GUI_Server: Display sync messages
+        SM->GUI_Client: Display sync messages
+    end
+    User_Server->GUI_Server: Clicks "Pause"
+    GUI_Server->SM: Pause synchronization
+    SM->GUI_Client: Display "Sync Paused On Server"
+    User_Client->GUI_Client: Clicks "Pause"
+    GUI_Client->SM: Pause synchronization
+    SM->GUI_Server: Display "Sync Paused On Client"
+
+    User_Server->GUI_Server: Clicks "Reset"
+    GUI_Server->SM: Stop synchronization & disconnect
+
+    User_Client->GUI_Client: Clicks "Reset"
+    GUI_Client->SM: Stop synchronization & disconnect
+
+    alt connection error while syncing or disconnected
+        SM->GUI_Server: Display "Connection lost"
+        SM->GUI_Client: Display "Connection lost"
+        SM->SM: Try to reconnect
+        SM->GUI_Server: Display "Connection..."
+        SM->GUI_Client: Display "Connection..."
+    end
+end
+
+User_Server->GUI_Server: Clicks "Change Theme"
+GUI_Server->GUI_Server: Open theme selection dialog
+GUI_Server->GUI_Server: Change application theme
+GUI_Server->User_Server: Display new theme
+
+User_Client->GUI_Client: Clicks "Change Theme"
+GUI_Client<-GUI_Client: Open theme selection dialog.  
+GUI_Client<-GUI_Client: Change application theme.
+GUI_Client->User_Client: Display new theme
+@enduml
