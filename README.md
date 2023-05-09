@@ -11,7 +11,7 @@
 
 ## Requirements
 
-- Jdk 17
+- Jdk 17 and higher
 
 ## Using the app
 
