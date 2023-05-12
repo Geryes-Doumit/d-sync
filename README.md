@@ -19,7 +19,7 @@ D-sync is a very simple application :
 - Launch it by opening Dsync.jar with Java(TM) Platform,
 - or by using this command :
 ```
-java -jar DSync.jar
+java -jar Dsync.jar
 ```
 
 - You will see multiple buttons on the interface. You can choose the local mode or the network mode, in which you can choose to host a server or to connect to one
