@@ -26,7 +26,7 @@ java -jar D-Sync.jar
 
 - Make sure to fill out the required information (folder path(s), IP address, port)
 
-- Press Start Syncing and admire Dsync working flawlessly !
+- Press "Start Syncing" and admire D-sync working flawlessly !
 
 - You can also change the application's theme just by clicking on the "change theme" button
 
